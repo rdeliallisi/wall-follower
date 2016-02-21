@@ -1,7 +1,0 @@
-\beamer@endinputifotherversion {3.36pt}
-\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
-\beamer@subsectionintoc {1}{1}{Goal}{3}{0}{1}
-\beamer@subsectionintoc {1}{2}{Architecture}{5}{0}{1}
-\beamer@sectionintoc {2}{Algorithm}{7}{0}{2}
-\beamer@sectionintoc {3}{Development Strategy}{7}{0}{3}
-\beamer@subsectionintoc {3}{1}{Testing}{7}{0}{3}
