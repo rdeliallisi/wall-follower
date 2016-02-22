@@ -1,0 +1,62 @@
+\beamer@endinputifotherversion {3.36pt}
+\headcommand {\slideentry {0}{0}{1}{1/1}{}{0}}
+\headcommand {\beamer@framepages {1}{1}}
+\headcommand {\slideentry {0}{0}{2}{2/2}{}{0}}
+\headcommand {\beamer@framepages {2}{2}}
+\headcommand {\sectionentry {1}{Introduction}{3}{Introduction}{0}}
+\headcommand {\beamer@sectionpages {1}{2}}
+\headcommand {\beamer@subsectionpages {1}{2}}
+\headcommand {\beamer@subsectionentry {0}{1}{1}{3}{Goal}}\headcommand {\beamer@subsectionpages {3}{2}}
+\headcommand {\slideentry {1}{1}{1}{3/3}{Goal}{0}}
+\headcommand {\beamer@framepages {3}{3}}
+\headcommand {\slideentry {1}{1}{2}{4/4}{Goal}{0}}
+\headcommand {\beamer@framepages {4}{4}}
+\headcommand {\beamer@subsectionentry {0}{1}{2}{5}{Architecture}}\headcommand {\beamer@subsectionpages {3}{4}}
+\headcommand {\slideentry {1}{2}{1}{5/5}{Architecture}{0}}
+\headcommand {\beamer@framepages {5}{5}}
+\headcommand {\slideentry {1}{2}{2}{6/6}{Architecture}{0}}
+\headcommand {\beamer@framepages {6}{6}}
+\headcommand {\slideentry {1}{2}{3}{7/7}{Architecture}{0}}
+\headcommand {\beamer@framepages {7}{7}}
+\headcommand {\sectionentry {2}{Algorithms}{8}{Algorithms}{0}}
+\headcommand {\beamer@sectionpages {3}{7}}
+\headcommand {\beamer@subsectionpages {5}{7}}
+\headcommand {\beamer@subsectionentry {0}{2}{1}{8}{Transforms}}\headcommand {\beamer@subsectionpages {8}{7}}
+\headcommand {\slideentry {2}{1}{1}{8/8}{Transforms}{0}}
+\headcommand {\beamer@framepages {8}{8}}
+\headcommand {\beamer@subsectionentry {0}{2}{2}{9}{Bug Algorithms}}\headcommand {\beamer@subsectionpages {8}{8}}
+\headcommand {\slideentry {2}{2}{1}{9/9}{Bug Algorithms}{0}}
+\headcommand {\beamer@framepages {9}{9}}
+\headcommand {\slideentry {2}{2}{2}{10/10}{Bug Algorithms}{0}}
+\headcommand {\beamer@framepages {10}{10}}
+\headcommand {\beamer@subsectionentry {0}{2}{3}{11}{Mapping}}\headcommand {\beamer@subsectionpages {9}{10}}
+\headcommand {\slideentry {2}{3}{1}{11/11}{Mapping}{0}}
+\headcommand {\beamer@framepages {11}{11}}
+\headcommand {\sectionentry {3}{Design Patterns}{12}{Design Patterns}{0}}
+\headcommand {\beamer@sectionpages {8}{11}}
+\headcommand {\beamer@subsectionpages {11}{11}}
+\headcommand {\beamer@subsectionentry {0}{3}{1}{12}{Patterns in Use}}\headcommand {\beamer@subsectionpages {12}{11}}
+\headcommand {\slideentry {3}{1}{1}{12/12}{Patterns in Use}{0}}
+\headcommand {\beamer@framepages {12}{12}}
+\headcommand {\slideentry {3}{1}{2}{13/13}{Patterns in Use}{0}}
+\headcommand {\beamer@framepages {13}{13}}
+\headcommand {\sectionentry {4}{Development Methodology}{14}{Development Methodology}{0}}
+\headcommand {\beamer@sectionpages {12}{13}}
+\headcommand {\beamer@subsectionpages {12}{13}}
+\headcommand {\beamer@subsectionentry {0}{4}{1}{14}{Workflow}}\headcommand {\beamer@subsectionpages {14}{13}}
+\headcommand {\slideentry {4}{1}{1}{14/14}{Workflow}{0}}
+\headcommand {\beamer@framepages {14}{14}}
+\headcommand {\slideentry {4}{1}{2}{15/15}{Workflow}{0}}
+\headcommand {\beamer@framepages {15}{15}}
+\headcommand {\slideentry {4}{1}{3}{16/16}{Workflow}{0}}
+\headcommand {\beamer@framepages {16}{16}}
+\headcommand {\sectionentry {5}{References}{17}{References}{0}}
+\headcommand {\beamer@sectionpages {14}{16}}
+\headcommand {\beamer@subsectionpages {14}{16}}
+\headcommand {\slideentry {5}{0}{1}{17/17}{}{0}}
+\headcommand {\beamer@framepages {17}{17}}
+\headcommand {\beamer@partpages {1}{17}}
+\headcommand {\beamer@subsectionpages {17}{17}}
+\headcommand {\beamer@sectionpages {17}{17}}
+\headcommand {\beamer@documentpages {17}}
+\headcommand {\def \inserttotalframenumber {17}}
