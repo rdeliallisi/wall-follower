@@ -3,3 +3,6 @@
 *.out
 *.snm
 *.aux
+*.gz
+*.toc
+*.nav
