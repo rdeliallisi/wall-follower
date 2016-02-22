@@ -280,10 +280,23 @@ Given a goal, a robot, and a maze:
 \subsection{Patterns in Use}
 \begin{frame}
 \frametitle{Singleton}
+\begin{itemize}
+\item Comes from the mathematical `Singleton (a.k.a. Unit set)'
+\item Restricts the instantiation of a class to one object
+\item Defines a `getInstance' operation to expose the unique instance
+\item Useful when exactly one object needed to coordinate actions
+\item getInstance responsible for creating class unique instance
+\end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Mediator}
+\begin{itemize}
+\item Behavioural pattern - Can alter the program's running behaviour
+\item Communication between objects encapsulated with a mediator object
+\item Objects no longer communicate directly with each other
+\item Reduces the dependencies between communicating objects, thereby lowering the coupling
+\end{itemize}
 \end{frame}
 %------------------------------------------------
 \section{Development Methodology}
@@ -327,12 +340,17 @@ Given a goal, a robot, and a maze:
 \item Divide tasks into issues
 \item Branching Model
 \begin{itemize}
-\item Each issue a separate branch on the remote
-\item To be merged back in to the master after testing results
+\item Each issue to be a separate branch on the remote
+\item To be merged back in to the master after completion of issue
 \end{itemize}
+\item Pre commit hooks for code style guideline compliance
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+\frametitle{Deliverables and Timeline}
+\includegraphics[scale=0.23]{assets/gannt/chart.png}
+\end{frame}
 
 %------------------------------------------------
 \section{References}
