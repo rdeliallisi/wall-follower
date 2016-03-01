@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "lab_simulator")
+set(lab_simulator_MAINTAINER "max <max@todo.todo>")
+set(lab_simulator_DEPRECATED "")
+set(lab_simulator_VERSION "0.0.0")
+set(lab_simulator_BUILD_DEPENDS "stage_ros")
+set(lab_simulator_RUN_DEPENDS "stage_ros")
+set(lab_simulator_BUILDTOOL_DEPENDS "catkin")

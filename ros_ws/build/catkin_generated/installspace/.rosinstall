@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/rubin/ros_ws/install/setup.sh

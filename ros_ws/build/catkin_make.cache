@@ -1,0 +1,2 @@
+lab_simulator
+-DCATKIN_DEVEL_PREFIX=/home/rubin/ros_ws/devel -DCMAKE_INSTALL_PREFIX=/home/rubin/ros_ws/install -G Unix Makefiles

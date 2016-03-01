@@ -1,0 +1,8 @@
+prefix=/home/rubin/ros_ws/devel
+
+Name: lab_simulator
+Description: Description of lab_simulator
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/rubin/ros_ws/devel/lib 
+Requires: 

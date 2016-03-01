@@ -1,0 +1,8 @@
+prefix=/home/rubin/ros_ws/install
+
+Name: lab_simulator
+Description: Description of lab_simulator
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/rubin/ros_ws/install/lib 
+Requires: 
