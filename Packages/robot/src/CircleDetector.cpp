@@ -4,7 +4,7 @@
 #include <sstream>
 
 void callback(const sensor_msgs::LaserScan& msg) {
-    ROS_INFO("%s\n", msg.str().c_str());
+    ROS_INFO("%f\n", msg.scan_time);
 }
 
 int main(int argc, char **argv) {
