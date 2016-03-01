@@ -1,9 +1,0 @@
-/home/rubin/ros_ws/build/lab_simulator/CMakeFiles/_catkin_empty_exported_target.dir
-/home/rubin/ros_ws/build/CMakeFiles/clean_test_results.dir
-/home/rubin/ros_ws/build/CMakeFiles/clean_test_results_Project.dir
-/home/rubin/ros_ws/build/CMakeFiles/download_extra_data.dir
-/home/rubin/ros_ws/build/CMakeFiles/doxygen.dir
-/home/rubin/ros_ws/build/gtest/CMakeFiles/gtest.dir
-/home/rubin/ros_ws/build/gtest/CMakeFiles/gtest_main.dir
-/home/rubin/ros_ws/build/CMakeFiles/run_tests.dir
-/home/rubin/ros_ws/build/CMakeFiles/tests.dir
