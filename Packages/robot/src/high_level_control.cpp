@@ -20,6 +20,7 @@ HighLevelControl::HighLevelControl() : node_() {
 void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
     std::vector<float>::iterator it = std::min_element(ranges.begin(), ranges.end());
+   
     if (*it > security_distance_) {
         can_continue_ = true;
     } else {
@@ -65,6 +66,7 @@ void HighLevelControl::set_angular_velocity(double angular_velocity) {
 
 void HighLevelControl::WallFollowMove() {
     if (!can_continue_ && !is_following_wall_) {
+        srand(time(NULL));
         turn_type_ = rand() % 2 == 0 ? -1 : 1;
         is_following_wall_ = true;
     } else if (can_continue_ && !is_following_wall_) {
@@ -80,7 +82,7 @@ void HighLevelControl::WallFollowMove() {
     }
 }
 
-void HighLevelControl::RandomMove() {
+void HighLevelControl::ControlledRandomMove() {
     if (can_continue_) {
         Move(linear_velocity_, 0);
         is_turning_ = false;
@@ -91,6 +93,16 @@ void HighLevelControl::RandomMove() {
         }
 
         Move(0, angular_velocity_ * turn_type_);
+    }
+}
+
+void HighLevelControl::TotalRandomMove() {
+    if(can_continue_) {
+        Move(linear_velocity_, 0);
+    } else {
+        srand(time(NULL));
+        int turn_factor = rand() % 20 - 10;
+        Move(0, turn_factor * angular_velocity_);
     }
 }
 

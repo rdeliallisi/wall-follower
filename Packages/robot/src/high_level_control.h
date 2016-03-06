@@ -77,9 +77,16 @@ public:
 
     /**
      * Moves the robot randomly using the specified linear and
-     * angular velocity
+     * angular velocity. The robot will chose a direction to turn and 
+     * turn in that direction until it completes the turn.
      */
-    void RandomMove();
+    void ControlledRandomMove();
+
+    /**
+     * Turns the robot a random amount of degrees in a random direction each
+     * time an obstacle is encountered.
+     */
+    void TotalRandomMove();
 
     //TODO(rdeliallisi): To be put into Low Level Control
     /**
