@@ -27,8 +27,9 @@ private:
     // Used to get the data from the laser range finder
     ros::Subscriber laser_sub_;
 
-    // The type of turn the robot is currently in when turning
-    // -2 for right 2 for left
+    // The type of turn the robot is currently in when turning.
+    // Negative for right, positive for right/
+    // The magnitude specifies the turning angle
     int turn_type_;
 
     // Minimum proximity distance that the robot can have from a wall
@@ -47,6 +48,8 @@ private:
 
     // Checks if robot is close enough to the wall it is following
     bool is_close_to_wall_;
+
+    bool is_following_wall_;
 
     bool is_turning_;
 
