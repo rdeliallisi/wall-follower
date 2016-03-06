@@ -27,8 +27,16 @@ private:
     // Used to get the data from the laser range finder
     ros::Subscriber laser_sub_;
 
+    // The type of turn the robot is currently in when turning
+    // -2 for right 2 for left
+    int turn_type_;
+
     // Minimum proximity distance that the robot can have from a wall
     double security_distance_;
+
+    // Maximum distance the robot can be away from the wall it is
+    // following
+    double wall_follow_distance_;
 
     double linear_velocity_;
 
@@ -37,6 +45,10 @@ private:
     // Checks if the robot can walk straight or not
 	bool can_continue_;
 
+    // Checks if robot is close enough to the wall it is following
+    bool is_close_to_wall_;
+
+    bool is_turning_;
 
     // TODO(rdeliallisi): To be put into Object Detection
     /**
@@ -55,18 +67,16 @@ public:
 
     void set_linear_velocity(double linear_velocity);
 
+    /**
+     * Moves the robot so that it always follows a wall
+     */
+    void WallFollowMove();
 
     /**
      * Moves the robot randomly using the specified linear and
      * angular velocity
      */
     void RandomMove();
-
-    /**
-     * Moves the robot so that it always stays close to the wall it is currently
-     * following.
-     */
-    void WallFollowMove();
 
     //TODO(rdeliallisi): To be put into Low Level Control
     /**

@@ -4,6 +4,7 @@
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "HighLevelControl");
+    srand(time(NULL));
 
     HighLevelControl high_level_control;
 
