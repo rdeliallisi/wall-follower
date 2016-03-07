@@ -5,61 +5,90 @@
 #include <sensor_msgs/LaserScan.h>
 
 /**
- * Breaks down abstract movement commands into smaller ones,
+ * @brief Breaks down abstract movement commands into smaller ones,
  * that can be executed by the Low Level Control
+ *
  * Usage:
  *     HighLevelControl high_level_control;
- *     high_level_control.move();
+ *     high_level_control.FollowWallMove();
+ *
+ * @author Rubin Deliallisi
+ * @date March 2016
  */
 class HighLevelControl {
 
 private:
 
     // TODO(rdeliallisi): To be put into Low Level Control
-    // Ros node to which the class is attached
+    /**
+     * Ros node to which the class is attached
+    */
     ros::NodeHandle node_;
 
     // TODO(rdeliallisi): To be put into Low Level Control
-    // Used to send messages to the actual robot
-	ros::Publisher cmd_vel_pub_;
+    /**
+     * Used to send messages to the actual robot
+     */
+    ros::Publisher cmd_vel_pub_;
 
     // TODO(rdeliallisi): To be put into Object Detection
-    // Used to get the data from the laser range finder
+    /**
+     * Used to get the data from the laser range finder
+     */
     ros::Subscriber laser_sub_;
 
-    // The type of turn the robot is currently in when turning.
-    // Negative for right, positive for right/
-    // The magnitude specifies the turning angle
+    /**
+     * The type of turn the robot is currently in when turning.
+     */
     int turn_type_;
 
-    // Minimum proximity distance that the robot can have from a wall
+    /**
+     * Minimum proximity distance that the robot can have from a wall
+     */
     double security_distance_;
 
-    // Maximum distance the robot can be away from the wall it is
-    // following
+    /**
+     * Maximum distance the robot can be away from the anchor wall
+     */
     double wall_follow_distance_;
 
     double linear_velocity_;
 
     double angular_velocity_;
 
-    // Checks if the robot can walk straight or not
-	bool can_continue_;
+    /**
+     * Can the robot continue walking in a straight line or not
+     */
+    bool can_continue_;
 
-    // Checks if robot is close enough to the wall it is following
+    /**
+     * Is the robot close enough to the anchor wall
+     */
     bool is_close_to_wall_;
 
+    /**
+     * Is the robot anchored to a wall or not
+     */
     bool is_following_wall_;
 
     bool is_turning_;
 
     // TODO(rdeliallisi): To be put into Object Detection
     /**
-     * Gets the data from the laser range finder, examines them and 
+     * Gets the data from the laser range finder, examines them and
      * updates the relevant class variables
      * @param msg Raw data comming from the laser range finder
      */
     void LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
+
+    //TODO(rdeliallisi): To be put into Low Level Control
+    /**
+     * Send the movement command to the robot using ROS nodes and
+     * topics
+     * @param linear_speed  Linear Speed that the robot should move with
+     * @param angular_speed Angular Speed that the robot should rotate with
+     */
+    void Move(double linear_speed, double angular_speed);
 
 public:
     HighLevelControl();
@@ -77,7 +106,7 @@ public:
 
     /**
      * Moves the robot randomly using the specified linear and
-     * angular velocity. The robot will chose a direction to turn and 
+     * angular velocity. The robot will chose a direction to turn and
      * turn in that direction until it completes the turn.
      */
     void ControlledRandomMove();
@@ -87,15 +116,6 @@ public:
      * time an obstacle is encountered.
      */
     void TotalRandomMove();
-
-    //TODO(rdeliallisi): To be put into Low Level Control
-    /**
-     * Send the movement command to the robot using ROS nodes and
-     * topics
-     * @param linear_speed  Linear Speed that the robot should move with
-     * @param angular_speed Angular Speed that the robot should rotate with
-     */
-    void Move(double linear_speed, double angular_speed);
 };
 
 #endif
