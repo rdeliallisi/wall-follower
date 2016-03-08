@@ -3,7 +3,6 @@
 #include "circle_detector.h"
 
 #include "math.h"
-
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -12,54 +11,22 @@
 using namespace std;
 using namespace cv;
 
-
-CircleDetector::CircleDetector() : node_() {
-    laser_sub_ = node_.subscribe("base_scan", 100, &CircleDetector::callback, this);
+CircleDetector::CircleDetector() : node_() , circle_() {
+    count_threshold_ = 0;
+    laser_sub_ = node_.subscribe("base_scan", 100, &CircleDetector::LaserCallback, this);
 }
 
-
-vector<Vec3f> CircleDetector::find_circles(cv::Mat image) {
-    //compute Hough Transform
-    Mat destination;
-    Canny(image, destination, 200, 20);
-    GaussianBlur(destination, destination, Size(7, 7), 2, 2 );
-
-    vector<Vec3f> circles;
-    HoughCircles(destination, circles, CV_HOUGH_GRADIENT, 1, 100, 200, 15, 10, 20);
-
-    return circles;
+Circle CircleDetector::get_circle() {
+    return circle_;
 }
 
-
-void CircleDetector::callback(const sensor_msgs::LaserScan::ConstPtr& msg) {
+void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
 
     int data_points = msg->ranges.size();
 
     //create image
     int screen_width = 1000;
     int screen_height = 1000;
-    cv::Mat image = create_image(screen_width, screen_height, msg);
-
-    //compute hough transform for circles
-    vector<Vec3f> circles = find_circles(image);
-    cout << "Circles: " << circles.size() << endl;
-
-    // Draw the circles detected
-    for ( size_t i = 0; i < circles.size(); i++ ) {
-        Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-        int radius = cvRound(circles[i][2]);
-        cv::circle( image, center, 3, Scalar(0, 255, 255), -1);
-        cv::circle( image, center, radius, Scalar(0, 0, 255), 1 );
-    }
-
-    // namedWindow( "Display window", WINDOW_AUTOSIZE );
-    // imshow( "Display window", image );
-    // waitKey(-1);
-}
-
-
-cv::Mat CircleDetector::create_image(int screen_width, int screen_height, 
-    const sensor_msgs::LaserScan::ConstPtr& msg) {
 
     cv::Mat image;
     image.create(screen_width, screen_height, CV_8UC1);
@@ -70,7 +37,6 @@ cv::Mat CircleDetector::create_image(int screen_width, int screen_height,
     }
 
     //convert laser_scan data to image
-    int data_points = msg->ranges.size();
     float base_scan_min_angle = msg->angle_min;
     for (int i = 0; i < data_points; ++i) {
         //calculate cartesian coordinates
@@ -85,10 +51,43 @@ cv::Mat CircleDetector::create_image(int screen_width, int screen_height,
         if (screen_x > 0 && screen_y > 0) {
             image.at<uchar>(screen_y, screen_x) = (uchar)0;
         } else {
-            cout << screen_x << endl;
-            cout << screen_y << endl;
+            // Coordinates are out of bound becaus of roundoff errors
         }
     }
 
-    return image;
+    //compute Hough Transform
+    Mat destination;
+    Canny(image, destination, 200, 20);
+    GaussianBlur(destination, destination, Size(7, 7), 2, 2 );
+
+    vector<Vec3f> circles;
+    HoughCircles(destination, circles, CV_HOUGH_GRADIENT, 1, 100, 200, 15, 10, 20);
+
+    if (circles.size() != 1) {
+        count_threshold_ = 0;
+        circle_.x = circle_.y = -1;
+    } else {
+        count_threshold_++;
+
+        if (count_threshold_ > 5) {
+            circle_.x = (circles[0][0] - screen_width / 2) / 100.0;
+            circle_.y = -(circles[0][1] - screen_height / 2) / 100.0;
+
+        }
+    }
+
+    // Draw the circles detected and display them
+    // for ( size_t i = 0; i < circles.size(); i++ )
+    // {
+    //     Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+    //     int radius = cvRound(circles[i][2]);
+    //     cv::circle( image, center, 3, Scalar(0, 255, 255), -1);
+    //     cv::circle( image, center, radius, Scalar(0, 0, 255), 1 );
+    // }
+
+    // namedWindow( "Display window", WINDOW_AUTOSIZE );
+    // imshow( "Display window", image );
+    // waitKey(-1);
 }
+
+

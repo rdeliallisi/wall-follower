@@ -1,75 +1,40 @@
-#ifndef CIRCLE_DETECTOR_H
-#define CIRCLE_DETECTOR_H
+#ifndef CRICLE_DETECTOR_H
+#define CRICLE_DETECTOR_H
 
-#include <ros/ros.h>
-#include <sensor_msgs/LaserScan.h>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <vector>
+#include "ros/ros.h"
+#include "sensor_msgs/LaserScan.h"
 
-/**
- * @brief Detects half-circle
- *
- * @date March 2016
- */
+class Circle{
+public:
+    float x, y;
+};
+
 class CircleDetector {
+private:
+    ros::NodeHandle node_;
+    ros::Subscriber laser_sub_;
+    Circle circle_;
+    int count_threshold_;
 
 public:
-
-    /**
-     * Ros node to which the class is attached
-    */
-    ros::NodeHandle node_;
-
-    /**
-     * Used to get the data from the laser range finder
-     */
-    ros::Subscriber laser_sub_;
-
 
     CircleDetector();
 
     /**
-     * @brief creates an image which reflects the laser scan data
-     * 
-     * @param screen_width 
-     * @param screen_height 
-     * @param msg [laser_scan]
-     * @return cv::Mat 
-     */
-    cv::Mat create_image(int screen_width, int screen_height, 
-    const sensor_msgs::LaserScan::ConstPtr& msg);
-
-    /**
-    * @brief Creates a white image of given dimensions
+    * Gets the data from the laser range finder, creates an
+    * image out of it and runs openCV HoughLines on it
     * 
-    * @param screen_width 
-    * @param screen_height 
-    * 
-    * @return image cv::Mat
+    * @param msg Raw data comming from the laser range finder
     */
-    cv::Mat create_image(int screen_width, int screen_height);
-
+    void LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
 
     /**
-     * @brief callback function for laser_scan
-     * @details Gets the date from the laser range finder, creates an
-     * image out of it and runs openCV HoughCircles on it
-     * 
-     * @param msg sensor_msgs::LaserScan
+     * Returns the detected circle
+     * @return -1, -1 if no circle is detected at the moment, the coordinates
+     * of the circle otherwise
      */
-    void callback(const sensor_msgs::LaserScan::ConstPtr& msg);
-
-    /**
-     * @brief applies HoughCircles and finds the goal
-     * 
-     * @param image 
-     * @return circles  
-     **/
-    std::vector<cv::Vec3f> find_circles(cv::Mat image);
-
-
+    Circle get_circle();
 };
+
 
 #endif

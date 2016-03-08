@@ -94,7 +94,7 @@ floorplan
 #define the compbot instance
 compbot
 (
-	pose [ 0.777 -0.430 0.000 13.893 ]
+	pose [ 1 0.250 0.000 0 ]
 	name "compbot"
 	color "blue"	
 )

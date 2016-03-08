@@ -17,15 +17,15 @@ catkin_package()
 
 # Build Circle Detector
 include_directories(include/${PROJECT_NAME} ${catkin_INCLUDE_DIRS} ${GTest_INCLUDE_DIRS})
-add_library(my_library src/circle_detector_node.cpp)
+add_library(my_library src/circle_detector.cpp)
 
 
-add_executable(circle_detector_node src/circle_detector.cpp src/circle_detector_node.cpp)
-target_link_libraries ( circle_detector_node ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} )
-add_dependencies(circle_detector_node robot_generate_messages_cpp)
+add_executable(CircleDetector src/circle_detector.cpp src/circle_detector_node.cpp)
+target_link_libraries ( CircleDetector ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} )
+add_dependencies(CircleDetector robot_generate_messages_cpp)
 
 # Unit Tests
 
-add_rostest_gtest(circle_detector_test launch/circle_detect.launch src/test/circle_detector_test.cpp)
-target_link_libraries(circle_detector_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+add_rostest_gtest(CD_test launch/circle_detect.launch src/test/circle_detector_test.cpp)
+target_link_libraries(CD_test my_library ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
