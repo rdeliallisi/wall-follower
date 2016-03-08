@@ -5,7 +5,7 @@
 
 HighLevelControl::HighLevelControl() : node_() {
     security_distance_ = 0.275;
-    wall_follow_distance_ = 0.35;
+    wall_follow_distance_ = 0.4;
     linear_velocity_ = 0.4;
     angular_velocity_ = 1;
 
