@@ -6,4 +6,30 @@ Team Members
 - Maria Ficiu [MariaFiciu]
 - Rubin Deliallisi [rdeliallisi]
 - Siddharth Shukla [thunderboltsid]
+
+Project Description:
+A robot developed using ROS that can navigate a maze based on the input from a laser range finder.
+
+External Dependencies:
+- ROS
+- OpenCV
+- GoogleTest
+
+Development timeline
+- Sprint 1: Completed circle detection (Maria, Atabak), Completed random walk (Rubin),
+  Basic wall following - a bit buggy (Rubin), Object detection without OpenCV using analytical methods - Experimental,
+  not merged yet (Siddharth)
+
+- Sprint 2: (Pending)
+
+- Sprint 3: (Pending)
+
+Setup:
+- Navigate to your catkin workspace
+- Copy `robot` to your `src`
+- Run `catkin_make`
+- Run `source devel/setup.bash`
+- Run `roscore`
+- Run `roslaunch lab_simulator simulator.launch`
+- Run `rosrun robot HighLevelControlNode && rosrun robot CircleDetector`
 */
