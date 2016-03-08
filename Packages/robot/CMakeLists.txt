@@ -12,7 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
 find_package( OpenCV REQUIRED)
 find_package(GTest REQUIRED)
 find_package(rostest REQUIRED)
+
 include_directories(include/${PROJECT_NAME} ${catkin_INCLUDE_DIRS} ${GTest_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
+
 add_library(my_library src/high_level_control.cpp src/circle_detector.cpp)
 target_link_libraries(my_library ${OpenCV_LIBRARIES})
 
@@ -36,7 +38,7 @@ target_link_libraries(HLCN_start_position_test my_library ${catkin_LIBRARIES} ${
 add_rostest_gtest(HLCN_wall_proximity_test launch/wall_proximity.launch src/test/HLCH_wall_proximity_test.cpp)
 target_link_libraries(HLCN_wall_proximity_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(CD_no_circle_test launch/start_position.launch src/test/CD_no_circle_test.cpp)
+add_rostest_gtest(CD_no_circle_test launch/start_position2.launch src/test/CD_no_circle_test.cpp)
 target_link_libraries(CD_no_circle_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
 add_rostest_gtest(CD_circle_present_test launch/circle_detect.launch src/test/CD_circle_present_test.cpp)
