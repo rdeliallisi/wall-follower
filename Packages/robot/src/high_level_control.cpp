@@ -4,7 +4,7 @@
 #include "high_level_control.h"
 
 HighLevelControl::HighLevelControl() : node_() {
-    security_distance_ = 0.25;
+    security_distance_ = 0.275;
     wall_follow_distance_ = 0.35;
     linear_velocity_ = 0.4;
     angular_velocity_ = 1;
