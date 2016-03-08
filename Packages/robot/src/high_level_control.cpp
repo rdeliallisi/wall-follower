@@ -6,7 +6,7 @@
 HighLevelControl::HighLevelControl() : node_() {
     security_distance_ = 0.25;
     wall_follow_distance_ = 0.35;
-    linear_velocity_ = 0.5;
+    linear_velocity_ = 0.4;
     angular_velocity_ = 1;
 
     cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel", 100);
@@ -64,10 +64,19 @@ void HighLevelControl::set_angular_velocity(double angular_velocity) {
     angular_velocity_ = angular_velocity;
 }
 
+void HighLevelControl::set_turn_type(int turn_type) {
+    turn_type_ = turn_type;
+    is_following_wall_ = true;
+}
+
 void HighLevelControl::WallFollowMove() {
     if (!can_continue_ && !is_following_wall_) {
         srand(time(NULL));
-        turn_type_ = rand() % 2 == 0 ? -1 : 1;
+
+        // If we are in override mode don't change the type of the wall
+        if(turn_type_ != 1 && turn_type_ != -1)
+            turn_type_ = rand() % 2 == 0 ? -1 : 1;
+
         is_following_wall_ = true;
     } else if (can_continue_ && !is_following_wall_) {
         Move(linear_velocity_, 0);

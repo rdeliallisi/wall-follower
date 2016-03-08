@@ -99,10 +99,12 @@ public:
 
     void set_linear_velocity(double linear_velocity);
 
-    /**
-     * Override setter for testing purposes
-     */
 
+    /**
+     * Override method for testing purposes
+     * @param turn_type Decides the type of the wall the robot is following.
+     * 1 for right wall, -1 for left wall
+     */
     void set_turn_type(int turn_type);
 
     /**
