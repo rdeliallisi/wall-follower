@@ -1,4 +1,5 @@
 /**
+\mainpage
 SE Lab Team 7
 
 Team Members
@@ -36,8 +37,4 @@ Setup:
 - Run `roscore`
 - Run `roslaunch lab_simulator simulator.launch`
 - Run `rosrun robot HighLevelControlNode && rosrun robot CircleDetector`
-
-or
-
-- Run `project_run.sh`
 */
