@@ -1,0 +1,105 @@
+\hypertarget{classHighLevelControl}{\section{High\-Level\-Control Class Reference}
+\label{classHighLevelControl}\index{High\-Level\-Control@{High\-Level\-Control}}
+}
+
+
+Breaks down abstract movement commands into smaller ones, that can be executed by the Low Level Control.  
+
+
+
+
+{\ttfamily \#include $<$high\-\_\-level\-\_\-control.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classHighLevelControl_aac1848a3223d2a4441a54c00cb4e3af6}{void {\bfseries set\-\_\-security\-\_\-distance} (double security\-\_\-distance)}\label{classHighLevelControl_aac1848a3223d2a4441a54c00cb4e3af6}
+
+\item 
+\hypertarget{classHighLevelControl_a15fd2a5a71a2dfee668153fa217dd4a3}{void {\bfseries set\-\_\-angular\-\_\-velocity} (double angular\-\_\-velocity)}\label{classHighLevelControl_a15fd2a5a71a2dfee668153fa217dd4a3}
+
+\item 
+\hypertarget{classHighLevelControl_a9e0d860131c93c51b54bbf741fb87c84}{void {\bfseries set\-\_\-linear\-\_\-velocity} (double linear\-\_\-velocity)}\label{classHighLevelControl_a9e0d860131c93c51b54bbf741fb87c84}
+
+\item 
+void \hyperlink{classHighLevelControl_a3d6185ee401e05141c4c8ce504f7fd74}{set\-\_\-turn\-\_\-type} (int turn\-\_\-type)
+\item 
+bool \hyperlink{classHighLevelControl_ac66b63d8f13f54a2e4a13da35c0701b0}{can\-\_\-continue} ()
+\item 
+\hypertarget{classHighLevelControl_ab958c89bc1762671d14b967b15dccfb8}{bool {\bfseries is\-\_\-close\-\_\-to\-\_\-wall} ()}\label{classHighLevelControl_ab958c89bc1762671d14b967b15dccfb8}
+
+\item 
+\hypertarget{classHighLevelControl_acfa4985eb2022acd8b59886657877acf}{bool {\bfseries is\-\_\-following\-\_\-wall} ()}\label{classHighLevelControl_acfa4985eb2022acd8b59886657877acf}
+
+\item 
+\hypertarget{classHighLevelControl_a72337bf999829a3fc0752bdfe419f97d}{bool {\bfseries is\-\_\-turning} ()}\label{classHighLevelControl_a72337bf999829a3fc0752bdfe419f97d}
+
+\item 
+void \hyperlink{classHighLevelControl_ab1d5093f7707ff78368af39f5db38575}{Wall\-Follow\-Move} ()
+\item 
+void \hyperlink{classHighLevelControl_aa2ecdf510640a8bd7cb76ecd4a28a814}{Controlled\-Random\-Move} ()
+\item 
+void \hyperlink{classHighLevelControl_a58b9c0a66518e0fcd5461fe2eba25d9a}{Total\-Random\-Move} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Breaks down abstract movement commands into smaller ones, that can be executed by the Low Level Control. 
+
+Usage\-: \hyperlink{classHighLevelControl}{High\-Level\-Control} high\-\_\-level\-\_\-control; high\-\_\-level\-\_\-control.\-Follow\-Wall\-Move();
+
+\begin{DoxyAuthor}{Author}
+Rubin Deliallisi 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+March 2016 
+\end{DoxyDate}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classHighLevelControl_ac66b63d8f13f54a2e4a13da35c0701b0}{\index{High\-Level\-Control@{High\-Level\-Control}!can\-\_\-continue@{can\-\_\-continue}}
+\index{can\-\_\-continue@{can\-\_\-continue}!HighLevelControl@{High\-Level\-Control}}
+\subsubsection[{can\-\_\-continue}]{\setlength{\rightskip}{0pt plus 5cm}bool High\-Level\-Control\-::can\-\_\-continue (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHighLevelControl_ac66b63d8f13f54a2e4a13da35c0701b0}
+4 bool getters to test the state of the robot \hypertarget{classHighLevelControl_aa2ecdf510640a8bd7cb76ecd4a28a814}{\index{High\-Level\-Control@{High\-Level\-Control}!Controlled\-Random\-Move@{Controlled\-Random\-Move}}
+\index{Controlled\-Random\-Move@{Controlled\-Random\-Move}!HighLevelControl@{High\-Level\-Control}}
+\subsubsection[{Controlled\-Random\-Move}]{\setlength{\rightskip}{0pt plus 5cm}void High\-Level\-Control\-::\-Controlled\-Random\-Move (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classHighLevelControl_aa2ecdf510640a8bd7cb76ecd4a28a814}
+Moves the robot randomly using the specified linear and angular velocity. The robot will chose a direction to turn and turn in that direction until it completes the turn. \hypertarget{classHighLevelControl_a3d6185ee401e05141c4c8ce504f7fd74}{\index{High\-Level\-Control@{High\-Level\-Control}!set\-\_\-turn\-\_\-type@{set\-\_\-turn\-\_\-type}}
+\index{set\-\_\-turn\-\_\-type@{set\-\_\-turn\-\_\-type}!HighLevelControl@{High\-Level\-Control}}
+\subsubsection[{set\-\_\-turn\-\_\-type}]{\setlength{\rightskip}{0pt plus 5cm}void High\-Level\-Control\-::set\-\_\-turn\-\_\-type (
+\begin{DoxyParamCaption}
+\item[{int}]{turn\-\_\-type}
+\end{DoxyParamCaption}
+)}}\label{classHighLevelControl_a3d6185ee401e05141c4c8ce504f7fd74}
+Override method for testing purposes 
+\begin{DoxyParams}{Parameters}
+{\em turn\-\_\-type} & Decides the type of the wall the robot is following. 1 for right wall, -\/1 for left wall \\
+\hline
+\end{DoxyParams}
+\hypertarget{classHighLevelControl_a58b9c0a66518e0fcd5461fe2eba25d9a}{\index{High\-Level\-Control@{High\-Level\-Control}!Total\-Random\-Move@{Total\-Random\-Move}}
+\index{Total\-Random\-Move@{Total\-Random\-Move}!HighLevelControl@{High\-Level\-Control}}
+\subsubsection[{Total\-Random\-Move}]{\setlength{\rightskip}{0pt plus 5cm}void High\-Level\-Control\-::\-Total\-Random\-Move (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classHighLevelControl_a58b9c0a66518e0fcd5461fe2eba25d9a}
+Turns the robot a random amount of degrees in a random direction each time an obstacle is encountered. \hypertarget{classHighLevelControl_ab1d5093f7707ff78368af39f5db38575}{\index{High\-Level\-Control@{High\-Level\-Control}!Wall\-Follow\-Move@{Wall\-Follow\-Move}}
+\index{Wall\-Follow\-Move@{Wall\-Follow\-Move}!HighLevelControl@{High\-Level\-Control}}
+\subsubsection[{Wall\-Follow\-Move}]{\setlength{\rightskip}{0pt plus 5cm}void High\-Level\-Control\-::\-Wall\-Follow\-Move (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classHighLevelControl_ab1d5093f7707ff78368af39f5db38575}
+Moves the robot so that it always follows a wall 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+Packages/robot/include/robot/high\-\_\-level\-\_\-control.\-h\item 
+Packages/robot/src/high\-\_\-level\-\_\-control.\-cpp\end{DoxyCompactItemize}
