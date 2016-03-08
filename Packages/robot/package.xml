@@ -44,21 +44,12 @@
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>sensor_msgs</build_depend>
-  <build_depend>tf</build_depend>
-  <build_depend>laser_geometry</build_depend>
-  <build_depend>libpcl-all-dev</build_depend>
-  <build_depend>laser_geometry</build_depend>
-  <build_depend>eigen</build_depend>
 
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>opencv2</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>laser_geometry</run_depend>
-  <run_depend>libpcl-all</run_depend>
-  <depend package="eigen" />
-  <run_depend>eigen</run_depend>
+
  
 
   <!-- The export tag contains other, unspecified, tags -->

@@ -5,25 +5,26 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   sensor_msgs
-  tf
-  laser_geometry
-  pcl_ros
-  cv_bridge
 )
 
+
+
 find_package( OpenCV REQUIRED)
-find_package(Eigen3 REQUIRED) 
+find_package(GTest REQUIRED)
+find_package(rostest REQUIRED)
 
 catkin_package()
 
-## Build LineDetector
-include_directories(include ${catkin_INCLUDE_DIRS})
-include_directories(include ${catkin_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS})
-include_directories(${EIGEN3_INCLUDE_DIR})
+# Build Circle Detector
+include_directories(include ${catkin_INCLUDE_DIRS} ${GTest_INCLUDE_DIRS})
+add_library(my_library src/circle_detector_node.cpp)
 
-add_executable(LineDetector src/LineDetector.cpp)
-target_link_libraries ( LineDetector ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} )
 
-add_dependencies(LineDetector robot_generate_messages_cpp)
+add_executable(circle_detector_node src/circle_detector_node.cpp)
+target_link_libraries ( circle_detector_node ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} )
+add_dependencies(circle_detector_node robot_generate_messages_cpp)
 
+# Unit Tests
+
+target_link_libraries(circle_detector_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 

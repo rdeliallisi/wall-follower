@@ -91,7 +91,7 @@ void callback(const sensor_msgs::LaserScan::ConstPtr& msg) {
 }
 
 int main(int argc, char **argv) {
-    ros::init(argc, argv, "line_detector");
+    ros::init(argc, argv, "circle_detector");
     ros::NodeHandle n;
 
     ros::Rate loop_rate(50);
