@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     {
 
         Circle c = circle_detector.get_circle();
-        if(c.x != -1 && c.y != -1){
+        if(c.x != -10 && c.y != -10){
             cout << "Detecting Cricle!" << endl;
             cout << c.x << " " << c.y << endl;
         }

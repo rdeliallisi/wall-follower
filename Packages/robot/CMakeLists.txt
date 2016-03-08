@@ -26,6 +26,8 @@ add_dependencies(CircleDetector robot_generate_messages_cpp)
 
 # Unit Tests
 
-add_rostest_gtest(CD_test launch/circle_detect.launch src/test/circle_detector_test.cpp)
+add_rostest_gtest(CD_no_circle_test launch/start_position.launch src/test/CD_no_circle_test.cpp)
 target_link_libraries(CD_test my_library ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
+add_rostest_gtest(CD_test_circle_present_test launch/circle_detect.launch src/test/CD_circle_present_test.cpp)
+target_link_libraries(CD_test my_library ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
