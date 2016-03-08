@@ -33,3 +33,7 @@ target_link_libraries(CD_no_circle_test my_library ${catkin_LIBRARIES} ${GTEST_L
 
 add_rostest_gtest(CD_circle_present_test launch/circle_detect.launch src/test/CD_circle_present_test.cpp)
 target_link_libraries(CD_circle_present_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+
+add_rostest_gtest(CD_circle_present_test2 launch/circle_detect2.launch src/test/CD_circle_present_test.cpp)
+target_link_libraries(CD_circle_present_test2 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})

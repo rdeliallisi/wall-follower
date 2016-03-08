@@ -10,7 +10,7 @@ TEST(CircleDetectTest, CircleDetected) {
 
 	ros::Rate r(10.0);
 	int i = 0;
-	while(ros::ok() && i < 10) {
+	while(ros::ok() && i < 20) {
 		ros::spinOnce();
 		i++;
 		r.sleep();
