@@ -24,6 +24,10 @@ Development timeline
 
 - Sprint 3: (Pending)
 
+To access experimental features:
+- WallFollowMode: Modify `Packages/robot/src/high_level_control_node.cpp:13` to `high_level_control.WallFollowMove();`
+- TotalRandomMove: Modify `Packages/robot/src/high_level_control_node.cpp:13` to `high_level_control.TotalRandomMove();`
+
 Setup:
 - Navigate to your catkin workspace
 - Copy `robot` to your `src`
@@ -32,4 +36,8 @@ Setup:
 - Run `roscore`
 - Run `roslaunch lab_simulator simulator.launch`
 - Run `rosrun robot HighLevelControlNode && rosrun robot CircleDetector`
+
+or
+
+- Run `project_run.sh`
 */
