@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-	<arg name="world_name" default="comp-simple"/>
+	<arg name="world_name" default="circle_detect"/>
 
 	<node name="simulator" pkg="stage_ros" type="stageros" args="$(find robot)/worlds/$(arg world_name).world">
 	</node>
 
-	<test test-name="CD_test" pkg="robot" type="CD_test">
+	<test test-name="CD_circle_present_test" pkg="robot" type="CD_circle_present_test">
 	</test>
 
 </launch>
