@@ -5,6 +5,7 @@
 	<node name="simulator" pkg="stage_ros" type="stageros" args="$(find robot)/worlds/$(arg world_name).world">
 	</node>
 
+	<test test-name="CD_no_circle_test" pkg="robot" type="CD_no_circle_test">
 	<test test-name="HLCN_start_position_test" pkg="robot" type="HLCN_start_position_test">
 	</test>
 
