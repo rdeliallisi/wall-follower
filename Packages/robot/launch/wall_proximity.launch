@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<arg name="world_name" default="wall_proximity"/>
+
+	<node name="simulator" pkg="stage_ros" type="stageros" args="$(find robot)/worlds/$(arg world_name).world">
+	</node>
+
+	<test test-name="HLCN_wall_proximity_test" pkg="robot" type="HLCN_wall_proximity_test">
+	</test>
+
+</launch>
