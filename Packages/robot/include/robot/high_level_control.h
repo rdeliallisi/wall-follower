@@ -93,10 +93,22 @@ private:
 public:
     HighLevelControl();
 
+    /**
+     * Change the minimum distance the robot can be close to the wall to
+     * @param security_distance New security distance of the robot
+     */
     void set_security_distance(double security_distance);
 
+    /**
+     * Change the angular velocity of the robot
+     * @param angular_velocity New angular velocity of the robot
+     */
     void set_angular_velocity(double angular_velocity);
 
+    /**
+     * Change the angular velocity of the robot
+     * @param linear_velocity New angular velocity of the robot
+     */
     void set_linear_velocity(double linear_velocity);
 
 
@@ -108,21 +120,33 @@ public:
     void set_turn_type(int turn_type);
 
     /**
-     * 4 bool getters to test the state of the robot
+     * Checks if the robot can continue waking forward or not
+     * @return Returns the value of can_continue_
      */
-
     bool can_continue() {
         return can_continue_;
     }
 
+    /**
+     * Checks if the robot is close enough to the wall it is anchored to 
+     * @return Returns the value of is_close_to_wall_
+     */
     bool is_close_to_wall() {
         return is_close_to_wall_;
     }
 
+    /**
+     * Checks if the robot is anchored and following a specific wall
+     * @return Returns the value of is_following_wall_
+     */
     bool is_following_wall() {
         return is_following_wall_;
     }
 
+    /**
+     * Checks if the robot is in the middle of a turning process
+     * @return Returns the value of is_turning_
+     */
     bool is_turning() {
         return is_turning_;
     }

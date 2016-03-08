@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['wallfollowmove',['WallFollowMove',['../classHighLevelControl.html#ab1d5093f7707ff78368af39f5db38575',1,'HighLevelControl']]]
+  ['totalrandommove',['TotalRandomMove',['../classHighLevelControl.html#a58b9c0a66518e0fcd5461fe2eba25d9a',1,'HighLevelControl']]]
 ];
