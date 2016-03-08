@@ -6,8 +6,8 @@
 
 TEST(CircleDetectTest, CircleDetected) {
 	CircleDetector circle_detector;
-	ASSERT_EQ(circle_detector.circle_.x, -10)
-	ASSERT_EQ(circle_detector.circle_.y, -10)
+	ASSERT_FLOAT_EQ(circle_detector.get_circle().x, -10);
+	ASSERT_FLOAT_EQ(circle_detector.get_circle().y, -10);
 }
 
 int main(int argc, char** argv) {

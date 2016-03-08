@@ -13,6 +13,8 @@ using namespace cv;
 
 CircleDetector::CircleDetector() : node_() , circle_() {
     count_threshold_ = 0;
+    circle_.x = -10;
+    circle_.y = -10;
     laser_sub_ = node_.subscribe("base_scan", 100, &CircleDetector::LaserCallback, this);
 }
 
