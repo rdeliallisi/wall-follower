@@ -7,7 +7,11 @@
 
 //TODO(atabakhafeez): Write complete test case
 TEST(CircleDetectTest, CircleDetected) {
-	
+	CircleDetector circle_detector;
+    // ros::Rate r(10);
+    // ASSERT_TRUE(circle_detector.get_circle().x != -1);
+
+
 }
 
 int main(int argc, char** argv) {
