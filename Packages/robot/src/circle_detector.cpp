@@ -37,7 +37,7 @@ Circle CircleDetector::get_circle() {
 
 void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
 
-    int data_points = msg->ranges.size();
+    size_t data_points = msg->ranges.size();
 
     //create image
     int screen_width = 1000;
