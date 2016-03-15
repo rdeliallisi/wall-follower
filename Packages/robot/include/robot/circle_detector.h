@@ -100,6 +100,11 @@ public:
      * of the circle otherwise
      */
     Circle get_circle();
+
+    /**
+    * @brief Renders the circle on the map image
+    */
+    void RenderImage(std::vector<Vec3f> circles, cv::Mat image);
 };
 
 
