@@ -47,14 +47,15 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     image.create(screen_width, screen_height, CV_8UC1);
     for (int i = 0; i < image.rows; i++) {
         for (int j = 0; j < image.cols; j++) {
-            image.at<uchar>(i, j) = (uchar)255;
+            image.at<uchar>(i, j) = static_cast<uchar>(255);
         }
     }
 
     //convert laser_scan data to image
     float base_scan_min_angle = msg->angle_min;
     for (int i = 0; i < data_points; ++i) {
-        //calculate cartesian coordinates
+        //calculate cartesian coordinates : using 100 to scale the values to
+        // map on the image
         float cartesian_x = (msg->ranges[data_points - 1 - i] * 
             sin(base_scan_min_angle)) * 100;
         float cartesian_y = (msg->ranges[data_points - 1 - i] * 
@@ -62,11 +63,11 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
         base_scan_min_angle += msg->angle_increment;
 
         //convert to screen coordinates
-        int screen_x = (int)((cartesian_x + screen_width / 2));
-        int screen_y = (int)((-cartesian_y + screen_height / 2));
+        int screen_x = static_cast<int>((cartesian_x + screen_width / 2));
+        int screen_y = static_cast<int>((-cartesian_y + screen_height / 2));
 
         if (screen_x > 0 && screen_y > 0) {
-            image.at<uchar>(screen_y, screen_x) = (uchar)0;
+            image.at<uchar>(screen_y, screen_x) = static_cast<uchar>(0);
         } else {
             // Coordinates are out of bound because of roundoff errors
             ROS_INFO("Round off error: Coordinates out of bound");
