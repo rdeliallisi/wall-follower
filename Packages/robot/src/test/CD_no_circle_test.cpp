@@ -15,6 +15,15 @@
 
 TEST(CircleDetectTest, CircleDetected) {
 	CircleDetector circle_detector;
+
+	ros::Rate r(10.0);
+	int i = 0;
+	while (ros::ok() && i < 10) {
+		ros::spinOnce();
+		i++;
+		r.sleep();
+	}
+
 	ASSERT_FLOAT_EQ(circle_detector.get_circle().x, -10);
 	ASSERT_FLOAT_EQ(circle_detector.get_circle().y, -10);
 }
