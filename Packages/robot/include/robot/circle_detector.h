@@ -15,6 +15,15 @@
 
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <vector>
+
+
+using namespace std;
+using namespace cv;
+
 
 /**
  * @brief Define the Circle class which 
@@ -58,11 +67,6 @@ private:
     ros::NodeHandle node_;
 
     /**
-     * The laser_sub subscribes the node that is seen to the laser range finder.
-     */
-    ros::Subscriber laser_sub_;
-
-    /**
      * @brief The laser_sub subsrives the node that is seen to the laser range 
      * finder
      */
@@ -104,7 +108,7 @@ public:
     /**
     * @brief Renders the circle on the map image
     */
-    void RenderImage(std::vector<Vec3f> circles, cv::Mat image);
+    void RenderImage(vector<Vec3f> circles, cv::Mat image);
 };
 
 

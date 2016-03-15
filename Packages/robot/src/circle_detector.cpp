@@ -96,7 +96,7 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     }
 }
 
-void CircleDetector::RenderImage(std::vector<Vec3f> circles, cv::Mat image){
+void CircleDetector::RenderImage(vector<Vec3f> circles, cv::Mat image){
     for ( size_t i = 0; i < circles.size(); i++ ) {
         Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
         int radius = cvRound(circles[i][2]);
