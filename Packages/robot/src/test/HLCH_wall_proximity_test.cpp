@@ -1,3 +1,15 @@
+/** 
+ * @file HLCH_wall_proximity_test.cpp
+ * @brief This file tests that the robot does not get away from the wall it is 
+ * following
+ *
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
+
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 #include "high_level_control.h"

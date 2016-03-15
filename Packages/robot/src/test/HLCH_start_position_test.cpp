@@ -1,3 +1,16 @@
+/** 
+ * @file HLCH_start_position_test.cpp
+ * @brief This file tests that the robot goes to the wall in from and follows it
+ * starting from a given fixed position
+ *
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
+
+
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 #include "high_level_control.h"
