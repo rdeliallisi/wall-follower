@@ -1,3 +1,14 @@
+/**
+ * @file circle_detector.cpp
+ * @brief This file contains the implementation of the circle detector class.
+ * 
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
+
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
 #include "circle_detector.h"
@@ -11,11 +22,13 @@
 using namespace std;
 using namespace cv;
 
+
 CircleDetector::CircleDetector() : node_() , circle_() {
     count_threshold_ = 0;
     circle_.x = -10;
     circle_.y = -10;
-    laser_sub_ = node_.subscribe("base_scan", 100, &CircleDetector::LaserCallback, this);
+    laser_sub_ = node_.subscribe("base_scan", 100, 
+        &CircleDetector::LaserCallback, this);
 }
 
 Circle CircleDetector::get_circle() {
@@ -42,8 +55,10 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     float base_scan_min_angle = msg->angle_min;
     for (int i = 0; i < data_points; ++i) {
         //calculate cartesian coordinates
-        float cartesian_x = (msg->ranges[data_points - 1 - i] * sin(base_scan_min_angle)) * 100;
-        float cartesian_y = (msg->ranges[data_points - 1 - i] * cos(base_scan_min_angle)) * 100;
+        float cartesian_x = (msg->ranges[data_points - 1 - i] * 
+            sin(base_scan_min_angle)) * 100;
+        float cartesian_y = (msg->ranges[data_points - 1 - i] * 
+            cos(base_scan_min_angle)) * 100;
         base_scan_min_angle += msg->angle_increment;
 
         //convert to screen coordinates
@@ -63,7 +78,8 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     GaussianBlur(destination, destination, Size(7, 7), 2, 2 );
 
     vector<Vec3f> circles;
-    HoughCircles(destination, circles, CV_HOUGH_GRADIENT, 1, 100, 200, 15, 10, 20);
+    HoughCircles(destination, circles, CV_HOUGH_GRADIENT, 1, 100, 200, 15, 10,
+    20);
 
     if (circles.size() != 1) {
         count_threshold_ = 0;
@@ -90,5 +106,3 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     imshow( "Display window", image );
     waitKey(-1);
 }
-
-
