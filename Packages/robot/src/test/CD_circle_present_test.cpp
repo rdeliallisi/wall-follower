@@ -1,3 +1,14 @@
+/**
+ * @file CD_circle_present_test.cpp
+ * @brief Test cases for circles when they are present.
+ * 
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
+
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 #include "circle_detector.h"

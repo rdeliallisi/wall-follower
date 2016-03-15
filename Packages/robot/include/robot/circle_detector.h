@@ -1,3 +1,15 @@
+/**
+ * @file circle_detector.cpp
+ * @brief Header file for the circle detector class.
+ * 
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
+
+
 #ifndef CRICLE_DETECTOR_H
 #define CRICLE_DETECTOR_H
 
@@ -5,7 +17,9 @@
 #include "sensor_msgs/LaserScan.h"
 
 /**
- * @brief Define the Circle class which takes the coordinates of the points.
+ * @brief Define the Circle class which 
+ * takes the coordinates of the points.
+ * 
  */
 class Circle {
 public:
@@ -34,8 +48,12 @@ public:
  */
 class CircleDetector {
 private:
+/**
+ * @brief The class has as parameters the following:
+ */
+
     /**
-     * The node that was created.
+     * @brief the node that was created
      */
     ros::NodeHandle node_;
 
@@ -45,31 +63,39 @@ private:
     ros::Subscriber laser_sub_;
 
     /**
-     * The circle is the actual circle that the scanner has found.
+     * @brief The laser_sub subsrives the node that is seen to the laser range 
+     * finder
      */
 
+    ros::Subscriber laser_sub_;
+
+    /**
+     * @brief The circle is the actual circle that the scanner has found.
+     */
     Circle circle_;
 
     /**
-     * The count_threshold takes care of the thresholds that were encountered by the 
-     * laser range scanner so far.
+     *  @brief The count_threshold takes care of the thresholds that were 
+     *  encountered by the laser range scanner so far.
      */
     int count_threshold_;
 
 public:
-
+    /**
+     * @brief Default constructor for CircleDetector
+     */
     CircleDetector();
 
     /**
-    * Gets the data from the laser range finder, creates an
-    * image out of it and runs openCV HoughLines on it
-    *
-    * @param msg Raw data comming from the laser range finder
-    */
+     * @brief Gets the data from the laser range finder, creates an
+     * image out of it and runs openCV HoughLines on it
+     *
+     * @param[in]  msg   msg Raw data comming from the laser range finder
+     */
     void LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
 
     /**
-     * Returns the detected circle
+     * @brief Returns the detected circle
      * @return -1, -1 if no circle is detected at the moment, the coordinates
      * of the circle otherwise
      */
@@ -78,3 +104,4 @@ public:
 
 
 #endif
+
