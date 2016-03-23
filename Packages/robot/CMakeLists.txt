@@ -36,11 +36,11 @@ target_link_libraries(HLCN_start_position_test my_library ${catkin_LIBRARIES} ${
 add_rostest_gtest(HLCN_wall_proximity_test launch/wall_proximity.launch test/HLCH_wall_proximity_test.cpp)
 target_link_libraries(HLCN_wall_proximity_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(CD_no_circle_test launch/start_position2.launch test/CD_no_circle_test.cpp)
+add_rostest_gtest(CD_no_circle_test launch/no_circle.launch test/CD_no_circle_test.cpp)
 target_link_libraries(CD_no_circle_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(CD_circle_present_test launch/circle_detect.launch test/CD_circle_present_test.cpp)
-target_link_libraries(CD_circle_present_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+add_rostest_gtest(CD_circle_present_test_1 launch/circle_present_1.launch test/CD_circle_present_test.cpp)
+target_link_libraries(CD_circle_present_test_1 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(CD_circle_present_test2 launch/circle_detect2.launch test/CD_circle_present_test.cpp)
-target_link_libraries(CD_circle_present_test2 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+add_rostest_gtest(CD_circle_present_test_2 launch/circle_present_2.launch test/CD_circle_present_test.cpp)
+target_link_libraries(CD_circle_present_test_2 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})

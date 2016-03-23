@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-	<arg name="world_name" default="circle_detect2"/>
+	<arg name="world_name" default="circle_present_2"/>
 
 	<node name="simulator" pkg="stage_ros" type="stageros" args="$(find robot)/worlds/$(arg world_name).world">
 	</node>
