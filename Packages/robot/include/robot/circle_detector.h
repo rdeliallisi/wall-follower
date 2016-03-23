@@ -63,13 +63,6 @@ private:
     ros::Subscriber laser_sub_;
 
     /**
-     * @brief The laser_sub subsrives the node that is seen to the laser range 
-     * finder
-     */
-
-    ros::Subscriber laser_sub_;
-
-    /**
      * @brief The circle is the actual circle that the scanner has found.
      */
     Circle circle_;

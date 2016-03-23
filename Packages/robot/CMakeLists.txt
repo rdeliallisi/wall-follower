@@ -7,9 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
 )
 
-
-
-find_package( OpenCV REQUIRED)
+find_package(OpenCV REQUIRED)
 find_package(GTest REQUIRED)
 find_package(rostest REQUIRED)
 
@@ -32,17 +30,17 @@ add_dependencies(CircleDetector robot_generate_messages_cpp)
 
 #Unit Tests
 
-add_rostest_gtest(HLCN_start_position_test launch/start_position.launch src/test/HLCH_start_position_test.cpp)
+add_rostest_gtest(HLCN_start_position_test launch/start_position.launch test/HLCH_start_position_test.cpp)
 target_link_libraries(HLCN_start_position_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(HLCN_wall_proximity_test launch/wall_proximity.launch src/test/HLCH_wall_proximity_test.cpp)
+add_rostest_gtest(HLCN_wall_proximity_test launch/wall_proximity.launch test/HLCH_wall_proximity_test.cpp)
 target_link_libraries(HLCN_wall_proximity_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(CD_no_circle_test launch/start_position2.launch src/test/CD_no_circle_test.cpp)
+add_rostest_gtest(CD_no_circle_test launch/start_position2.launch test/CD_no_circle_test.cpp)
 target_link_libraries(CD_no_circle_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(CD_circle_present_test launch/circle_detect.launch src/test/CD_circle_present_test.cpp)
+add_rostest_gtest(CD_circle_present_test launch/circle_detect.launch test/CD_circle_present_test.cpp)
 target_link_libraries(CD_circle_present_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(CD_circle_present_test2 launch/circle_detect2.launch src/test/CD_circle_present_test.cpp)
+add_rostest_gtest(CD_circle_present_test2 launch/circle_detect2.launch test/CD_circle_present_test.cpp)
 target_link_libraries(CD_circle_present_test2 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
