@@ -20,9 +20,9 @@ catkin_package()
 
 #High Level Control Node
 
-add_executable(HighLevelControlNode src/high_level_control_node.cpp src/high_level_control.cpp)
-target_link_libraries(HighLevelControlNode ${catkin_LIBRARIES})
-add_dependencies(HighLevelControlNode robot_generate_messages_cpp)
+add_executable(HighLevelControl src/high_level_control_node.cpp src/high_level_control.cpp)
+target_link_libraries(HighLevelControl ${catkin_LIBRARIES})
+add_dependencies(HighLevelControl robot_generate_messages_cpp)
 
 add_executable(CircleDetector src/circle_detector.cpp src/circle_detector_node.cpp)
 target_link_libraries ( CircleDetector ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} )

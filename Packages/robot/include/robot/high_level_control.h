@@ -1,4 +1,4 @@
-/** 
+/**
  * @file high_level_control.h
  * @brief This file defines the HighLevelControl clas
  *
@@ -14,6 +14,61 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
+
+enum TurnType {
+    RIGHT, NONE, LEFT
+};
+
+struct MoveSpecs {
+    /**
+     * @brief Minimum proximity distance that the robot can have from a wall
+     */
+    double security_distance_;
+
+    /**
+     * @brief Maximum distance the robot can be away from the anchor wall
+     */
+    double wall_follow_distance_;
+
+    /**
+     * @brief Linear velocity for a single robot movement
+     */
+    double linear_velocity_;
+
+    /**
+     * @brief Angular velocity for a single robot movement
+     */
+    double angular_velocity_;
+
+    /**
+     * @brief Specifies the type of turn the robot should make when it is far
+     * from the wall
+     */
+     TurnType turn_type_;
+};
+
+struct MoveStatus {
+    /**
+     * @brief Can the robot continue walking in a straight line or not
+     */
+    bool can_continue_;
+
+    /**
+     * @brief Is the robot close enough to the anchor wall
+     */
+    bool is_close_to_wall_;
+
+    /**
+     * @brief Is the robot anchored to a wall or not
+     */
+    bool is_following_wall_;
+
+    /**
+     * @brief When the robot is in controled random walk this variable specifies
+     * if it is turning or not
+     */
+    bool is_turning_;
+};
 
 /**
  * @brief Breaks down abstract movement commands into smaller ones, that can be
@@ -50,50 +105,14 @@ private:
     ros::Subscriber laser_sub_;
 
     /**
-     * @brief The type of turn the robot is currently in when turning.
+     * @brief Contains constants that define the robot moving behavior
      */
-    int turn_type_;
+    MoveSpecs move_specs_;
 
     /**
-     * @brief Minimum proximity distance that the robot can have from a wall
+     * @brief Contains the corrent movement status
      */
-    double security_distance_;
-
-    /**
-     * @brief Maximum distance the robot can be away from the anchor wall
-     */
-    double wall_follow_distance_;
-
-    /**
-     * @brief Linear velocity for a single robot movement
-     */
-    double linear_velocity_;
-
-    /**
-     * @brief Angular velocity for a single robot movement
-     */
-    double angular_velocity_;
-
-    /**
-     * @brief Can the robot continue walking in a straight line or not
-     */
-    bool can_continue_;
-
-    /**
-     * @brief Is the robot close enough to the anchor wall
-     */
-    bool is_close_to_wall_;
-
-    /**
-     * @brief Is the robot anchored to a wall or not
-     */
-    bool is_following_wall_;
-
-    /**
-     * @brief When the robot is in controled random walk this variable specifies
-     * if it is turning or not
-     */
-    bool is_turning_;
+    MoveStatus move_status_;
 
     // TODO(rdeliallisi): To be put into Object Detection
     /**
@@ -110,6 +129,18 @@ private:
      * @param angular_speed Angular Speed that the robot should rotate with
      */
     void Move(double linear_speed, double angular_speed);
+
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     */
+    void InitialiseMoveSpecs();
+
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     */
+    void InitialiseMoveStatus();
 
 public:
     HighLevelControl();
@@ -138,22 +169,22 @@ public:
      * @param turn_type Decides the type of the wall the robot is following.
      * 1 for right wall, -1 for left wall
      */
-    void set_turn_type(int turn_type);
+    void set_turn_type(TurnType turn_type);
 
     /**
      * @brief Checks if the robot can continue waking forward or not
      * @return Returns the value of can_continue_
      */
     bool can_continue() {
-        return can_continue_;
+        return move_status_.can_continue_;
     }
 
     /**
-     * @brief Checks if the robot is close enough to the wall it is anchored to 
+     * @brief Checks if the robot is close enough to the wall it is anchored to
      * @return Returns the value of is_close_to_wall_
      */
     bool is_close_to_wall() {
-        return is_close_to_wall_;
+        return move_status_.is_close_to_wall_;
     }
 
     /**
@@ -161,7 +192,7 @@ public:
      * @return Returns the value of is_following_wall_
      */
     bool is_following_wall() {
-        return is_following_wall_;
+        return move_status_.is_following_wall_;
     }
 
     /**
@@ -169,26 +200,13 @@ public:
      * @return Returns the value of is_turning_
      */
     bool is_turning() {
-        return is_turning_;
+        return move_status_.is_turning_;
     }
 
     /**
      * @brief Moves the robot so that it always follows a wall
      */
     void WallFollowMove();
-
-    /**
-     * @brief Moves the robot randomly using the specified linear and
-     * angular velocity. The robot will chose a direction to turn and
-     * turn in that direction until it completes the turn.
-     */
-    void ControlledRandomMove();
-
-    /**
-     * @brief Turns the robot a random amount of degrees in a random direction 
-     * each time an obstacle is encountered.
-     */
-    void TotalRandomMove();
 };
 
 #endif
