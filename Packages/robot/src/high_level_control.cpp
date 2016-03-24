@@ -25,9 +25,17 @@ HighLevelControl::HighLevelControl() : node_() {
 void HighLevelControl::InitialiseMoveSpecs() {
     move_specs_.security_distance_ = 0.275;
     move_specs_.wall_follow_distance_ = 0.4;
-    move_specs_.linear_velocity_ = 0.4;
+    move_specs_.max_linear_velocity_ = 1;
+    move_specs_.min_linear_velocity_ = 0.4;
+    move_specs_.linear_velocity_ = move_specs_.min_linear_velocity_;
     move_specs_.angular_velocity_ = 1;
     move_specs_.turn_type_ = NONE;
+    move_specs_.right_range_.low_lim_ = 0;
+    move_specs_.right_range_.high_lim_ = 225;
+    move_specs_.left_range_.low_lim_ = 495;
+    move_specs_.left_range_.high_lim_ = 720;
+    move_specs_.center_range_.low_lim_ = 350;
+    move_specs_.center_range_.high_lim_ = 370;
 }
 
 void HighLevelControl::InitialiseMoveStatus() {
@@ -39,6 +47,10 @@ void HighLevelControl::InitialiseMoveStatus() {
 
 void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
+    NormalMovement(ranges);
+}
+
+void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
     std::vector<float>::iterator it = std::min_element(ranges.begin(), ranges.end());
 
     if (*it > move_specs_.security_distance_) {
@@ -47,15 +59,20 @@ void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg
         move_status_.can_continue_ = false;
     }
 
+    std::vector<float>::iterator center_min = std::min_element(ranges.begin() + move_specs_.center_range_.low_lim_,
+            ranges.begin() + move_specs_.center_range_.high_lim_);
+
+    SetLinearVelocity(*center_min);
+
     if (move_status_.is_following_wall_) {
         int low_lim, high_lim;
 
-        if (move_specs_.turn_type_ == LEFT) {
-            low_lim = 0;
-            high_lim = 250;
-        } else if (move_specs_.turn_type_ == RIGHT) {
-            low_lim = 470;
-            high_lim = 720;
+        if (move_specs_.turn_type_ == RIGHT) {
+            low_lim = move_specs_.right_range_.low_lim_;
+            high_lim = move_specs_.right_range_.high_lim_;
+        } else if (move_specs_.turn_type_ == LEFT) {
+            low_lim = move_specs_.left_range_.low_lim_;
+            high_lim = move_specs_.left_range_.high_lim_;
         } else {
             // This case shoud never happen
             ros::shutdown();
@@ -68,7 +85,21 @@ void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg
             move_status_.is_close_to_wall_ = true;
         } else {
             move_status_.is_close_to_wall_ = false;
+            move_status_.is_turning_ = true;
         }
+    }
+}
+
+void HighLevelControl::TurnMovement() {
+    //TODO
+}
+
+void HighLevelControl::SetLinearVelocity(double min_center_distance) {
+    ROS_INFO("%lf", min_center_distance);
+    if (min_center_distance < 1) {
+        move_specs_.linear_velocity_ = move_specs_.min_linear_velocity_;
+    } else {
+        move_specs_.linear_velocity_ = move_specs_.max_linear_velocity_;
     }
 }
 

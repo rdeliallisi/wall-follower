@@ -87,7 +87,7 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     } else {
         count_threshold_++;
 
-        if (count_threshold_ > 5) {
+        if (count_threshold_ > 0) {
             circle_.x = (circles[0][0] - screen_width / 2) / 100.0;
             circle_.y = -(circles[0][1] - screen_height / 2) / 100.0;
 

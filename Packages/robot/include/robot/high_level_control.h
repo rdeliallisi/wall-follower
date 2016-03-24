@@ -16,7 +16,12 @@
 #include <sensor_msgs/LaserScan.h>
 
 enum TurnType {
-    RIGHT, NONE, LEFT
+    LEFT, NONE, RIGHT
+};
+
+struct Range {
+    int low_lim_;
+    int high_lim_;
 };
 
 struct MoveSpecs {
@@ -29,6 +34,17 @@ struct MoveSpecs {
      * @brief Maximum distance the robot can be away from the anchor wall
      */
     double wall_follow_distance_;
+
+    /**
+     * @brief Maximum linear velocity that the robot can have
+     */
+    double max_linear_velocity_;
+
+    /**
+     * @brief Minimum linear velocity that the robot can have
+     */
+
+    double min_linear_velocity_;
 
     /**
      * @brief Linear velocity for a single robot movement
@@ -44,7 +60,23 @@ struct MoveSpecs {
      * @brief Specifies the type of turn the robot should make when it is far
      * from the wall
      */
-     TurnType turn_type_;
+    TurnType turn_type_;
+
+    /**
+     * @brief Range of LRF values to the right of the robot
+     */
+    Range right_range_;
+
+    /**
+     * @brief Range of LRF values to the left of the robot
+     */
+    Range left_range_;
+
+    /**
+     * @brief Range of LRF value in front of the robot
+     */
+    Range center_range_;
+
 };
 
 struct MoveStatus {
@@ -141,6 +173,12 @@ private:
      * @details [long description]
      */
     void InitialiseMoveStatus();
+
+    void NormalMovement(std::vector<float>& ranges);
+
+    void TurnMovement();
+
+    void SetLinearVelocity(double min_center_distance);
 
 public:
     HighLevelControl();
