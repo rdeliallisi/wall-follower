@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
+
 	<arg name="HLC_params" default="HLC_params.yaml"/>
 
-	<node name="HighLevelControl" pkg="robot" type="HighLevelControl" />
+	<arg name="world_name" default="easy"/>
 
-	<rosparam command="load" file="$(find robot)/config/$(arg HLC_params)" />
+	<node name="HighLevelControl" pkg="robot" type="HighLevelControl" clear_params="true">
+		<rosparam command="load" file="$(find robot)/config/$(arg HLC_params)" />
+	</node>
+
+	<node name="simulator" pkg="stage_ros" type="stageros" args="$(find lab_simulator)/worlds/$(arg world_name).world" />
 
 </launch>

@@ -4,7 +4,7 @@
 high_security_distance : 0.28
 # This the distance to the opposite side of the wall we are following.
 # We make it smaller so that we can fit into tighter corners
-low_security_distance : 0.15
+low_security_distance : 0.14
 # This distance is 0.4 so that there is 0.12 space for the robot to march
 # forward
 wall_follow_distance : 0.4
@@ -12,7 +12,7 @@ wall_follow_distance : 0.4
 max_linear_velocity : 1
 # 0.4 assures that we can take tight turns and also that we never hit the
 # wall given the specified security distance
-min_linear_velocity : 0.4
+min_linear_velocity : 0.5
 # 1 is enough for the turn to have the desired effect without getting into
 #complicated situations
 angular_velocity : 1

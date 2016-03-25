@@ -25,63 +25,63 @@ HighLevelControl::HighLevelControl() : node_() {
 void HighLevelControl::InitialiseMoveSpecs() {
     bool loaded = true;
 
-    if (!node_.getParam("/high_security_distance",
+    if (!node_.getParam("/HighLevelControl/high_security_distance",
                         move_specs_.high_security_distance_)) {
         loaded = false;
 
     }
 
-    if (!node_.getParam("/low_security_distance",
+    if (!node_.getParam("/HighLevelControl/low_security_distance",
                         move_specs_.low_security_distance_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/wall_follow_distance",
+    if (!node_.getParam("/HighLevelControl/wall_follow_distance",
                         move_specs_.wall_follow_distance_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/max_linear_velocity",
+    if (!node_.getParam("/HighLevelControl/max_linear_velocity",
                         move_specs_.max_linear_velocity_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/min_linear_velocity",
+    if (!node_.getParam("/HighLevelControl/min_linear_velocity",
                         move_specs_.min_linear_velocity_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/angular_velocity",
+    if (!node_.getParam("/HighLevelControl/angular_velocity",
                         move_specs_.angular_velocity_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/right_range_low_lim",
+    if (!node_.getParam("/HighLevelControl/right_range_low_lim",
                         move_specs_.right_range_.low_lim_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/right_range_high_lim",
+    if (!node_.getParam("/HighLevelControl/right_range_high_lim",
                         move_specs_.right_range_.high_lim_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/left_range_low_lim",
+    if (!node_.getParam("/HighLevelControl/left_range_low_lim",
                         move_specs_.left_range_.low_lim_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/left_range_high_lim",
+    if (!node_.getParam("/HighLevelControl/left_range_high_lim",
                         move_specs_.left_range_.high_lim_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/center_range_low_lim",
+    if (!node_.getParam("/HighLevelControl/center_range_low_lim",
                         move_specs_.center_range_.low_lim_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/center_range_high_lim",
+    if (!node_.getParam("/HighLevelControl/center_range_high_lim",
                         move_specs_.center_range_.high_lim_)) {
         loaded = false;
     }
@@ -171,7 +171,9 @@ void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
 }
 
 void HighLevelControl::SetLinearVelocity(double min_center_distance) {
-    if (min_center_distance < 1) {
+    double limit = move_specs_.max_linear_velocity_ / 5.0
+                   + move_specs_.high_security_distance_;
+    if (min_center_distance < limit) {
         move_specs_.linear_velocity_ = move_specs_.min_linear_velocity_;
     } else {
         move_specs_.linear_velocity_ = move_specs_.max_linear_velocity_;
@@ -213,7 +215,6 @@ void HighLevelControl::WallFollowMove() {
     }
 }
 
-//TODO: To be put into Low Level Control
 void HighLevelControl::Move(double linear_velocity, double angular_velocity) {
     geometry_msgs::Twist msg;
     msg.linear.x = linear_velocity;
