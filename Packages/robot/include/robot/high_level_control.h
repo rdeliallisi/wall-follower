@@ -26,9 +26,16 @@ struct Range {
 
 struct MoveSpecs {
     /**
-     * @brief Minimum proximity distance that the robot can have from a wall
+     * @brief Minimum proximity distance that the robot can have from the wall it
+     * is following of the walls in front
      */
-    double security_distance_;
+    double high_security_distance_;
+
+    /**
+     * @brief Minimum proximity distance that the robot can have from the wall on
+     * the opposite side of the wall it is following
+     */
+    double low_security_distance_;
 
     /**
      * @brief Maximum distance the robot can be away from the anchor wall
@@ -148,7 +155,6 @@ private:
      */
     void LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
 
-    //TODO(rdeliallisi): To be put into Low Level Control
     /**
      * @brief Send the movement command to the robot using ROS nodes and topics
      * @param linear_speed  Linear Speed that the robot should move with

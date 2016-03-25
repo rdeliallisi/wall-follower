@@ -23,19 +23,75 @@ HighLevelControl::HighLevelControl() : node_() {
 }
 
 void HighLevelControl::InitialiseMoveSpecs() {
-    move_specs_.security_distance_ = 0.275;
-    move_specs_.wall_follow_distance_ = 0.4;
-    move_specs_.max_linear_velocity_ = 1;
-    move_specs_.min_linear_velocity_ = 0.4;
+    bool loaded = true;
+
+    if (!node_.getParam("/high_security_distance",
+                        move_specs_.high_security_distance_)) {
+        loaded = false;
+
+    }
+
+    if (!node_.getParam("/low_security_distance",
+                        move_specs_.low_security_distance_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/wall_follow_distance",
+                        move_specs_.wall_follow_distance_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/max_linear_velocity",
+                        move_specs_.max_linear_velocity_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/min_linear_velocity",
+                        move_specs_.min_linear_velocity_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/angular_velocity",
+                        move_specs_.angular_velocity_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/right_range_low_lim",
+                        move_specs_.right_range_.low_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/right_range_high_lim",
+                        move_specs_.right_range_.high_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/left_range_low_lim",
+                        move_specs_.left_range_.low_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/left_range_high_lim",
+                        move_specs_.left_range_.high_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/center_range_low_lim",
+                        move_specs_.center_range_.low_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/center_range_high_lim",
+                        move_specs_.center_range_.high_lim_)) {
+        loaded = false;
+    }
+
     move_specs_.linear_velocity_ = move_specs_.min_linear_velocity_;
-    move_specs_.angular_velocity_ = 1;
     move_specs_.turn_type_ = NONE;
-    move_specs_.right_range_.low_lim_ = 0;
-    move_specs_.right_range_.high_lim_ = 225;
-    move_specs_.left_range_.low_lim_ = 495;
-    move_specs_.left_range_.high_lim_ = 720;
-    move_specs_.center_range_.low_lim_ = 340;
-    move_specs_.center_range_.high_lim_ = 380;
+
+    if (loaded == false) {
+        ros::shutdown();
+    }
 }
 
 void HighLevelControl::InitialiseMoveStatus() {
@@ -77,7 +133,8 @@ void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
     std::vector<float>::iterator secondary_min = std::min_element(ranges.begin() + secondary_low_lim,
             ranges.begin() + secondary_high_lim);
 
-    if (*priority_min > move_specs_.security_distance_ && *secondary_min > 0.1) {
+    if (*priority_min > move_specs_.high_security_distance_
+            && *secondary_min > move_specs_.low_security_distance_) {
         move_status_.can_continue_ = true;
     } else {
         move_status_.can_continue_ = false;
@@ -122,7 +179,7 @@ void HighLevelControl::SetLinearVelocity(double min_center_distance) {
 }
 
 void HighLevelControl::set_security_distance(double security_distance) {
-    move_specs_.security_distance_ = security_distance;
+    move_specs_.high_security_distance_ = security_distance;
 }
 
 void HighLevelControl::set_linear_velocity(double linear_velocity) {
