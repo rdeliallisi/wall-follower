@@ -94,12 +94,6 @@ struct MoveStatus {
      * @brief Is the robot anchored to a wall or not
      */
     bool is_following_wall_;
-
-    /**
-     * @brief When the robot is in controled random walk this variable specifies
-     * if it is turning or not
-     */
-    bool is_turning_;
 };
 
 /**
@@ -176,8 +170,6 @@ private:
 
     void NormalMovement(std::vector<float>& ranges);
 
-    void TurnMovement();
-
     void SetLinearVelocity(double min_center_distance);
 
 public:
@@ -231,14 +223,6 @@ public:
      */
     bool is_following_wall() {
         return move_status_.is_following_wall_;
-    }
-
-    /**
-     * @brief Checks if the robot is in the middle of a turning process
-     * @return Returns the value of is_turning_
-     */
-    bool is_turning() {
-        return move_status_.is_turning_;
     }
 
     /**

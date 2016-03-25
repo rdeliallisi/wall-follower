@@ -34,14 +34,13 @@ void HighLevelControl::InitialiseMoveSpecs() {
     move_specs_.right_range_.high_lim_ = 225;
     move_specs_.left_range_.low_lim_ = 495;
     move_specs_.left_range_.high_lim_ = 720;
-    move_specs_.center_range_.low_lim_ = 350;
-    move_specs_.center_range_.high_lim_ = 370;
+    move_specs_.center_range_.low_lim_ = 340;
+    move_specs_.center_range_.high_lim_ = 380;
 }
 
 void HighLevelControl::InitialiseMoveStatus() {
     move_status_.can_continue_ = true;
     move_status_.is_close_to_wall_ = false;
-    move_status_.is_turning_ = false;
     move_status_.is_following_wall_ = false;
 }
 
@@ -51,9 +50,34 @@ void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg
 }
 
 void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
-    std::vector<float>::iterator it = std::min_element(ranges.begin(), ranges.end());
+    int priority_low_lim, priority_high_lim, secondary_low_lim, secondary_high_lim;
+    if (move_specs_.turn_type_ == RIGHT) {
+        priority_low_lim = move_specs_.right_range_.low_lim_;
+        priority_high_lim = move_specs_.left_range_.low_lim_;
 
-    if (*it > move_specs_.security_distance_) {
+        secondary_low_lim = move_specs_.left_range_.low_lim_;
+        secondary_high_lim = move_specs_.left_range_.high_lim_;
+    } else if (move_specs_.turn_type_ == LEFT) {
+        priority_low_lim = move_specs_.right_range_.high_lim_;
+        priority_high_lim = move_specs_.left_range_.high_lim_;
+
+        secondary_low_lim = move_specs_.right_range_.low_lim_;
+        secondary_high_lim = move_specs_.right_range_.high_lim_;
+    } else {
+        priority_low_lim = 0;
+        priority_high_lim = 720;
+
+        secondary_low_lim = 0;
+        secondary_high_lim = 720;
+    }
+
+    std::vector<float>::iterator priority_min = std::min_element(ranges.begin() + priority_low_lim,
+            ranges.begin() + priority_high_lim);
+
+    std::vector<float>::iterator secondary_min = std::min_element(ranges.begin() + secondary_low_lim,
+            ranges.begin() + secondary_high_lim);
+
+    if (*priority_min > move_specs_.security_distance_ && *secondary_min > 0.1) {
         move_status_.can_continue_ = true;
     } else {
         move_status_.can_continue_ = false;
@@ -85,17 +109,11 @@ void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
             move_status_.is_close_to_wall_ = true;
         } else {
             move_status_.is_close_to_wall_ = false;
-            move_status_.is_turning_ = true;
         }
     }
 }
 
-void HighLevelControl::TurnMovement() {
-    //TODO
-}
-
 void HighLevelControl::SetLinearVelocity(double min_center_distance) {
-    ROS_INFO("%lf", min_center_distance);
     if (min_center_distance < 1) {
         move_specs_.linear_velocity_ = move_specs_.min_linear_velocity_;
     } else {
@@ -123,12 +141,7 @@ void HighLevelControl::set_turn_type(TurnType turn_type) {
 void HighLevelControl::WallFollowMove() {
     if (!move_status_.can_continue_ && !move_status_.is_following_wall_) {
         srand(time(NULL));
-
-        // If we are in override mode don't change the type of the wall
-        if (move_specs_.turn_type_ == NONE) {
-            move_specs_.turn_type_ = rand() % 2 == 0 ? RIGHT : LEFT;
-        }
-
+        move_specs_.turn_type_ = rand() % 2 == 0 ? RIGHT : LEFT;
         move_status_.is_following_wall_ = true;
     } else if (move_status_.can_continue_ && !move_status_.is_following_wall_) {
         Move(move_specs_.linear_velocity_, 0);
