@@ -28,7 +28,6 @@ void HighLevelControl::InitialiseMoveSpecs() {
     if (!node_.getParam("/HighLevelControl/high_security_distance",
                         move_specs_.high_security_distance_)) {
         loaded = false;
-
     }
 
     if (!node_.getParam("/HighLevelControl/low_security_distance",
@@ -86,6 +85,16 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
+    if (!node_.getParam("/HighLevelControl/forward_range_low_lim",
+                        move_specs_.forward_range_.low_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/HighLevelControl/forward_range_high_lim",
+                        move_specs_.forward_range_.high_lim_)) {
+        loaded = false;
+    }
+
     move_specs_.linear_velocity_ = move_specs_.min_linear_velocity_;
     move_specs_.turn_type_ = NONE;
 
@@ -106,73 +115,31 @@ void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg
 }
 
 void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
-    int priority_low_lim, priority_high_lim, secondary_low_lim, secondary_high_lim;
-    if (move_specs_.turn_type_ == RIGHT) {
-        priority_low_lim = move_specs_.right_range_.low_lim_;
-        priority_high_lim = move_specs_.left_range_.low_lim_;
+    double right_min_distance, left_min_distance, center_min_distance, forward_min_distance;
 
-        secondary_low_lim = move_specs_.left_range_.low_lim_;
-        secondary_high_lim = move_specs_.left_range_.high_lim_;
-    } else if (move_specs_.turn_type_ == LEFT) {
-        priority_low_lim = move_specs_.right_range_.high_lim_;
-        priority_high_lim = move_specs_.left_range_.high_lim_;
+    right_min_distance = GetMin(ranges, move_specs_.right_range_.low_lim_,
+                                move_specs_.right_range_.high_lim_);
 
-        secondary_low_lim = move_specs_.right_range_.low_lim_;
-        secondary_high_lim = move_specs_.right_range_.high_lim_;
-    } else {
-        priority_low_lim = 0;
-        priority_high_lim = 720;
+    left_min_distance = GetMin(ranges, move_specs_.left_range_.low_lim_,
+                               move_specs_.left_range_.high_lim_);
 
-        secondary_low_lim = 0;
-        secondary_high_lim = 720;
-    }
+    center_min_distance = GetMin(ranges, move_specs_.center_range_.low_lim_,
+                                 move_specs_.center_range_.high_lim_);
 
-    std::vector<float>::iterator priority_min = std::min_element(ranges.begin() + priority_low_lim,
-            ranges.begin() + priority_high_lim);
+    forward_min_distance = GetMin(ranges, move_specs_.forward_range_.low_lim_,
+                                  move_specs_.forward_range_.high_lim_);
 
-    std::vector<float>::iterator secondary_min = std::min_element(ranges.begin() + secondary_low_lim,
-            ranges.begin() + secondary_high_lim);
+    CanContinue(right_min_distance, left_min_distance, center_min_distance);
 
-    if (*priority_min > move_specs_.high_security_distance_
-            && *secondary_min > move_specs_.low_security_distance_) {
-        move_status_.can_continue_ = true;
-    } else {
-        move_status_.can_continue_ = false;
-    }
+    SetLinearVelocity(forward_min_distance);
 
-    std::vector<float>::iterator center_min = std::min_element(ranges.begin() + move_specs_.center_range_.low_lim_,
-            ranges.begin() + move_specs_.center_range_.high_lim_);
-
-    SetLinearVelocity(*center_min);
-
-    if (move_status_.is_following_wall_) {
-        int low_lim, high_lim;
-
-        if (move_specs_.turn_type_ == RIGHT) {
-            low_lim = move_specs_.right_range_.low_lim_;
-            high_lim = move_specs_.right_range_.high_lim_;
-        } else if (move_specs_.turn_type_ == LEFT) {
-            low_lim = move_specs_.left_range_.low_lim_;
-            high_lim = move_specs_.left_range_.high_lim_;
-        } else {
-            // This case shoud never happen
-            ros::shutdown();
-        }
-
-        std::vector<float>::iterator wall_it = std::min_element(ranges.begin() + low_lim,
-                                               ranges.begin() + high_lim);
-
-        if (*wall_it < move_specs_.wall_follow_distance_) {
-            move_status_.is_close_to_wall_ = true;
-        } else {
-            move_status_.is_close_to_wall_ = false;
-        }
-    }
+    IsCloseToWall(right_min_distance, left_min_distance, center_min_distance);
 }
 
 void HighLevelControl::SetLinearVelocity(double min_center_distance) {
     double limit = move_specs_.max_linear_velocity_ / 5.0
                    + move_specs_.high_security_distance_;
+
     if (min_center_distance < limit) {
         move_specs_.linear_velocity_ = move_specs_.min_linear_velocity_;
     } else {
@@ -180,21 +147,76 @@ void HighLevelControl::SetLinearVelocity(double min_center_distance) {
     }
 }
 
-void HighLevelControl::set_security_distance(double security_distance) {
-    move_specs_.high_security_distance_ = security_distance;
+double HighLevelControl::GetMin(std::vector<float>& ranges, int start, int finish) {
+    std::vector<float>::iterator min = std::min_element(ranges.begin() + start,
+                                       ranges.begin() + finish);
+    return *min;
 }
 
-void HighLevelControl::set_linear_velocity(double linear_velocity) {
-    move_specs_.linear_velocity_ = linear_velocity;
+void HighLevelControl::CanContinue(double right_min_distance, double left_min_distance,
+                                   double center_min_distance) {
+    double priority_min, secondary_min;
+    if (move_specs_.turn_type_ == RIGHT) {
+        priority_min = center_min_distance < right_min_distance ? center_min_distance :
+                       right_min_distance;
+
+        secondary_min = left_min_distance;
+    } else if (move_specs_.turn_type_ == LEFT) {
+        priority_min = center_min_distance < left_min_distance ? center_min_distance :
+                       left_min_distance;
+
+        secondary_min = right_min_distance;
+    } else {
+        priority_min = secondary_min = Min(right_min_distance, left_min_distance,
+                                           center_min_distance);
+    }
+
+    if (priority_min > move_specs_.high_security_distance_
+            && secondary_min > move_specs_.low_security_distance_) {
+        move_status_.can_continue_ = true;
+    } else {
+        move_status_.can_continue_ = false;
+    }
 }
 
-void HighLevelControl::set_angular_velocity(double angular_velocity) {
-    move_specs_.angular_velocity_ = angular_velocity;
+void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_distance,
+                                   double center_min_distance) {
+    if (move_status_.is_following_wall_) {
+        double min;
+        if(move_specs_.turn_type_ == RIGHT) {
+            min = right_min_distance;
+        } else if(move_specs_.turn_type_ == LEFT) {
+            min = left_min_distance;
+        } else {
+            // This case should never happen
+            ros::shutdown();
+        }
+
+        if(min < move_specs_.wall_follow_distance_) {
+            move_status_.is_close_to_wall_ = true;
+        } else {
+            move_status_.is_close_to_wall_ = false;
+        }
+    }
 }
 
-void HighLevelControl::set_turn_type(TurnType turn_type) {
-    move_specs_.turn_type_ = turn_type;
-    move_status_.is_following_wall_ = true;
+double HighLevelControl::Min(double right_min_distance, double left_min_distance,
+                             double center_min_distance) {
+    double min;
+    if (right_min_distance < center_min_distance) {
+        if (right_min_distance < left_min_distance) {
+            min = right_min_distance;
+        } else {
+            min = left_min_distance;
+        }
+    } else {
+        if (center_min_distance < left_min_distance) {
+            min = center_min_distance;
+        } else {
+            min = left_min_distance;
+        }
+    }
+    return min;
 }
 
 void HighLevelControl::WallFollowMove() {

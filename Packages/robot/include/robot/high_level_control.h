@@ -14,94 +14,7 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
-
-enum TurnType {
-    LEFT, NONE, RIGHT
-};
-
-struct Range {
-    int low_lim_;
-    int high_lim_;
-};
-
-struct MoveSpecs {
-    /**
-     * @brief Minimum proximity distance that the robot can have from the wall it
-     * is following of the walls in front
-     */
-    double high_security_distance_;
-
-    /**
-     * @brief Minimum proximity distance that the robot can have from the wall on
-     * the opposite side of the wall it is following
-     */
-    double low_security_distance_;
-
-    /**
-     * @brief Maximum distance the robot can be away from the anchor wall
-     */
-    double wall_follow_distance_;
-
-    /**
-     * @brief Maximum linear velocity that the robot can have
-     */
-    double max_linear_velocity_;
-
-    /**
-     * @brief Minimum linear velocity that the robot can have
-     */
-
-    double min_linear_velocity_;
-
-    /**
-     * @brief Linear velocity for a single robot movement
-     */
-    double linear_velocity_;
-
-    /**
-     * @brief Angular velocity for a single robot movement
-     */
-    double angular_velocity_;
-
-    /**
-     * @brief Specifies the type of turn the robot should make when it is far
-     * from the wall
-     */
-    TurnType turn_type_;
-
-    /**
-     * @brief Range of LRF values to the right of the robot
-     */
-    Range right_range_;
-
-    /**
-     * @brief Range of LRF values to the left of the robot
-     */
-    Range left_range_;
-
-    /**
-     * @brief Range of LRF value in front of the robot
-     */
-    Range center_range_;
-
-};
-
-struct MoveStatus {
-    /**
-     * @brief Can the robot continue walking in a straight line or not
-     */
-    bool can_continue_;
-
-    /**
-     * @brief Is the robot close enough to the anchor wall
-     */
-    bool is_close_to_wall_;
-
-    /**
-     * @brief Is the robot anchored to a wall or not
-     */
-    bool is_following_wall_;
-};
+#include "move_helpers.h"
 
 /**
  * @brief Breaks down abstract movement commands into smaller ones, that can be
@@ -174,38 +87,68 @@ private:
      */
     void InitialiseMoveStatus();
 
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     *
+     * @param ranges [description]
+     */
     void NormalMovement(std::vector<float>& ranges);
 
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     *
+     * @param min_center_distance [description]
+     */
     void SetLinearVelocity(double min_center_distance);
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     *
+     * @param ranges [description]
+     * @param start [description]
+     * @param end [description]
+     * @return [description]
+     */
+    double GetMin(std::vector<float>& ranges, int start, int finish);
+
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     *
+     * @param right_min_distance [description]
+     * @param left_min_distance [description]
+     * @param center_min_distance [description]
+     */
+    void CanContinue(double right_min_distance, double left_min_distance,
+                     double center_min_distance);
+
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     * 
+     * @param right_min_distance [description]
+     * @param left_min_distance [description]
+     * @param center_min_distance [description]
+     */
+    void IsCloseToWall(double right_min_distance, double left_min_distance,
+                     double center_min_distance);
+
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     *
+     * @param right_min_distance [description]
+     * @param left_min_distance [description]
+     * @param center_min_distance [description]
+     * @return [description]
+     */
+    double Min(double right_min_distance, double left_min_distance,
+               double center_min_distance);
 
 public:
     HighLevelControl();
-
-    /**
-     * @brief Change the minimum distance the robot can be close to the wall to
-     * @param security_distance New security distance of the robot
-     */
-    void set_security_distance(double security_distance);
-
-    /**
-     * @brief Change the angular velocity of the robot
-     * @param angular_velocity New angular velocity of the robot
-     */
-    void set_angular_velocity(double angular_velocity);
-
-    /**
-     * @brief Change the angular velocity of the robot
-     * @param linear_velocity New angular velocity of the robot
-     */
-    void set_linear_velocity(double linear_velocity);
-
-
-    /**
-     * @brief Override method for testing purposes
-     * @param turn_type Decides the type of the wall the robot is following.
-     * 1 for right wall, -1 for left wall
-     */
-    void set_turn_type(TurnType turn_type);
 
     /**
      * @brief Checks if the robot can continue waking forward or not

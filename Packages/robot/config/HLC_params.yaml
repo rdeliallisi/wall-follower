@@ -10,7 +10,7 @@ low_security_distance : 0.14
 wall_follow_distance : 0.4
 # 1 is quick and quite safe in the open space and during wide turns
 max_linear_velocity : 1
-# 0.4 assures that we can take tight turns and also that we never hit the
+# 0.5 assures that we can take tight turns and also that we never hit the
 # wall given the specified security distance
 min_linear_velocity : 0.5
 # 1 is enough for the turn to have the desired effect without getting into
@@ -24,7 +24,11 @@ right_range_high_lim : 225
 # to the left
 left_range_low_lim : 495
 left_range_high_lim : 720
-# The next 2 values specify a 90 degree range of values in from of the robot,
-# from 75 degree to the left to 75 degree to the right
-center_range_low_lim : 340
-center_range_high_lim : 380
+# The next 2 values specify a 90 degree range of values in front of the robot,
+# from 75 degree to the right to 75 degree to the left
+center_range_low_lim : 225
+center_range_high_lim : 495
+# The next 2 values specify a 20 degree range of values in front of the robot,
+# from 110 degree to the right to 110 degree to the left
+forward_range_low_lim : 330
+forward_range_high_lim : 390
