@@ -1,0 +1,12 @@
+canny_threshold_1 : 200
+canny_threshold_2 : 20
+
+blur_kernel_size : 9
+blur_sigma : 2
+
+hough_dp : 1
+hough_min_dist : 500
+hough_threshold_1 : 200
+hough_threshold_2 : 15
+hough_min_radius: 15
+hough_max_radius: 30

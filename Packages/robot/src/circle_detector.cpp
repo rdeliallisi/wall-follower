@@ -18,87 +18,180 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <vector>
+#include "detect_helpers.h"
 
-using namespace std;
-using namespace cv;
-
-
-CircleDetector::CircleDetector() : node_() , circle_() {
-    count_threshold_ = 0;
+CircleDetector::CircleDetector() : node_() , circle_(), cartesian_() {
     circle_.x = -10;
     circle_.y = -10;
+    cartesian_.x = 0;
+    cartesian_.y = 0;
     laser_sub_ = node_.subscribe("base_scan", 100,
                                  &CircleDetector::LaserCallback, this);
+    LoadParams();
 }
 
 Circle CircleDetector::get_circle() {
     return circle_;
 }
 
-void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
+CartesianCoordinates CircleDetector::get_cartesian_coordinates() {
+    return cartesian_;
+}
 
-    int data_points = msg->ranges.size();
+ScreenCoordinates CircleDetector::get_screen_coordinates() {
+    return screen_;
+}
+
+void CircleDetector::ConvertLaserScanToCartesian(int i, float base_scan_min_angle,
+        const sensor_msgs::LaserScan::ConstPtr& msg) {
+
+    size_t data_points = msg->ranges.size();
+
+    cartesian_.x = (msg->ranges[data_points - 1 - i] *
+                    sin(base_scan_min_angle)) * 100;
+    cartesian_.y = (msg->ranges[data_points - 1 - i] *
+                    cos(base_scan_min_angle)) * 100;
+}
+
+void CircleDetector::ConvertCartesianToScreen(int screen_width, int screen_height) {
+    screen_.x = static_cast<int>(cartesian_.x + screen_width / 2);
+    screen_.y = static_cast<int>(-cartesian_.y + screen_height / 2);
+}
+
+void CircleDetector::ConvertLaserScanToCartesian(float range, float base_scan_min_angle) {
+    const int scale_factor = 100;
+    cartesian_.x = (range * sin(base_scan_min_angle)) * scale_factor;
+    cartesian_.y = (range * cos(base_scan_min_angle)) * scale_factor;
+}
+
+void CircleDetector::LoadParams() {
+    bool loaded = true;
+
+    if (!node_.getParam("/CircleDetector/canny_threshold_1",
+                        canny_params_.threshold_1_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/CircleDetector/canny_threshold_2",
+                        canny_params_.threshold_2_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/CircleDetector/blur_kernel_size",
+                        blur_params_.kernel_size_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/CircleDetector/blur_sigma",
+                        blur_params_.sigma_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/CircleDetector/hough_threshold_1",
+                        hough_params_.threshold_1_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/CircleDetector/hough_threshold_2",
+                        hough_params_.threshold_2_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/CircleDetector/hough_dp",
+                        hough_params_.dp_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/CircleDetector/hough_min_dist",
+                        hough_params_.min_dist_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/CircleDetector/hough_min_radius",
+                        hough_params_.min_radius_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/CircleDetector/hough_max_radius",
+                        hough_params_.max_radius_)) {
+        loaded = false;
+    }
+
+    if (!loaded) {
+        ros::shutdown();
+    }
+}
+
+void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
+    LoadParams();
+
+    size_t data_points = msg->ranges.size();
 
     //create image
     int screen_width = 1000;
     int screen_height = 1000;
 
-    cv::Mat image(screen_width, screen_height, CV_8UC1, Scalar(0));
+    cv::Mat image;
+    image.create(screen_width, screen_height, CV_8UC1);
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+            image.at<uchar>(i, j) = static_cast<uchar>(255);
+        }
+    }
 
     //convert laser_scan data to image
     float base_scan_min_angle = msg->angle_min;
     for (int i = 0; i < data_points; ++i) {
-        //calculate cartesian coordinates
-        float cartesian_x = (msg->ranges[data_points - 1 - i] *
-                             sin(base_scan_min_angle)) * 100;
-        float cartesian_y = (msg->ranges[data_points - 1 - i] *
-                             cos(base_scan_min_angle)) * 100;
-        base_scan_min_angle += msg->angle_increment;
 
-        //convert to screen coordinates
-        int screen_x = (int)((cartesian_x + screen_width / 2));
-        int screen_y = (int)((-cartesian_y + screen_height / 2));
+        const int lrf_max_range = 5;
+        float range = msg->ranges[data_points - 1 - i];
+        if (range < lrf_max_range) {
+            ConvertLaserScanToCartesian(range, base_scan_min_angle);
+            ConvertCartesianToScreen(screen_width, screen_height);
+            base_scan_min_angle += msg->angle_increment;
 
-        if (screen_x > 0 && screen_y > 0) {
-            image.at<uchar>(screen_y, screen_x) = (uchar)255;
-        } else {
-            // Coordinates are out of bound becaus of roundoff errors
+            if (screen_.x >= 0 && screen_.y >= 0) {
+                image.at<uchar>(screen_.y, screen_.x) = static_cast<uchar>(0);
+            } else {
+                // Coordinates are out of bound because of roundoff errors
+                ROS_INFO("Round off error: Coordinates out of bound");
+            }
         }
     }
-
     //compute Hough Transform
-    Canny(image, image, 200,20);
-    GaussianBlur(image, image, Size(9, 9), 2, 2);
-
-    // namedWindow( "Display window", WINDOW_AUTOSIZE );
-    // imshow( "Display window", image );
-    // waitKey(0);
+    cv::Mat destination;
+    cv::Canny(image, destination, canny_params_.threshold_1_,
+              canny_params_.threshold_2_);
+    cv::GaussianBlur(destination, destination,
+                     Size(blur_params_.kernel_size_, blur_params_.kernel_size_),
+                     blur_params_.sigma_, blur_params_.sigma_);
 
     vector<Vec3f> circles;
-    HoughCircles(image, circles, CV_HOUGH_GRADIENT, 1, 1000, 200, 20, 5, 50);
+    cv::HoughCircles(destination, circles, CV_HOUGH_GRADIENT,
+                     hough_params_.dp_, hough_params_.min_dist_, 
+                     hough_params_.threshold_1_, hough_params_.threshold_2_,
+                     hough_params_.min_radius_, hough_params_.max_radius_);
 
-    if (circles.size() != 1) {
-        count_threshold_ = 0;
-        circle_.x = circle_.y = -10;
+    RenderImage(circles, destination);
+
+    if (circles.size() >= 1) {
+        circle_.x = (circles[0][0] - screen_width / 2) / 100.0;
+        circle_.y = -(circles[0][1] - screen_height / 2) / 100.0;
     } else {
-        count_threshold_++;
+        circle_.x = -10;
+        circle_.y = -10;
+    }
+}
 
-        if (count_threshold_ > 0) {
-            circle_.x = (circles[0][0] - screen_width / 2) / 100.0;
-            circle_.y = -(circles[0][1] - screen_height / 2) / 100.0;
-
-        }
+void CircleDetector::RenderImage(vector<Vec3f> circles, cv::Mat image) {
+    for ( size_t i = 0; i < circles.size(); i++ ) {
+        Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+        int radius = cvRound(circles[i][2]);
+        cv::circle( image, center, 3, Scalar(255), -1);
+        cv::circle( image, center, radius, Scalar(255), 1 );
     }
 
-    //Draw the circles detected and display them
-    // for ( size_t i = 0; i < circles.size(); i++ ) {
-    //     Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-    //     int radius = cvRound(circles[i][2]);
-    //     cv::circle( image, center, 3, Scalar(0, 255, 255), -1);
-    //     cv::circle( image, center, radius, Scalar(0, 0, 255), 1 );
-    // }
-
-    // namedWindow( "Display window", WINDOW_AUTOSIZE );
-    // imshow( "Display window", image );
-    // waitKey(0);
+    namedWindow( "Display window", WINDOW_AUTOSIZE );
+    imshow( "Display window", image );
+    waitKey(25);
 }
