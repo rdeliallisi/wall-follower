@@ -109,13 +109,13 @@ private:
     /**
      * @brief [brief description]
      * @details [long description]
-     * 
+     *
      * @param right_min_distance [description]
      * @param left_min_distance [description]
      * @param center_min_distance [description]
      */
     void IsCloseToWall(double right_min_distance, double left_min_distance,
-                     double center_min_distance);
+                       double center_min_distance);
 
 public:
     HighLevelControl();

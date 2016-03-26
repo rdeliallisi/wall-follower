@@ -58,12 +58,6 @@ struct MoveSpecs {
      * @brief Range of 90 degrees in front of the robot
      */
     Range center_range_;
-
-    /**
-     * @brief Range of 20 degrees if front fo the robot
-     */
-    Range forward_range_;
-
 };
 
 struct MoveStatus {

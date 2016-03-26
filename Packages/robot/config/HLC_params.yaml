@@ -26,7 +26,3 @@ left_range_high_lim : 720
 # from 75 degree to the right to 75 degree to the left
 center_range_low_lim : 225
 center_range_high_lim : 495
-# The next 2 values specify a 20 degree range of values in front of the robot,
-# from 110 degree to the right to 110 degree to the left
-forward_range_low_lim : 330
-forward_range_high_lim : 390

@@ -81,16 +81,6 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/forward_range_low_lim",
-                        move_specs_.forward_range_.low_lim_)) {
-        loaded = false;
-    }
-
-    if (!node_.getParam("/HighLevelControl/forward_range_high_lim",
-                        move_specs_.forward_range_.high_lim_)) {
-        loaded = false;
-    }
-
     move_specs_.turn_type_ = NONE;
 
     if (loaded == false) {
@@ -110,7 +100,7 @@ void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg
 }
 
 void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
-    double right_min_distance, left_min_distance, center_min_distance, forward_min_distance;
+    double right_min_distance, left_min_distance, center_min_distance;
 
     right_min_distance = GetMin(ranges, move_specs_.right_range_.low_lim_,
                                 move_specs_.right_range_.high_lim_);
@@ -120,9 +110,6 @@ void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
 
     center_min_distance = GetMin(ranges, move_specs_.center_range_.low_lim_,
                                  move_specs_.center_range_.high_lim_);
-
-    forward_min_distance = GetMin(ranges, move_specs_.forward_range_.low_lim_,
-                                  move_specs_.forward_range_.high_lim_);
 
     CanContinue(right_min_distance, left_min_distance, center_min_distance);
 
@@ -156,19 +143,19 @@ void HighLevelControl::CanContinue(double right_min_distance, double left_min_di
 }
 
 void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_distance,
-                                   double center_min_distance) {
+                                     double center_min_distance) {
     if (move_status_.is_following_wall_) {
         double min;
-        if(move_specs_.turn_type_ == RIGHT) {
+        if (move_specs_.turn_type_ == RIGHT) {
             min = right_min_distance;
-        } else if(move_specs_.turn_type_ == LEFT) {
+        } else if (move_specs_.turn_type_ == LEFT) {
             min = left_min_distance;
         } else {
             // This case should never happen
             ros::shutdown();
         }
 
-        if(min < move_specs_.wall_follow_distance_) {
+        if (min < move_specs_.wall_follow_distance_) {
             move_status_.is_close_to_wall_ = true;
         } else {
             move_status_.is_close_to_wall_ = false;
@@ -179,6 +166,7 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
 void HighLevelControl::WallFollowMove() {
     if (!move_status_.can_continue_ && !move_status_.is_following_wall_) {
         srand(time(NULL));
+
         move_specs_.turn_type_ = rand() % 2 == 0 ? RIGHT : LEFT;
         move_status_.is_following_wall_ = true;
     } else if (move_status_.can_continue_ && !move_status_.is_following_wall_) {
