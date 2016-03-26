@@ -13,6 +13,7 @@
 #include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/Twist.h>
 #include "high_level_control.h"
+#include "util_functions.h"
 
 HighLevelControl::HighLevelControl() : node_() {
     InitialiseMoveSpecs();
@@ -40,13 +41,8 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/max_linear_velocity",
-                        move_specs_.max_linear_velocity_)) {
-        loaded = false;
-    }
-
-    if (!node_.getParam("/HighLevelControl/min_linear_velocity",
-                        move_specs_.min_linear_velocity_)) {
+    if (!node_.getParam("/HighLevelControl/linear_velocity",
+                        move_specs_.linear_velocity_)) {
         loaded = false;
     }
 
@@ -95,7 +91,6 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
-    move_specs_.linear_velocity_ = move_specs_.min_linear_velocity_;
     move_specs_.turn_type_ = NONE;
 
     if (loaded == false) {
@@ -131,26 +126,7 @@ void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
 
     CanContinue(right_min_distance, left_min_distance, center_min_distance);
 
-    SetLinearVelocity(forward_min_distance);
-
     IsCloseToWall(right_min_distance, left_min_distance, center_min_distance);
-}
-
-void HighLevelControl::SetLinearVelocity(double min_center_distance) {
-    double limit = move_specs_.max_linear_velocity_ / 5.0
-                   + move_specs_.high_security_distance_;
-
-    if (min_center_distance < limit) {
-        move_specs_.linear_velocity_ = move_specs_.min_linear_velocity_;
-    } else {
-        move_specs_.linear_velocity_ = move_specs_.max_linear_velocity_;
-    }
-}
-
-double HighLevelControl::GetMin(std::vector<float>& ranges, int start, int finish) {
-    std::vector<float>::iterator min = std::min_element(ranges.begin() + start,
-                                       ranges.begin() + finish);
-    return *min;
 }
 
 void HighLevelControl::CanContinue(double right_min_distance, double left_min_distance,
@@ -198,25 +174,6 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
             move_status_.is_close_to_wall_ = false;
         }
     }
-}
-
-double HighLevelControl::Min(double right_min_distance, double left_min_distance,
-                             double center_min_distance) {
-    double min;
-    if (right_min_distance < center_min_distance) {
-        if (right_min_distance < left_min_distance) {
-            min = right_min_distance;
-        } else {
-            min = left_min_distance;
-        }
-    } else {
-        if (center_min_distance < left_min_distance) {
-            min = center_min_distance;
-        } else {
-            min = left_min_distance;
-        }
-    }
-    return min;
 }
 
 void HighLevelControl::WallFollowMove() {

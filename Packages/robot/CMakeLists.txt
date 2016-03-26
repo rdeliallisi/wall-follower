@@ -13,14 +13,14 @@ find_package(rostest REQUIRED)
 
 include_directories(include/${PROJECT_NAME} ${catkin_INCLUDE_DIRS} ${GTest_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 
-add_library(my_library src/high_level_control.cpp src/circle_detector.cpp)
+add_library(my_library src/high_level_control.cpp src/circle_detector.cpp src/util_functions.cpp)
 target_link_libraries(my_library ${OpenCV_LIBRARIES})
 
 catkin_package()
 
 #High Level Control Node
 
-add_executable(HighLevelControl src/high_level_control_node.cpp src/high_level_control.cpp)
+add_executable(HighLevelControl src/high_level_control_node.cpp src/high_level_control.cpp src/util_functions.cpp)
 target_link_libraries(HighLevelControl ${catkin_LIBRARIES})
 add_dependencies(HighLevelControl robot_generate_messages_cpp)
 

@@ -29,17 +29,6 @@ struct MoveSpecs {
     double wall_follow_distance_;
 
     /**
-     * @brief Maximum linear velocity that the robot can have
-     */
-    double max_linear_velocity_;
-
-    /**
-     * @brief Minimum linear velocity that the robot can have
-     */
-
-    double min_linear_velocity_;
-
-    /**
      * @brief Linear velocity for a single robot movement
      */
     double linear_velocity_;
