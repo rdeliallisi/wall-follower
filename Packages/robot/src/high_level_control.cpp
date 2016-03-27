@@ -12,13 +12,19 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/Twist.h>
+#include <cmath>
 #include "robot/circle_detect_msg.h"
 #include "high_level_control.h"
 #include "util_functions.h"
 
+#define PI 3.14159265
+
 HighLevelControl::HighLevelControl() : node_() {
     InitialiseMoveSpecs();
     InitialiseMoveStatus();
+
+    circle_x = -10;
+    circle_y = -10;
 
     cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel", 100);
     laser_sub_ = node_.subscribe("circle_detect", 100, &HighLevelControl::LaserCallback, this);
@@ -97,8 +103,28 @@ void HighLevelControl::InitialiseMoveStatus() {
 
 void HighLevelControl::LaserCallback(const robot::circle_detect_msg::ConstPtr& msg) {
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
-    NormalMovement(ranges);
-    WallFollowMove();
+    if (!circle_hit_mode_) {
+        circle_x = msg->circle_x;
+        circle_y = msg->circle_y;
+        double wall;
+        if (move_specs_.turn_type_ == RIGHT) {
+            wall = ranges[380];
+        } else if (move_specs_.turn_type_ == LEFT) {
+            wall = ranges[340];
+        } else {
+            wall = 1;
+        }
+
+        double threshold = circle_x * circle_x + circle_y * circle_y + 0.5;
+        if (wall * wall > threshold && circle_x > -0.5 && circle_x < 0.5 && circle_y < 1) {
+            circle_hit_mode_ = true;
+        }
+        NormalMovement(ranges);
+        WallFollowMove();
+    } else {
+        HitCircle(ranges);
+    }
+
 }
 
 void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
@@ -162,6 +188,36 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
         } else {
             move_status_.is_close_to_wall_ = false;
         }
+    }
+}
+
+void HighLevelControl::HitCircle(std::vector<float>& ranges) {
+    if (move_specs_.turn_type_ == RIGHT) {
+        double back_value = ranges[move_specs_.right_range_.low_lim_];
+        double front_value = ranges[90];
+        double diff = front_value - sin(PI / 3.0) * back_value;
+
+        if (diff <= 0.05 && diff >= -0.05) {
+            Move(move_specs_.linear_velocity_, 0);
+        } else if (diff > 0.05) {
+            Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
+        } else {
+            Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
+        }
+    } else if (move_specs_.turn_type_ == LEFT) {
+        double back_value = ranges[move_specs_.left_range_.high_lim_];
+        double front_value = ranges[630];
+        double diff = front_value - sin(PI / 3.0) * back_value;
+
+        if (diff <= 0.05 && diff >= -0.05) {
+            Move(move_specs_.linear_velocity_, 0);
+        } else if (diff > 0.05) {
+            Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
+        } else {
+            Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
+        }
+    } else {
+        // ros::shutdown();
     }
 }
 

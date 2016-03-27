@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 
     HighLevelControl high_level_control;
 
-    ros::Rate r(100.0);
+    ros::Rate r(10.0);
     while (ros::ok())
     {
 

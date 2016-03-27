@@ -138,7 +138,7 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     image.create(screen_width, screen_height, CV_8UC1);
     for (int i = 0; i < image.rows; i++) {
         for (int j = 0; j < image.cols; j++) {
-            image.at<uchar>(i, j) = static_cast<uchar>(255);
+            image.at<uchar>(i, j) = static_cast<uchar>(0);
         }
     }
 
@@ -154,7 +154,7 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
             base_scan_min_angle += msg->angle_increment;
 
             if (screen_.x >= 0 && screen_.y >= 0) {
-                image.at<uchar>(screen_.y, screen_.x) = static_cast<uchar>(0);
+                image.at<uchar>(screen_.y, screen_.x) = static_cast<uchar>(255);
             } else {
                 // Coordinates are out of bound because of roundoff errors
                 ROS_INFO("Round off error: Coordinates out of bound");
@@ -163,9 +163,9 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     }
     //compute Hough Transform
     cv::Mat destination;
-    cv::Canny(image, destination, canny_params_.threshold_1_,
-              canny_params_.threshold_2_);
-    cv::GaussianBlur(destination, destination,
+    // cv::Canny(image, destination, canny_params_.threshold_1_,
+    //           canny_params_.threshold_2_);
+    cv::GaussianBlur(image, destination,
                      Size(blur_params_.kernel_size_, blur_params_.kernel_size_),
                      blur_params_.sigma_, blur_params_.sigma_);
 
@@ -175,7 +175,15 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
                      hough_params_.threshold_1_, hough_params_.threshold_2_,
                      hough_params_.min_radius_, hough_params_.max_radius_);
 
-    //RenderImage(circles, destination);
+    RenderImage(circles, destination);
+
+    if(circles.size() == 1) {
+        circle_.x = circles[0][0] / 100 - 5;
+        circle_.y = -(circles[0][1] / 100 - 5);
+    } else {
+        circle_.x = -10;
+        circle_.y = -10;
+    }
 
         robot::circle_detect_msg pub_msg;
         pub_msg.header.stamp = ros::Time::now();

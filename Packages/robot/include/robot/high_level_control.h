@@ -61,7 +61,8 @@ private:
      */
     MoveStatus move_status_;
 
-    // TODO(rdeliallisi): To be put into Object Detection
+    double circle_x, circle_y;
+
     /**
      * @brief Gets the data from the laser range finder, examines them and
      * updates the relevant class variables
