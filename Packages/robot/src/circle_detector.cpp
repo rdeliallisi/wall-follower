@@ -143,7 +143,7 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     float base_scan_min_angle = msg->angle_min;
     for (int i = 0; i < data_points; ++i) {
 
-        const int lrf_max_range = 5;
+        const float lrf_max_range = 5;
         float range = msg->ranges[data_points - 1 - i];
         if (range < lrf_max_range) {
             ConvertLaserScanToCartesian(range, base_scan_min_angle);
@@ -152,6 +152,8 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
 
             if (screen_.x >= 0 && screen_.y >= 0) {
                 image.at<uchar>(screen_.y, screen_.x) = static_cast<uchar>(0);
+                // Point center(screen_.x, screen_.y);
+                // cv::circle( image, center, 5, Scalar(0), -1);
             } else {
                 // Coordinates are out of bound because of roundoff errors
                 ROS_INFO("Round off error: Coordinates out of bound");
@@ -193,5 +195,5 @@ void CircleDetector::RenderImage(vector<Vec3f> circles, cv::Mat image) {
 
     namedWindow( "Display window", WINDOW_AUTOSIZE );
     imshow( "Display window", image );
-    waitKey(25);
+    waitKey(10);
 }

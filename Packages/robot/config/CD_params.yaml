@@ -5,8 +5,8 @@ blur_kernel_size : 9
 blur_sigma : 2
 
 hough_dp : 1
-hough_min_dist : 500
-hough_threshold_1 : 200
+hough_min_dist : 1000
+hough_threshold_1 : 30
 hough_threshold_2 : 15
-hough_min_radius: 15
+hough_min_radius: 10
 hough_max_radius: 30
