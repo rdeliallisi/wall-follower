@@ -11,6 +11,7 @@
 
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
+#include "robot/circle_detect_msg.h"
 #include "circle_detector.h"
 
 #include "math.h"
@@ -27,6 +28,8 @@ CircleDetector::CircleDetector() : node_() , circle_(), cartesian_() {
     cartesian_.y = 0;
     laser_sub_ = node_.subscribe("base_scan", 100,
                                  &CircleDetector::LaserCallback, this);
+    circle_detect_pub_ = node_.advertise<robot::circle_detect_msg>(
+                             "circle_detect", 100);
     LoadParams();
 }
 
@@ -152,8 +155,6 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
 
             if (screen_.x >= 0 && screen_.y >= 0) {
                 image.at<uchar>(screen_.y, screen_.x) = static_cast<uchar>(0);
-                // Point center(screen_.x, screen_.y);
-                // cv::circle( image, center, 5, Scalar(0), -1);
             } else {
                 // Coordinates are out of bound because of roundoff errors
                 ROS_INFO("Round off error: Coordinates out of bound");
@@ -170,19 +171,19 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
 
     vector<Vec3f> circles;
     cv::HoughCircles(destination, circles, CV_HOUGH_GRADIENT,
-                     hough_params_.dp_, hough_params_.min_dist_, 
+                     hough_params_.dp_, hough_params_.min_dist_,
                      hough_params_.threshold_1_, hough_params_.threshold_2_,
                      hough_params_.min_radius_, hough_params_.max_radius_);
 
-    RenderImage(circles, destination);
+    //RenderImage(circles, destination);
 
-    if (circles.size() >= 1) {
-        circle_.x = (circles[0][0] - screen_width / 2) / 100.0;
-        circle_.y = -(circles[0][1] - screen_height / 2) / 100.0;
-    } else {
-        circle_.x = -10;
-        circle_.y = -10;
-    }
+        robot::circle_detect_msg pub_msg;
+        pub_msg.header.stamp = ros::Time::now();
+        pub_msg.header.frame_id = "/robot";
+        pub_msg.circle_x = circle_.x;
+        pub_msg.circle_y = circle_.y;
+        pub_msg.ranges = msg->ranges;
+        circle_detect_pub_.publish(pub_msg);
 }
 
 void CircleDetector::RenderImage(vector<Vec3f> circles, cv::Mat image) {

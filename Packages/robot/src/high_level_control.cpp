@@ -12,6 +12,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/Twist.h>
+#include "robot/circle_detect_msg.h"
 #include "high_level_control.h"
 #include "util_functions.h"
 
@@ -20,7 +21,7 @@ HighLevelControl::HighLevelControl() : node_() {
     InitialiseMoveStatus();
 
     cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel", 100);
-    laser_sub_ = node_.subscribe("base_scan", 100, &HighLevelControl::LaserCallback, this);
+    laser_sub_ = node_.subscribe("circle_detect", 100, &HighLevelControl::LaserCallback, this);
 }
 
 void HighLevelControl::InitialiseMoveSpecs() {
@@ -94,9 +95,10 @@ void HighLevelControl::InitialiseMoveStatus() {
     move_status_.is_following_wall_ = false;
 }
 
-void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
+void HighLevelControl::LaserCallback(const robot::circle_detect_msg::ConstPtr& msg) {
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
     NormalMovement(ranges);
+    WallFollowMove();
 }
 
 void HighLevelControl::NormalMovement(std::vector<float>& ranges) {

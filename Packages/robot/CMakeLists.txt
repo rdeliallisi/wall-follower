@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 2.8.3)
 project(robot)
 
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  sensor_msgs
+  	roscpp
+  	rospy
+  	sensor_msgs
+  	std_msgs
+  	message_generation
 )
 
 find_package(OpenCV REQUIRED)
@@ -16,7 +18,20 @@ include_directories(include/${PROJECT_NAME} ${catkin_INCLUDE_DIRS} ${GTest_INCLU
 add_library(my_library src/high_level_control.cpp src/circle_detector.cpp src/util_functions.cpp)
 target_link_libraries(my_library ${OpenCV_LIBRARIES})
 
-catkin_package()
+add_message_files(
+    FILES
+    circle_detect_msg.msg
+)
+
+generate_messages(
+    DEPENDENCIES
+    std_msgs
+    sensor_msgs
+)
+
+catkin_package(
+	CATKIN_DEPENDS message_runtime
+)
 
 #High Level Control Node
 

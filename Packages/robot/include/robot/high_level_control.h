@@ -14,6 +14,7 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
+#include "robot/circle_detect_msg.h"
 #include "move_helpers.h"
 
 /**
@@ -66,7 +67,7 @@ private:
      * updates the relevant class variables
      * @param msg Raw data comming from the laser range finder
      */
-    void LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
+    void LaserCallback(const robot::circle_detect_msg::ConstPtr& msg);
 
     /**
      * @brief Send the movement command to the robot using ROS nodes and topics

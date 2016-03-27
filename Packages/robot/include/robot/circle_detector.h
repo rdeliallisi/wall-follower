@@ -105,6 +105,11 @@ private:
     ros::Subscriber laser_sub_;
 
     /**
+    * @brief the circle_detect_pub publishes the translated lrf input as well as circles, if any.
+    */
+    ros::Publisher circle_detect_pub_;
+
+    /**
      * @brief The circle is the actual circle that the scanner has found
      */
     Circle circle_;
