@@ -61,10 +61,6 @@ private:
      */
     MoveStatus move_status_;
 
-    double circle_x, circle_y;
-
-    bool circle_hit_mode_, hit_goal_;
-
     /**
      * @brief Gets the data from the laser range finder, examines them and
      * updates the relevant class variables
@@ -125,40 +121,26 @@ public:
     HighLevelControl();
 
     /**
-     * @brief Checks if the robot can continue waking forward or not
-     * @return Returns the value of can_continue_
-     */
-    bool can_continue() {
-        return move_status_.can_continue_;
-    }
-
-    /**
-     * @brief Checks if the robot is close enough to the wall it is anchored to
-     * @return Returns the value of is_close_to_wall_
-     */
-    bool is_close_to_wall() {
-        return move_status_.is_close_to_wall_;
-    }
-
-    /**
-     * @brief Checks if the robot is anchored and following a specific wall
-     * @return Returns the value of is_following_wall_
-     */
-    bool is_following_wall() {
-        return move_status_.is_following_wall_;
-    }
-
-    /**
      * @brief Moves the robot so that it always follows a wall
      */
     void WallFollowMove();
 
     /**
      * @brief [brief description]
-     * 
+     *
      * @param ranges [description]
      */
     void HitCircle(std::vector<float>& ranges);
+
+    /**
+     * @brief [brief description]
+     *
+     * @param circle_x [description]
+     * @param circle_y [description]
+     * @param ranges [description]
+     * @return [description]
+     */
+    bool CanHit(double circle_x, double circle_y, std::vector<float>& ranges);
 };
 
 #endif

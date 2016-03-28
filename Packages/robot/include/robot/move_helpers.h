@@ -75,6 +75,16 @@ struct MoveStatus {
      * @brief Is the robot anchored to a wall or not
      */
     bool is_following_wall_;
+
+    /**
+     * @brief Is the robot in circle hit mode
+     */
+    bool circle_hit_mode_;
+
+    /**
+     * @brief Is the robot positioned appropriately to go straight to the goal
+     */
+    bool hit_goal_;
 };
 
 #endif

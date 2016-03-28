@@ -21,11 +21,7 @@
 #include <vector>
 #include "detect_helpers.h"
 
-CircleDetector::CircleDetector() : node_() , circle_(), cartesian_() {
-    circle_.x = -10;
-    circle_.y = -10;
-    cartesian_.x = 0;
-    cartesian_.y = 0;
+CircleDetector::CircleDetector() : node_(){
     laser_sub_ = node_.subscribe("base_scan", 1000,
                                  &CircleDetector::LaserCallback, this);
     circle_detect_pub_ = node_.advertise<robot::circle_detect_msg>(
@@ -33,38 +29,15 @@ CircleDetector::CircleDetector() : node_() , circle_(), cartesian_() {
     LoadParams();
 }
 
-Circle CircleDetector::get_circle() {
-    return circle_;
+void CircleDetector::ConvertCartesianToScreen(int &x, int &y, int screen_w, int screen_h) {
+    x = static_cast<int>(x + screen_w / 2);
+    y = static_cast<int>(-y + screen_h / 2);
 }
 
-CartesianCoordinates CircleDetector::get_cartesian_coordinates() {
-    return cartesian_;
-}
-
-ScreenCoordinates CircleDetector::get_screen_coordinates() {
-    return screen_;
-}
-
-void CircleDetector::ConvertLaserScanToCartesian(int i, float base_scan_min_angle,
-        const sensor_msgs::LaserScan::ConstPtr& msg) {
-
-    size_t data_points = msg->ranges.size();
-
-    cartesian_.x = (msg->ranges[data_points - 1 - i] *
-                    sin(base_scan_min_angle)) * 100;
-    cartesian_.y = (msg->ranges[data_points - 1 - i] *
-                    cos(base_scan_min_angle)) * 100;
-}
-
-void CircleDetector::ConvertCartesianToScreen(int screen_width, int screen_height) {
-    screen_.x = static_cast<int>(cartesian_.x + screen_width / 2);
-    screen_.y = static_cast<int>(-cartesian_.y + screen_height / 2);
-}
-
-void CircleDetector::ConvertLaserScanToCartesian(float range, float base_scan_min_angle) {
+void CircleDetector::ConvertLaserScanToCartesian(int &x, int &y, float range, float base_scan_min_angle) {
     const int scale_factor = 100;
-    cartesian_.x = (range * sin(base_scan_min_angle)) * scale_factor;
-    cartesian_.y = (range * cos(base_scan_min_angle)) * scale_factor;
+    x = (range * sin(base_scan_min_angle)) * scale_factor;
+    y = (range * cos(base_scan_min_angle)) * scale_factor;
 }
 
 void CircleDetector::LoadParams() {
@@ -119,8 +92,10 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     size_t data_points = msg->ranges.size();
 
     //create image
+    // TODO: Put in state
     int screen_width = 1000;
     int screen_height = 1000;
+    const float lrf_max_range = 2;
 
     cv::Mat image;
     image.create(screen_width, screen_height, CV_8UC1);
@@ -133,17 +108,16 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     //convert laser_scan data to image
     float base_scan_min_angle = msg->angle_min;
     for (int i = 0; i < data_points; ++i) {
-
-        const float lrf_max_range = 2;
         float range = msg->ranges[data_points - 1 - i];
         base_scan_min_angle += msg->angle_increment;
-
         if (range < lrf_max_range) {
-            ConvertLaserScanToCartesian(range, base_scan_min_angle);
-            ConvertCartesianToScreen(screen_width, screen_height);
+            int x, y;
+            ConvertLaserScanToCartesian(x, y, range, base_scan_min_angle);
+            ConvertCartesianToScreen(x, y, screen_width, screen_height);
 
-            if (screen_.x >= 0 && screen_.y >= 0) {
-                image.at<uchar>(screen_.y, screen_.x) = static_cast<uchar>(255);
+            if (x >= 0 && y >= 0) {
+                // Swap places to adapt to OpenCV coordinate system
+                image.at<uchar>(y, x) = static_cast<uchar>(255);
             } else {
                 // Coordinates are out of bound because of roundoff errors
                 ROS_INFO("Round off error: Coordinates out of bound");
@@ -163,34 +137,21 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
                      hough_params_.threshold_1_, hough_params_.threshold_2_,
                      hough_params_.min_radius_, hough_params_.max_radius_);
 
-    //RenderImage(circles, destination);
-
+    double circle_x, circle_y;
     if (circles.size() == 1) {
-        circle_.x = circles[0][0] / 100 - 5;
-        circle_.y = -(circles[0][1] / 100 - 5);
+        circle_x = (circles[0][0] - screen_width / 2) / 100;
+        circle_y = -((circles[0][1] - screen_height / 2) / 100);
     } else {
-        circle_.x = -10;
-        circle_.y = -10;
+        circle_x = -10;
+        circle_y = -10;
     }
+    //Remove
 
     robot::circle_detect_msg pub_msg;
     pub_msg.header.stamp = ros::Time::now();
     pub_msg.header.frame_id = "/robot";
-    pub_msg.circle_x = circle_.x;
-    pub_msg.circle_y = circle_.y;
+    pub_msg.circle_x = circle_x;
+    pub_msg.circle_y = circle_y;
     pub_msg.ranges = msg->ranges;
     circle_detect_pub_.publish(pub_msg);
-}
-
-void CircleDetector::RenderImage(vector<Vec3f> circles, cv::Mat image) {
-    for ( size_t i = 0; i < circles.size(); i++ ) {
-        Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-        int radius = cvRound(circles[i][2]);
-        cv::circle( image, center, 3, Scalar(255), -1);
-        cv::circle( image, center, radius, Scalar(255), 1 );
-    }
-
-    namedWindow( "Display window", WINDOW_AUTOSIZE );
-    imshow( "Display window", image );
-    waitKey(10);
 }
