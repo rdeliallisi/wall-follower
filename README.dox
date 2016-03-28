@@ -12,9 +12,9 @@ Project Description:
 A robot developed using ROS that can navigate a maze based on the input from a laser range finder.
 
 External Dependencies:
-- ROS
-- OpenCV
-- GoogleTest
+- ROS : Jade v1.11.16
+- OpenCV : v3.1.10
+- GoogleTest : v1.7.0
 
 Development timeline
 - Sprint 1: Completed circle detection (Maria, Atabak), Completed random walk (Rubin),
