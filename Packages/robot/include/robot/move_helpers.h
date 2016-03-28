@@ -85,6 +85,11 @@ struct MoveStatus {
      * @brief Is the robot positioned appropriately to go straight to the goal
      */
     bool hit_goal_;
+
+    /**
+     * @brief Tracks if the robot is stuck or not
+     */
+    bool is_stuck_;
 };
 
 #endif

@@ -5,5 +5,5 @@ hough_dp : 1
 hough_min_dist : 1000
 hough_threshold_1 : 30
 hough_threshold_2 : 15
-hough_min_radius: 10
+hough_min_radius: 15
 hough_max_radius: 30

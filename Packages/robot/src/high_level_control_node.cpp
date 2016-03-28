@@ -22,7 +22,6 @@ int main(int argc, char** argv)
     ros::Rate r(10.0);
     while (ros::ok())
     {
-
         ros::spinOnce();
         r.sleep();
     }

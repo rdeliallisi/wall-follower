@@ -21,8 +21,8 @@ HighLevelControl::HighLevelControl() : node_() {
     InitialiseMoveSpecs();
     InitialiseMoveStatus();
 
-    cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-    laser_sub_ = node_.subscribe("circle_detect", 1000, &HighLevelControl::LaserCallback, this);
+    cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel", 100);
+    laser_sub_ = node_.subscribe("circle_detect", 100, &HighLevelControl::LaserCallback, this);
 }
 
 void HighLevelControl::InitialiseMoveSpecs() {
@@ -126,7 +126,7 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
     // Index of the angle in the ranges vector
     int index = (center_angle + 30) * 3;
     // Check if we might get an out of bound index after shifting by 20 deg
-    if(index < 60 || index >= 660)
+    if (index < 60 || index >= 660)
         return false;
     // Distance from LRF in the direction of the circle center
     double center_lrf = ranges[index];
@@ -222,7 +222,13 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
 void HighLevelControl::HitCircle(std::vector<float>& ranges) {
     if (move_status_.hit_goal_) {
         // Move fast towards goal
-        Move(move_specs_.linear_velocity_ * 10, 0);
+        float angular_velocity;
+        if(move_specs_.turn_type_ == LEFT) {
+            angular_velocity = 0.25;
+        } else {
+            angular_velocity = -0.25;
+        }
+        Move(move_specs_.linear_velocity_ * 10, angular_velocity);
         return;
     }
 
@@ -256,7 +262,7 @@ void HighLevelControl::HitCircle(std::vector<float>& ranges) {
 void HighLevelControl::WallFollowMove() {
     if (!move_status_.can_continue_ && !move_status_.is_following_wall_) {
         srand(time(NULL));
-
+        // 50% left mode, 50% right mode
         move_specs_.turn_type_ = rand() % 10000 > 5000 ? RIGHT : LEFT;
         move_status_.is_following_wall_ = true;
     } else if (move_status_.can_continue_ && !move_status_.is_following_wall_) {

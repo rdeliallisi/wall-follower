@@ -21,11 +21,11 @@
 #include <vector>
 #include "detect_helpers.h"
 
-CircleDetector::CircleDetector() : node_(){
-    laser_sub_ = node_.subscribe("base_scan", 1000,
+CircleDetector::CircleDetector() : node_() {
+    laser_sub_ = node_.subscribe("base_scan", 100,
                                  &CircleDetector::LaserCallback, this);
     circle_detect_pub_ = node_.advertise<robot::circle_detect_msg>(
-                             "circle_detect", 1000);
+                             "circle_detect", 100);
     LoadParams();
 }
 
@@ -145,7 +145,6 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
         circle_x = -10;
         circle_y = -10;
     }
-    //Remove
 
     robot::circle_detect_msg pub_msg;
     pub_msg.header.stamp = ros::Time::now();
