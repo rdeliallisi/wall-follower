@@ -21,7 +21,7 @@ Development timeline
   Basic wall following - a bit buggy (Rubin), Object detection without OpenCV using analytical methods - Experimental,
   not merged yet (Siddharth)
 
-- Sprint 2: (Pending)
+- Sprint 2: High Level Control (Rubin), Circle Detection (Atabak, Siddharth), HLC & CD Tests (Maria), HLC & CD Docs (Maria)
 
 - Sprint 3: (Pending)
 
