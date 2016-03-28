@@ -26,10 +26,10 @@ CircleDetector::CircleDetector() : node_() , circle_(), cartesian_() {
     circle_.y = -10;
     cartesian_.x = 0;
     cartesian_.y = 0;
-    laser_sub_ = node_.subscribe("base_scan", 100,
+    laser_sub_ = node_.subscribe("base_scan", 1000,
                                  &CircleDetector::LaserCallback, this);
     circle_detect_pub_ = node_.advertise<robot::circle_detect_msg>(
-                             "circle_detect", 100);
+                             "circle_detect", 1000);
     LoadParams();
 }
 
@@ -69,16 +69,6 @@ void CircleDetector::ConvertLaserScanToCartesian(float range, float base_scan_mi
 
 void CircleDetector::LoadParams() {
     bool loaded = true;
-
-    if (!node_.getParam("/CircleDetector/canny_threshold_1",
-                        canny_params_.threshold_1_)) {
-        loaded = false;
-    }
-
-    if (!node_.getParam("/CircleDetector/canny_threshold_2",
-                        canny_params_.threshold_2_)) {
-        loaded = false;
-    }
 
     if (!node_.getParam("/CircleDetector/blur_kernel_size",
                         blur_params_.kernel_size_)) {
@@ -126,8 +116,6 @@ void CircleDetector::LoadParams() {
 }
 
 void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
-    LoadParams();
-
     size_t data_points = msg->ranges.size();
 
     //create image
@@ -146,12 +134,13 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     float base_scan_min_angle = msg->angle_min;
     for (int i = 0; i < data_points; ++i) {
 
-        const float lrf_max_range = 5;
+        const float lrf_max_range = 2;
         float range = msg->ranges[data_points - 1 - i];
+        base_scan_min_angle += msg->angle_increment;
+
         if (range < lrf_max_range) {
             ConvertLaserScanToCartesian(range, base_scan_min_angle);
             ConvertCartesianToScreen(screen_width, screen_height);
-            base_scan_min_angle += msg->angle_increment;
 
             if (screen_.x >= 0 && screen_.y >= 0) {
                 image.at<uchar>(screen_.y, screen_.x) = static_cast<uchar>(255);
@@ -161,10 +150,9 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
             }
         }
     }
+
     //compute Hough Transform
     cv::Mat destination;
-    // cv::Canny(image, destination, canny_params_.threshold_1_,
-    //           canny_params_.threshold_2_);
     cv::GaussianBlur(image, destination,
                      Size(blur_params_.kernel_size_, blur_params_.kernel_size_),
                      blur_params_.sigma_, blur_params_.sigma_);
@@ -175,9 +163,9 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
                      hough_params_.threshold_1_, hough_params_.threshold_2_,
                      hough_params_.min_radius_, hough_params_.max_radius_);
 
-    RenderImage(circles, destination);
+    //RenderImage(circles, destination);
 
-    if(circles.size() == 1) {
+    if (circles.size() == 1) {
         circle_.x = circles[0][0] / 100 - 5;
         circle_.y = -(circles[0][1] / 100 - 5);
     } else {
@@ -185,13 +173,13 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
         circle_.y = -10;
     }
 
-        robot::circle_detect_msg pub_msg;
-        pub_msg.header.stamp = ros::Time::now();
-        pub_msg.header.frame_id = "/robot";
-        pub_msg.circle_x = circle_.x;
-        pub_msg.circle_y = circle_.y;
-        pub_msg.ranges = msg->ranges;
-        circle_detect_pub_.publish(pub_msg);
+    robot::circle_detect_msg pub_msg;
+    pub_msg.header.stamp = ros::Time::now();
+    pub_msg.header.frame_id = "/robot";
+    pub_msg.circle_x = circle_.x;
+    pub_msg.circle_y = circle_.y;
+    pub_msg.ranges = msg->ranges;
+    circle_detect_pub_.publish(pub_msg);
 }
 
 void CircleDetector::RenderImage(vector<Vec3f> circles, cv::Mat image) {

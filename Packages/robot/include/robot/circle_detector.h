@@ -124,8 +124,6 @@ private:
      */
     ScreenCoordinates screen_;
 
-    CannyParams canny_params_;
-
     BlurParams blur_params_;
 
     HoughParams hough_params_;

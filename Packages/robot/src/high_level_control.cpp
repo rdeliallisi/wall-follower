@@ -25,9 +25,11 @@ HighLevelControl::HighLevelControl() : node_() {
 
     circle_x = -10;
     circle_y = -10;
+    circle_hit_mode_ = false;
+    hit_goal_ = false;
 
-    cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel", 100);
-    laser_sub_ = node_.subscribe("circle_detect", 100, &HighLevelControl::LaserCallback, this);
+    cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+    laser_sub_ = node_.subscribe("circle_detect", 1000, &HighLevelControl::LaserCallback, this);
 }
 
 void HighLevelControl::InitialiseMoveSpecs() {
@@ -106,19 +108,33 @@ void HighLevelControl::LaserCallback(const robot::circle_detect_msg::ConstPtr& m
     if (!circle_hit_mode_) {
         circle_x = msg->circle_x;
         circle_y = msg->circle_y;
-        double wall;
+        // To be removed
+        // Start
+        double wall, center;
+        double distance = sqrt(circle_x * circle_x + circle_y * circle_y);
+        bool flag = true;
+        int angle = acos(circle_x / distance) / PI * 180;
+        int index = (angle + 30) * 3;
+        center = ranges[index];
         if (move_specs_.turn_type_ == RIGHT) {
-            wall = ranges[380];
+            wall = ranges[index + 60];
         } else if (move_specs_.turn_type_ == LEFT) {
-            wall = ranges[340];
+            wall = ranges[index - 60];
         } else {
-            wall = 1;
+            flag = false;
         }
 
-        double threshold = circle_x * circle_x + circle_y * circle_y + 0.5;
-        if (wall * wall > threshold && circle_x > -0.5 && circle_x < 0.5 && circle_y < 1) {
-            circle_hit_mode_ = true;
+        if (flag) {
+            double threshold = distance + 1;
+            if (wall > threshold &&
+                    center < distance &&
+                    circle_x > -0.5 && circle_x < 0.5 &&
+                    circle_y < 1 && circle_y > 0) {
+                circle_hit_mode_ = true;
+            }
+
         }
+        //End
         NormalMovement(ranges);
         WallFollowMove();
     } else {
@@ -192,29 +208,34 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
 }
 
 void HighLevelControl::HitCircle(std::vector<float>& ranges) {
+    if (hit_goal_) {
+        Move(move_specs_.linear_velocity_ * 5, 0);
+        return;
+    }
+
     if (move_specs_.turn_type_ == RIGHT) {
         double back_value = ranges[move_specs_.right_range_.low_lim_];
-        double front_value = ranges[90];
-        double diff = front_value - sin(PI / 3.0) * back_value;
+        double front_value = ranges[90 * 2];
+        double diff = front_value - back_value;
 
-        if (diff <= 0.05 && diff >= -0.05) {
-            Move(move_specs_.linear_velocity_, 0);
+        if (diff <= 0.025 && diff >= -0.025) {
+            hit_goal_ = true;
         } else if (diff > 0.05) {
-            Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
-        } else {
             Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
+        } else {
+            Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
         }
     } else if (move_specs_.turn_type_ == LEFT) {
         double back_value = ranges[move_specs_.left_range_.high_lim_];
         double front_value = ranges[630];
         double diff = front_value - sin(PI / 3.0) * back_value;
 
-        if (diff <= 0.05 && diff >= -0.05) {
-            Move(move_specs_.linear_velocity_, 0);
+        if (diff <= 0.025 && diff >= -0.025) {
+            hit_goal_ = true;
         } else if (diff > 0.05) {
-            Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
-        } else {
             Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
+        } else {
+            Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
         }
     } else {
         // ros::shutdown();

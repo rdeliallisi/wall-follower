@@ -1,11 +1,6 @@
 #ifndef DETECT_HELPERS_H
 #define DETECT_HELPERS_H
 
-struct CannyParams {
-	int threshold_1_;
-	int threshold_2_;
-};
-
 struct BlurParams {
 	int kernel_size_;
 	int sigma_;

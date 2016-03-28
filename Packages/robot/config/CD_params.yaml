@@ -1,6 +1,3 @@
-canny_threshold_1 : 200
-canny_threshold_2 : 20
-
 blur_kernel_size : 9
 blur_sigma : 2
 

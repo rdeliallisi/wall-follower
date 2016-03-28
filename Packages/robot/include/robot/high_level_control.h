@@ -63,6 +63,8 @@ private:
 
     double circle_x, circle_y;
 
+    bool circle_hit_mode_, hit_goal_;
+
     /**
      * @brief Gets the data from the laser range finder, examines them and
      * updates the relevant class variables
@@ -150,6 +152,13 @@ public:
      * @brief Moves the robot so that it always follows a wall
      */
     void WallFollowMove();
+
+    /**
+     * @brief [brief description]
+     * 
+     * @param ranges [description]
+     */
+    void HitCircle(std::vector<float>& ranges);
 };
 
 #endif
