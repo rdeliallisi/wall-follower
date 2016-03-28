@@ -1,4 +1,4 @@
-/** 
+/**
  * @file high_level_control.cpp
  * @brief This file provides the implementation of the HighLevelControl class
  *
@@ -12,121 +12,272 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/Twist.h>
+#include <cmath>
+#include "robot/circle_detect_msg.h"
 #include "high_level_control.h"
+#include "util_functions.h"
 
 HighLevelControl::HighLevelControl() : node_() {
-    security_distance_ = 0.275;
-    wall_follow_distance_ = 0.4;
-    linear_velocity_ = 0.4;
-    angular_velocity_ = 1;
+    InitialiseMoveSpecs();
+    InitialiseMoveStatus();
 
     cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel", 100);
-    laser_sub_ = node_.subscribe("base_scan", 100, &HighLevelControl::LaserCallback, this);
-    can_continue_ = true;
-    is_close_to_wall_ = false;
-    is_turning_ = false;
-    is_following_wall_ = false;
+    laser_sub_ = node_.subscribe("circle_detect", 100, &HighLevelControl::LaserCallback, this);
 }
 
-void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
-    std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
-    std::vector<float>::iterator it = std::min_element(ranges.begin(), ranges.end());
-   
-    if (*it > security_distance_) {
-        can_continue_ = true;
-    } else {
-        can_continue_ = false;
+void HighLevelControl::InitialiseMoveSpecs() {
+    bool loaded = true;
+
+    if (!node_.getParam("/HighLevelControl/high_security_distance",
+                        move_specs_.high_security_distance_)) {
+        loaded = false;
     }
 
-    if (is_following_wall_) {
-        int low_lim, high_lim;
+    if (!node_.getParam("/HighLevelControl/low_security_distance",
+                        move_specs_.low_security_distance_)) {
+        loaded = false;
+    }
 
-        if (turn_type_ == 1) {
-            low_lim = 50;
-            high_lim = 150;
-        } else if (turn_type_ == -1) {
-            low_lim = 520;
-            high_lim = 670;
+    if (!node_.getParam("/HighLevelControl/wall_follow_distance",
+                        move_specs_.wall_follow_distance_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/HighLevelControl/linear_velocity",
+                        move_specs_.linear_velocity_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/HighLevelControl/angular_velocity",
+                        move_specs_.angular_velocity_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/HighLevelControl/right_range_low_lim",
+                        move_specs_.right_range_.low_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/HighLevelControl/right_range_high_lim",
+                        move_specs_.right_range_.high_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/HighLevelControl/left_range_low_lim",
+                        move_specs_.left_range_.low_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/HighLevelControl/left_range_high_lim",
+                        move_specs_.left_range_.high_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/HighLevelControl/center_range_low_lim",
+                        move_specs_.center_range_.low_lim_)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("/HighLevelControl/center_range_high_lim",
+                        move_specs_.center_range_.high_lim_)) {
+        loaded = false;
+    }
+
+    move_specs_.turn_type_ = NONE;
+
+    if (loaded == false) {
+        ros::shutdown();
+    }
+}
+
+void HighLevelControl::InitialiseMoveStatus() {
+    move_status_.can_continue_ = true;
+    move_status_.is_close_to_wall_ = false;
+    move_status_.is_following_wall_ = false;
+    move_status_.circle_hit_mode_ = false;
+    move_status_.hit_goal_ = false;
+}
+
+void HighLevelControl::LaserCallback(const robot::circle_detect_msg::ConstPtr& msg) {
+    std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
+    // If true stay in the mode else check if we can hit circle
+    move_status_.circle_hit_mode_ = move_status_.circle_hit_mode_ ? true :
+                                    CanHit(msg->circle_x, msg->circle_y,
+                                           ranges);
+    if (!move_status_.circle_hit_mode_) {
+        NormalMovement(ranges);
+    } else {
+        HitCircle(ranges);
+    }
+}
+
+bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<float>& ranges) {
+    // Cannot hit circle if not in wall following mode
+    if (move_specs_.turn_type_ == NONE) {
+        return false;
+    }
+
+    // Distance to the wall 20 deg on the oposite side of the circle
+    double wall_20;
+    // Planar distance to the center of the circle ignoring obstacles
+    double center_distance = sqrt(circle_x * circle_x + circle_y * circle_y);
+    // Angle to the center of the circle relative to normal cartesian system
+    double center_angle = acos(circle_x / center_distance) / M_PI * 180;
+    // Index of the angle in the ranges vector
+    int index = (center_angle + 30) * 3;
+    // Check if we might get an out of bound index after shifting by 20 deg
+    if (index < 60 || index >= 660)
+        return false;
+    // Distance from LRF in the direction of the circle center
+    double center_lrf = ranges[index];
+    if (move_specs_.turn_type_ == RIGHT) {
+        // Distance 20 deg left from the center
+        wall_20 = ranges[index + 60];
+    } else if (move_specs_.turn_type_ == LEFT) {
+        // Distance 20 deg right from the center
+        wall_20 = ranges[index - 60];
+    } else {
+        return false;
+    }
+
+    // Threshold to detect if we have fake circle at a corner. If this is the
+    // case wall_20 will be smaller than the threshold
+    double threshold = center_distance + 1;
+    // If the threshold condition is true, if the circle is to the front of the
+    // robot and close enough then we go into circle hit mode
+    if (wall_20 > threshold && center_lrf < center_distance && circle_x > -0.5
+            && circle_x < 0.5 && circle_y < 1 && circle_y > 0) {
+        return true;
+    }
+
+    return false;
+}
+
+void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
+    double right_min_distance, left_min_distance, center_min_distance;
+
+    right_min_distance = GetMin(ranges, move_specs_.right_range_.low_lim_,
+                                move_specs_.right_range_.high_lim_);
+
+    left_min_distance = GetMin(ranges, move_specs_.left_range_.low_lim_,
+                               move_specs_.left_range_.high_lim_);
+
+    center_min_distance = GetMin(ranges, move_specs_.center_range_.low_lim_,
+                                 move_specs_.center_range_.high_lim_);
+
+    CanContinue(right_min_distance, left_min_distance, center_min_distance);
+
+    IsCloseToWall(right_min_distance, left_min_distance, center_min_distance);
+
+    WallFollowMove();
+}
+
+void HighLevelControl::CanContinue(double right_min_distance, double left_min_distance,
+                                   double center_min_distance) {
+    double priority_min, secondary_min;
+    if (move_specs_.turn_type_ == RIGHT) {
+        priority_min = center_min_distance < right_min_distance ? center_min_distance :
+                       right_min_distance;
+
+        secondary_min = left_min_distance;
+    } else if (move_specs_.turn_type_ == LEFT) {
+        priority_min = center_min_distance < left_min_distance ? center_min_distance :
+                       left_min_distance;
+
+        secondary_min = right_min_distance;
+    } else {
+        priority_min = secondary_min = Min(right_min_distance, left_min_distance,
+                                           center_min_distance);
+    }
+
+    if (priority_min > move_specs_.high_security_distance_
+            && secondary_min > move_specs_.low_security_distance_) {
+        move_status_.can_continue_ = true;
+    } else {
+        move_status_.can_continue_ = false;
+    }
+}
+
+void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_distance,
+                                     double center_min_distance) {
+    if (move_status_.is_following_wall_) {
+        double min;
+        if (move_specs_.turn_type_ == RIGHT) {
+            min = right_min_distance;
+        } else if (move_specs_.turn_type_ == LEFT) {
+            min = left_min_distance;
         } else {
-            // This case shoud never happen
+            // This case should never happen
             ros::shutdown();
         }
 
-        std::vector<float>::iterator wall_it = std::min_element(ranges.begin() + low_lim,
-                                               ranges.begin() + high_lim);
-
-        if (*wall_it < wall_follow_distance_) {
-            is_close_to_wall_ = true;
+        if (min < move_specs_.wall_follow_distance_) {
+            move_status_.is_close_to_wall_ = true;
         } else {
-            is_close_to_wall_ = false;
+            move_status_.is_close_to_wall_ = false;
         }
     }
 }
 
-void HighLevelControl::set_security_distance(double security_distance) {
-    security_distance_ = security_distance;
-}
+void HighLevelControl::HitCircle(std::vector<float>& ranges) {
+    if (move_status_.hit_goal_) {
+        // Move fast towards goal
+        float angular_velocity;
+        if(move_specs_.turn_type_ == LEFT) {
+            angular_velocity = 0.25;
+        } else {
+            angular_velocity = -0.25;
+        }
+        Move(move_specs_.linear_velocity_ * 10, angular_velocity);
+        return;
+    }
 
-void HighLevelControl::set_linear_velocity(double linear_velocity) {
-    linear_velocity_ = linear_velocity;
-}
+    // 0 deg if right wall and 240 if left wall
+    double back_value;
+    // 60 deg if right wall and 180 if left wall
+    double front_value;
+    if (move_specs_.turn_type_ == RIGHT) {
+        back_value = ranges[move_specs_.right_range_.low_lim_];
+        front_value = ranges[90 * 2];
+    } else if (move_specs_.turn_type_ == LEFT) {
+        back_value = ranges[move_specs_.left_range_.high_lim_ - 1];
+        front_value = ranges[720 - 90 * 2 - 1];
+    } else {
+        // Cannot hit circle if not in wall following mode
+        ros::shutdown();
+    }
 
-void HighLevelControl::set_angular_velocity(double angular_velocity) {
-    angular_velocity_ = angular_velocity;
-}
-
-void HighLevelControl::set_turn_type(int turn_type) {
-    turn_type_ = turn_type;
-    is_following_wall_ = true;
+    // The difference of the values must be very small such that the robot
+    // is aligned to the wall it is following. If not turn appropriately.
+    double diff = front_value - back_value;
+    if (diff <= 0.025 && diff >= -0.025) {
+        move_status_.hit_goal_ = true;
+    } else if (diff > 0.025) {
+        Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
+    } else {
+        Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
+    }
 }
 
 void HighLevelControl::WallFollowMove() {
-    if (!can_continue_ && !is_following_wall_) {
+    if (!move_status_.can_continue_ && !move_status_.is_following_wall_) {
         srand(time(NULL));
-
-        // If we are in override mode don't change the type of the wall
-        if(turn_type_ != 1 && turn_type_ != -1)
-            turn_type_ = rand() % 2 == 0 ? -1 : 1;
-
-        is_following_wall_ = true;
-    } else if (can_continue_ && !is_following_wall_) {
-        Move(linear_velocity_, 0);
+        // 50% left mode, 50% right mode
+        move_specs_.turn_type_ = rand() % 10000 > 5000 ? RIGHT : LEFT;
+        move_status_.is_following_wall_ = true;
+    } else if (move_status_.can_continue_ && !move_status_.is_following_wall_) {
+        Move(move_specs_.linear_velocity_, 0);
     } else {
-        if (can_continue_ && is_close_to_wall_) {
-            Move(linear_velocity_, 0);
-        } else if (!can_continue_) {
-            Move(0, turn_type_ * angular_velocity_);
-        } else if (!is_close_to_wall_) {
-            Move(0, -turn_type_ * angular_velocity_);
+        if (move_status_.can_continue_ && move_status_.is_close_to_wall_) {
+            Move(move_specs_.linear_velocity_, 0);
+        } else if (!move_status_.can_continue_) {
+            Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
+        } else if (!move_status_.is_close_to_wall_) {
+            Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
         }
     }
 }
 
-void HighLevelControl::ControlledRandomMove() {
-    if (can_continue_) {
-        Move(linear_velocity_, 0);
-        is_turning_ = false;
-    } else {
-        if (!is_turning_) {
-            turn_type_ = rand() % 2 == 0 ? -1 : 1;
-            is_turning_ = true;
-        }
-
-        Move(0, angular_velocity_ * turn_type_);
-    }
-}
-
-void HighLevelControl::TotalRandomMove() {
-    if(can_continue_) {
-        Move(linear_velocity_, 0);
-    } else {
-        srand(time(NULL));
-        int turn_factor = rand() % 20 - 10;
-        Move(0, turn_factor * angular_velocity_);
-    }
-}
-
-//TODO: To be put into Low Level Control
 void HighLevelControl::Move(double linear_velocity, double angular_velocity) {
     geometry_msgs::Twist msg;
     msg.linear.x = linear_velocity;
