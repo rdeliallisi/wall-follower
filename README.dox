@@ -22,7 +22,7 @@ Development timeline
   Basic wall following - a bit buggy (Rubin), Object detection without OpenCV using analytical methods - Experimental,
   not merged yet (Siddharth)
 
-- Sprint 2: High Level Control (Rubin), Circle Detection (Atabak, Siddharth), HLC & CD Tests (Maria), HLC & CD Docs (Maria)
+- Sprint 2: High Level Control (Rubin), Circle Detection (Atabak, Siddharth), HLC & CD Tests (Maria, Rubin), HLC & CD Docs (Maria)
 
 - Sprint 3: (Pending)
 
@@ -35,20 +35,19 @@ Setup:
 - Run `cd src`
 - Run `git clone https://github.com/JacobsUniversitySELab2016S/se-lab-team-7.git`
 - Navigate back to your catkin workspace (`cd ../`)
-- Run `source devel/setup.bash` or `source devel/setup.zsh` or `source devel/setup.sh` depending on your shell
 - Run `catkin_make`
+- Run `source devel/setup.bash` or `source devel/setup.zsh` or `source devel/setup.sh` depending on your shell
 - Run `roslaunch robot robot.launch world_name:=easy`
 - Run `roslaunch robot robot.launch world_name:=medium`
 - Run `roslaunch robot robot.launch world_name:=hard`
 
 Tests:
 - Navigate to your catkin workspace
-- Run `source devel/setup.bash` or `source devel/setup.zsh` or `source devel/setup.sh` depending on your shell
 - Run `catkin_make`
+- Run `source devel/setup.bash` or `source devel/setup.zsh` or `source devel/setup.sh` depending on your shell
 - Run `catkin_make run_tests` to execute test cases
 
 Generate Documentation:
 - Navigate to the git project root
 - Run `doxygen Doxyfile` to generate documentation
-
 */

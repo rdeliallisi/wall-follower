@@ -1,7 +1,7 @@
 /**
  * @file circle_detector_node.cpp
  * @brief Circle detector node which runs the circle detector
- * 
+ *
  * @author Atabak Hafeez [atabakhafeez]
  * @author Maria Ficiu [MariaFiciu]
  * @author Rubin Deliallisi [rdeliallisi]
@@ -15,15 +15,21 @@
 
 using namespace std;
 
+/**
+ * \cond
+ */
 int main(int argc, char **argv) {
-    ros::init(argc, argv, "CircleDetector");
-    CircleDetector circle_detector;
+	ros::init(argc, argv, "CircleDetector");
+	CircleDetector circle_detector;
 
-    ros::Rate r(10.0);
-    while (ros::ok()) {
+	ros::Rate r(10.0);
+	while (ros::ok()) {
 
-        ros::spinOnce();
-        r.sleep();
-    }
-    return 0;
+		ros::spinOnce();
+		r.sleep();
+	}
+	return 0;
 }
+/**
+ * \endcond
+ */
