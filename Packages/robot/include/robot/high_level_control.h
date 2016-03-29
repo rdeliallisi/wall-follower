@@ -96,20 +96,22 @@ public:
     void HitCircle(std::vector<float>& ranges);
 
     /**
-     * @brief [brief description]
+     * @brief Checks if the robots path is clear and it can hit the circle
      *
-     * @param circle_x [description]
-     * @param circle_y [description]
-     * @param ranges [description]
-     * @return [description]
+     * @param circle_x The x-coordinate of the circle in cartesian coordinates
+     * relative to the robot
+     * @param circle_y The y-coordinate of the circle in cartesian coordinates
+     * relative to the robot
+     * @param ranges The laser range finder ranges in std::vector<float> format
+     * @return Returns boolean value of whether thr robot can hit the cicle
      */
     bool CanHit(double circle_x, double circle_y, std::vector<float>& ranges);
 
     /**
-    * @brief [brief description]
-    * @details [long description]
+    * @brief Analyses the ranges given by the laser range finder and updates the 
+     * minimum distances on the left, right and center of the robot
     *
-    * @param ranges [description]
+    * @param ranges The laser range finder ranges in std::vector<float> format
     */
     void Update(std::vector<float>& ranges);
 
