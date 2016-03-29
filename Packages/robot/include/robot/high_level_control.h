@@ -83,12 +83,9 @@ private:
      */
     void InitialiseMoveStatus();
 
-public:
-    HighLevelControl();
-
     /**
-     * @brief Moves the robot so that it always follows a wall
-     */
+    * @brief Moves the robot so that it always follows a wall
+    */
     void WallFollowMove();
 
     /**
@@ -98,6 +95,9 @@ public:
      * @param ranges The laser range finder ranges in std::vector<float> format
      */
     void HitCircle(std::vector<float>& ranges);
+
+public:
+    HighLevelControl();
 
     /**
      * @brief [brief description]
