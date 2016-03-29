@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+	<arg name="CD_params" default="CD_params.yaml"/>
+
+	<rosparam command="load" file="$(find robot)/config/$(arg CD_params)" />
+
+	<test test-name="CD_utils_test" pkg="robot" type="CD_utils_test"/>
+
+
+</launch>

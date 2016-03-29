@@ -18,7 +18,7 @@
 #include "move_helpers.h"
 
 /**
- * @brief Defines the movement of the robot such as the wall following and the 
+ * @brief Defines the movement of the robot such as the wall following and the
  * gets data from the CircleDetector about the position of the circle and hits
  * it
  *
@@ -58,20 +58,28 @@ private:
     /**
      * @brief Gets the data from the laser range finder, examines them and
      * updates the relevant class variables
-     * 
+     *
      * @param msg Raw data comming from the laser range finder
      */
     void LaserCallback(const robot::circle_detect_msg::ConstPtr& msg);
 
     /**
-     * @brief Initialises the movement specifications by getting the parameters 
+    * @brief Analyses the ranges given by the laser range finder and updates the 
+     * minimum distances on the left, right and center of the robot
+    *
+    * @param ranges The laser range finder ranges in std::vector<float> format
+    */
+    void Update(std::vector<float>& ranges);
+
+    /**
+     * @brief Initialises the movement specifications by getting the parameters
      * from the config file
      */
     void InitialiseMoveSpecs();
 
     /**
-     * @brief Initialises the movement status of the robot once the robot is 
-     * initialised 
+     * @brief Initialises the movement status of the robot once the robot is
+     * initialised
      */
     void InitialiseMoveStatus();
 
@@ -81,15 +89,14 @@ public:
      */
     HighLevelControl();
 
-    
     /**
-     * @brief Moves the robot so that it always follows a wall
-     */
+    * @brief Moves the robot so that it always follows a wall
+    */
     void WallFollowMove();
 
     /**
-     * @brief Defines the movement of the robot when there is no wall nearby and 
-     * checks for the nearest wall 
+     * @brief Defines the movement of the robot when there is no wall nearby and
+     * checks for the nearest wall
      *
      * @param ranges The laser range finder ranges in std::vector<float> format
      */
@@ -108,20 +115,12 @@ public:
     bool CanHit(double circle_x, double circle_y, std::vector<float>& ranges);
 
     /**
-    * @brief Analyses the ranges given by the laser range finder and updates the 
-     * minimum distances on the left, right and center of the robot
-    *
-    * @param ranges The laser range finder ranges in std::vector<float> format
-    */
-    void Update(std::vector<float>& ranges);
-
-    /**
      * @brief Checks whether the robot can continue in the same path. If the 
      * security distance is close it sets the can_continue_ to false
      *
-     * @param right_min_distance The minimum distance detected in the ranges to 
+     * @param right_min_distance The minimum distance detected in the ranges to
      * the right of the robot
-     * @param left_min_distance The minimum distance detected in the ranges to 
+     * @param left_min_distance The minimum distance detected in the ranges to
      * the left of the robot
      * @param center_min_distance The minimum distance detected in the ranges
      * in front of the robot within a range
@@ -133,9 +132,9 @@ public:
      * @brief Checks if the robot is close to the wall by checking the direction
      * of the turn and minimum distance from the wall on that side
      *
-     * @param right_min_distance The minimum distance detected in the ranges to 
+     * @param right_min_distance The minimum distance detected in the ranges to
      * the right of the robot
-     * @param left_min_distance The minimum distance detected in the ranges to 
+     * @param left_min_distance The minimum distance detected in the ranges to
      * the left of the robot
      * @param center_min_distance The minimum distance detected in the ranges
      * in front of the robot within a range
@@ -151,28 +150,32 @@ public:
     void Move(double linear_speed, double angular_speed);
 
     /**
-     * @brief Tells the robot that the circle has been detected and it should 
-     * move straight towards it
+     * @brief Getter for the movement spacifications
      *
-     * @param ranges The laser range finder ranges in std::vector<float> format
+     * @return Returns MoveSpecs
      */
     MoveSpecs get_move_specs() {
         return move_specs_;
     }
 
-    /**
-     * @brief Checks if the circle detected is not actually a corner and gives a 
-     * go ahead to the HitCircle method 
-     *
-     * @param circle_x The x-coordinate of the circle in cartesian coordinates
-     * with the origin as the laser range finder
-     * @param circle_y The y-coordinate of the circle in cartesian coordinates
-     * with the origin as the laser range finder
-     * @param ranges The laser range finder ranges in std::vector<float> format
-     * @return Returns true/false of whether the robot can hit the circle or not
-     */
+   /**
+    * @brief Getter for the movement status of the robot
+    *
+    * @return Returns MoveStatus
+    */
     MoveStatus get_move_status() {
         return move_status_;
+    }
+
+    /**
+     * @brief Setter for turn type
+     *
+     * @param turn_type The TurnType for the robot
+     */
+    void set_turn_type(TurnType turn_type) {
+        if (!move_status_.is_following_wall_)
+            move_status_.is_following_wall_ = true;
+        move_specs_.turn_type_ = turn_type;
     }
 };
 
