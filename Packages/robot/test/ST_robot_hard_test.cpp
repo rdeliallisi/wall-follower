@@ -1,6 +1,6 @@
 /**
- * @file ST_robot_easy_test.cpp
- * @brief System test for successful completion of goal in easy world
+ * @file ST_robot_hard_test.cpp
+ * @brief System test for successful completion of goal in hard world
  *
  * @author Atabak Hafeez [atabakhafeez]
  * @author Maria Ficiu [MariaFiciu]
