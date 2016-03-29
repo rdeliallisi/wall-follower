@@ -12,9 +12,10 @@ Project Description:
 A robot developed using ROS that can navigate a maze based on the input from a laser range finder.
 
 External Dependencies:
-- ROS : Jade v1.11.16
+- ROS : v1.11.16 (Jade)
 - OpenCV : v3.1.10
 - GoogleTest : v1.7.0
+- Doxygen : v1.8.11
 
 Development timeline
 - Sprint 1: Completed circle detection (Maria, Atabak), Completed random walk (Rubin),
@@ -34,9 +35,20 @@ Setup:
 - Run `cd src`
 - Run `git clone https://github.com/JacobsUniversitySELab2016S/se-lab-team-7.git`
 - Navigate back to your catkin workspace (`cd ../`)
+- Run `source devel/setup.bash` or `source devel/setup.zsh` or `source devel/setup.sh` depending on your shell
 - Run `catkin_make`
-- Run `source devel/setup.bash`
 - Run `roslaunch robot robot.launch world_name:=easy`
 - Run `roslaunch robot robot.launch world_name:=medium`
 - Run `roslaunch robot robot.launch world_name:=hard`
+
+Tests:
+- Navigate to your catkin workspace
+- Run `source devel/setup.bash` or `source devel/setup.zsh` or `source devel/setup.sh` depending on your shell
+- Run `catkin_make`
+- Run `catkin_make run_tests` to execute test cases
+
+Generate Documentation:
+- Navigate to the git project root
+- Run `doxygen Doxyfile` to generate documentation
+
 */
