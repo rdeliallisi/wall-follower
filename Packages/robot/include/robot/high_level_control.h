@@ -1,6 +1,6 @@
 /**
  * @file high_level_control.h
- * @brief This file defines the HighLevelControl clas
+ * @brief This file defines the HighLevelControl class
  *
  * @author Atabak Hafeez [atabakhafeez]
  * @author Maria Ficiu [MariaFiciu]
@@ -18,34 +18,28 @@
 #include "move_helpers.h"
 
 /**
- * @brief Breaks down abstract movement commands into smaller ones, that can be
- * executed by the Low Level Control
+ * @brief Defines the movement of the robot such as the wall following and the 
+ * gets data from the CircleDetector about the position of the circle and hits
+ * it
  *
  * Usage:
  *     HighLevelControl high_level_control;
- *     high_level_control.FollowWallMove();
- *
- * @author Rubin Deliallisi (rdeliallisi)
- * @date March 2016
  */
 
 class HighLevelControl {
 
 private:
 
-    // TODO(rdeliallisi): To be put into Low Level Control
     /**
      * @brief Ros node to which the class is attached
     */
     ros::NodeHandle node_;
 
-    // TODO(rdeliallisi): To be put into Low Level Control
     /**
      * @brief Used to send messages to the actual robot
      */
     ros::Publisher cmd_vel_pub_;
 
-    // TODO(rdeliallisi): To be put into Object Detection
     /**
      * @brief Used to get the data from the laser range finder
      */
@@ -57,26 +51,35 @@ private:
     MoveSpecs move_specs_;
 
     /**
-     * @brief Contains the corrent movement status
+     * @brief Contains the current movement status
      */
     MoveStatus move_status_;
 
     /**
      * @brief Gets the data from the laser range finder, examines them and
      * updates the relevant class variables
+     * 
      * @param msg Raw data comming from the laser range finder
      */
     void LaserCallback(const robot::circle_detect_msg::ConstPtr& msg);
 
     /**
-     * @brief [brief description]
-     * @details [long description]
+     * @brief Send the movement command to the robot using ROS nodes and topics
+     * 
+     * @param linear_speed  Linear Speed that the robot should move with
+     * @param angular_speed Angular Speed that the robot should rotate with
+     */
+    void Move(double linear_speed, double angular_speed);
+
+    /**
+     * @brief Initialises the movement specifications by getting the parameters 
+     * from the config file
      */
     void InitialiseMoveSpecs();
 
     /**
-     * @brief [brief description]
-     * @details [long description]
+     * @brief Initialises the movement status of the robot once the robot is 
+     * initialised 
      */
     void InitialiseMoveStatus();
 
@@ -89,9 +92,10 @@ public:
     void WallFollowMove();
 
     /**
-     * @brief [brief description]
+     * @brief Defines the movement of the robot when there is no wall nearby and 
+     * checks for the nearest wall 
      *
-     * @param ranges [description]
+     * @param ranges The laser range finder ranges in std::vector<float> format
      */
     void HitCircle(std::vector<float>& ranges);
 
@@ -114,22 +118,29 @@ public:
     void Update(std::vector<float>& ranges);
 
     /**
-     * @brief [brief description]
-     * @details [long description]
+     * @brief Checks whether the robot can continue in the same path. If the 
+     * security distance is close it sets the can_continue_ to false
      *
-     * @param right_min_distance [description]
-     * @param left_min_distance [description]
-     * @param center_min_distance [description]
+     * @param right_min_distance The minimum distance detected in the ranges to 
+     * the right of the robot
+     * @param left_min_distance The minimum distance detected in the ranges to 
+     * the left of the robot
+     * @param center_min_distance The minimum distance detected in the ranges
+     * in front of the robot within a range
      */
     void CanContinue(double right_min_distance, double left_min_distance,
                      double center_min_distance);
 
     /**
-     * @brief [brief description]
+     * @brief Checks if the robot is close to the wall by checking the direction
+     * of the turn and minimum distance from the wall on that side
      *
-     * @param right_min_distance [description]
-     * @param left_min_distance [description]
-     * @param center_min_distance [description]
+     * @param right_min_distance The minimum distance detected in the ranges to 
+     * the right of the robot
+     * @param left_min_distance The minimum distance detected in the ranges to 
+     * the left of the robot
+     * @param center_min_distance The minimum distance detected in the ranges
+     * in front of the robot within a range
      */
     void IsCloseToWall(double right_min_distance, double left_min_distance,
                        double center_min_distance);
@@ -143,18 +154,25 @@ public:
     void Move(double linear_speed, double angular_speed);
 
     /**
-     * @brief [brief description]
-     * @details [long description]
-     * @return [description]
+     * @brief Tells the robot that the circle has been detected and it should 
+     * move straight towards it
+     *
+     * @param ranges The laser range finder ranges in std::vector<float> format
      */
     MoveSpecs get_move_specs() {
         return move_specs_;
     }
 
     /**
-     * @brief [brief description]
-     * @details [long description]
-     * @return [description]
+     * @brief Checks if the circle detected is not actually a corner and gives a 
+     * go ahead to the HitCircle method 
+     *
+     * @param circle_x The x-coordinate of the circle in cartesian coordinates
+     * with the origin as the laser range finder
+     * @param circle_y The y-coordinate of the circle in cartesian coordinates
+     * with the origin as the laser range finder
+     * @param ranges The laser range finder ranges in std::vector<float> format
+     * @return Returns true/false of whether the robot can hit the circle or not
      */
     MoveStatus get_move_status() {
         return move_status_;
