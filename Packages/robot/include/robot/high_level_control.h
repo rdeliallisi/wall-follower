@@ -159,6 +159,17 @@ public:
     MoveStatus get_move_status() {
         return move_status_;
     }
+
+    /**
+     * @brief Setter for turn type
+     * 
+     * @param turn_type [description]
+     */
+    void set_turn_type(TurnType turn_type) {
+        if(!move_status_.is_following_wall_)
+            move_status_.is_following_wall_ = true;
+        move_specs_.turn_type_ = turn_type;
+    }
 };
 
 #endif
