@@ -31,10 +31,12 @@ To access experimental features:
 
 Setup:
 - Navigate to your catkin workspace
-- Copy `robot` to your `src`
+- `cd src`
+- `git clone https://github.com/JacobsUniversitySELab2016S/se-lab-team-7.git`
+- Navigate back to catkin workspace
 - Run `catkin_make`
 - Run `source devel/setup.bash`
-- Run `roscore`
-- Run `roslaunch lab_simulator simulator.launch`
-- Run `rosrun robot HighLevelControlNode && rosrun robot CircleDetector`
+- Run `roslaunch robot robot.launch world_name:=easy`
+- Run `roslaunch robot robot.launch world_name:=medium`
+- Run `roslaunch robot robot.launch world_name:=hard`
 */
