@@ -28,57 +28,57 @@ HighLevelControl::HighLevelControl() : node_() {
 void HighLevelControl::InitialiseMoveSpecs() {
     bool loaded = true;
 
-    if (!node_.getParam("/HighLevelControl/high_security_distance",
+    if (!node_.getParam("high_security_distance",
                         move_specs_.high_security_distance_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/low_security_distance",
+    if (!node_.getParam("/low_security_distance",
                         move_specs_.low_security_distance_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/wall_follow_distance",
+    if (!node_.getParam("/wall_follow_distance",
                         move_specs_.wall_follow_distance_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/linear_velocity",
+    if (!node_.getParam("/linear_velocity",
                         move_specs_.linear_velocity_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/angular_velocity",
+    if (!node_.getParam("/angular_velocity",
                         move_specs_.angular_velocity_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/right_range_low_lim",
+    if (!node_.getParam("/right_range_low_lim",
                         move_specs_.right_range_.low_lim_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/right_range_high_lim",
+    if (!node_.getParam("/right_range_high_lim",
                         move_specs_.right_range_.high_lim_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/left_range_low_lim",
+    if (!node_.getParam("/left_range_low_lim",
                         move_specs_.left_range_.low_lim_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/left_range_high_lim",
+    if (!node_.getParam("/left_range_high_lim",
                         move_specs_.left_range_.high_lim_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/center_range_low_lim",
+    if (!node_.getParam("/center_range_low_lim",
                         move_specs_.center_range_.low_lim_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/HighLevelControl/center_range_high_lim",
+    if (!node_.getParam("/center_range_high_lim",
                         move_specs_.center_range_.high_lim_)) {
         loaded = false;
     }
@@ -105,7 +105,8 @@ void HighLevelControl::LaserCallback(const robot::circle_detect_msg::ConstPtr& m
                                     CanHit(msg->circle_x, msg->circle_y,
                                            ranges);
     if (!move_status_.circle_hit_mode_) {
-        NormalMovement(ranges);
+        Update(ranges);
+        WallFollowMove();
     } else {
         HitCircle(ranges);
     }
@@ -153,7 +154,7 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
     return false;
 }
 
-void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
+void HighLevelControl::Update(std::vector<float>& ranges) {
     double right_min_distance, left_min_distance, center_min_distance;
 
     right_min_distance = GetMin(ranges, move_specs_.right_range_.low_lim_,
@@ -168,8 +169,6 @@ void HighLevelControl::NormalMovement(std::vector<float>& ranges) {
     CanContinue(right_min_distance, left_min_distance, center_min_distance);
 
     IsCloseToWall(right_min_distance, left_min_distance, center_min_distance);
-
-    WallFollowMove();
 }
 
 void HighLevelControl::CanContinue(double right_min_distance, double left_min_distance,

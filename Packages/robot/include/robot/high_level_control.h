@@ -69,13 +69,6 @@ private:
     void LaserCallback(const robot::circle_detect_msg::ConstPtr& msg);
 
     /**
-     * @brief Send the movement command to the robot using ROS nodes and topics
-     * @param linear_speed  Linear Speed that the robot should move with
-     * @param angular_speed Angular Speed that the robot should rotate with
-     */
-    void Move(double linear_speed, double angular_speed);
-
-    /**
      * @brief [brief description]
      * @details [long description]
      */
@@ -86,36 +79,6 @@ private:
      * @details [long description]
      */
     void InitialiseMoveStatus();
-
-    /**
-     * @brief [brief description]
-     * @details [long description]
-     *
-     * @param ranges [description]
-     */
-    void NormalMovement(std::vector<float>& ranges);
-
-    /**
-     * @brief [brief description]
-     * @details [long description]
-     *
-     * @param right_min_distance [description]
-     * @param left_min_distance [description]
-     * @param center_min_distance [description]
-     */
-    void CanContinue(double right_min_distance, double left_min_distance,
-                     double center_min_distance);
-
-    /**
-     * @brief [brief description]
-     * @details [long description]
-     *
-     * @param right_min_distance [description]
-     * @param left_min_distance [description]
-     * @param center_min_distance [description]
-     */
-    void IsCloseToWall(double right_min_distance, double left_min_distance,
-                       double center_min_distance);
 
 public:
     HighLevelControl();
@@ -141,6 +104,61 @@ public:
      * @return [description]
      */
     bool CanHit(double circle_x, double circle_y, std::vector<float>& ranges);
+
+    /**
+    * @brief [brief description]
+    * @details [long description]
+    *
+    * @param ranges [description]
+    */
+    void Update(std::vector<float>& ranges);
+
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     *
+     * @param right_min_distance [description]
+     * @param left_min_distance [description]
+     * @param center_min_distance [description]
+     */
+    void CanContinue(double right_min_distance, double left_min_distance,
+                     double center_min_distance);
+
+    /**
+     * @brief [brief description]
+     *
+     * @param right_min_distance [description]
+     * @param left_min_distance [description]
+     * @param center_min_distance [description]
+     */
+    void IsCloseToWall(double right_min_distance, double left_min_distance,
+                       double center_min_distance);
+
+    /**
+    * @brief Send the movement command to the robot using ROS nodes and topics
+    *
+    * @param linear_speed  Linear Speed that the robot should move with
+    * @param angular_speed Angular Speed that the robot should rotate with
+    */
+    void Move(double linear_speed, double angular_speed);
+
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     * @return [description]
+     */
+    MoveSpecs get_move_specs() {
+        return move_specs_;
+    }
+
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     * @return [description]
+     */
+    MoveStatus get_move_status() {
+        return move_status_;
+    }
 };
 
 #endif
