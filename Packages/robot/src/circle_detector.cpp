@@ -43,42 +43,42 @@ void CircleDetector::ConvertLaserScanToCartesian(int &x, int &y, float range, fl
 void CircleDetector::LoadParams() {
     bool loaded = true;
 
-    if (!node_.getParam("/CircleDetector/blur_kernel_size",
+    if (!node_.getParam("/blur_kernel_size",
                         blur_params_.kernel_size_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/CircleDetector/blur_sigma",
+    if (!node_.getParam("/blur_sigma",
                         blur_params_.sigma_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/CircleDetector/hough_threshold_1",
+    if (!node_.getParam("/hough_threshold_1",
                         hough_params_.threshold_1_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/CircleDetector/hough_threshold_2",
+    if (!node_.getParam("/hough_threshold_2",
                         hough_params_.threshold_2_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/CircleDetector/hough_dp",
+    if (!node_.getParam("/hough_dp",
                         hough_params_.dp_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/CircleDetector/hough_min_dist",
+    if (!node_.getParam("/hough_min_dist",
                         hough_params_.min_dist_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/CircleDetector/hough_min_radius",
+    if (!node_.getParam("/hough_min_radius",
                         hough_params_.min_radius_)) {
         loaded = false;
     }
 
-    if (!node_.getParam("/CircleDetector/hough_max_radius",
+    if (!node_.getParam("/hough_max_radius",
                         hough_params_.max_radius_)) {
         loaded = false;
     }
@@ -92,7 +92,6 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     size_t data_points = msg->ranges.size();
 
     //create image
-    // TODO: Put in state
     int screen_width = 1000;
     int screen_height = 1000;
     const float lrf_max_range = 2;

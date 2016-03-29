@@ -58,6 +58,7 @@ private:
     /**
      * @brief Gets the data from the laser range finder, examines them and
      * updates the relevant class variables
+     * 
      * @param msg Raw data comming from the laser range finder
      */
     void LaserCallback(const robot::circle_detect_msg::ConstPtr& msg);
@@ -82,13 +83,39 @@ private:
      */
     void InitialiseMoveStatus();
 
+public:
+    HighLevelControl();
+
+    /**
+     * @brief Moves the robot so that it always follows a wall
+     */
+    void WallFollowMove();
+
     /**
      * @brief Defines the movement of the robot when there is no wall nearby and 
      * checks for the nearest wall 
      *
      * @param ranges The laser range finder ranges in std::vector<float> format
      */
-    void NormalMovement(std::vector<float>& ranges);
+    void HitCircle(std::vector<float>& ranges);
+
+    /**
+     * @brief [brief description]
+     *
+     * @param circle_x [description]
+     * @param circle_y [description]
+     * @param ranges [description]
+     * @return [description]
+     */
+    bool CanHit(double circle_x, double circle_y, std::vector<float>& ranges);
+
+    /**
+    * @brief [brief description]
+    * @details [long description]
+    *
+    * @param ranges [description]
+    */
+    void Update(std::vector<float>& ranges);
 
     /**
      * @brief Checks whether the robot can continue in the same path. If the 
@@ -125,9 +152,12 @@ public:
     HighLevelControl();
 
     /**
-     * @brief Moves the robot so that it always follows a wall
-     */
-    void WallFollowMove();
+    * @brief Send the movement command to the robot using ROS nodes and topics
+    *
+    * @param linear_speed  Linear Speed that the robot should move with
+    * @param angular_speed Angular Speed that the robot should rotate with
+    */
+    void Move(double linear_speed, double angular_speed);
 
     /**
      * @brief Tells the robot that the circle has been detected and it should 
@@ -135,7 +165,9 @@ public:
      *
      * @param ranges The laser range finder ranges in std::vector<float> format
      */
-    void HitCircle(std::vector<float>& ranges);
+    MoveSpecs get_move_specs() {
+        return move_specs_;
+    }
 
     /**
      * @brief Checks if the circle detected is not actually a corner and gives a 
@@ -148,7 +180,9 @@ public:
      * @param ranges The laser range finder ranges in std::vector<float> format
      * @return Returns true/false of whether the robot can hit the circle or not
      */
-    bool CanHit(double circle_x, double circle_y, std::vector<float>& ranges);
+    MoveStatus get_move_status() {
+        return move_status_;
+    }
 };
 
 #endif
