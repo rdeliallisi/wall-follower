@@ -45,17 +45,63 @@ add_dependencies(CircleDetector robot_generate_messages_cpp)
 
 #Unit Tests
 
-add_rostest_gtest(HLCN_start_position_test launch/start_position.launch test/HLCH_start_position_test.cpp)
-target_link_libraries(HLCN_start_position_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+#add_rostest_gtest(HLCN_start_position_test launch/start_position.launch test/HLCH_start_position_test.cpp)
+#target_link_libraries(HLCN_start_position_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+#
+#add_rostest_gtest(HLCN_wall_proximity_test launch/wall_proximity.launch test/HLCH_wall_proximity_test.cpp)
+#target_link_libraries(HLCN_wall_proximity_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+#
+#add_rostest_gtest(CD_no_circle_test launch/no_circle.launch test/CD_no_circle_test.cpp)
+#target_link_libraries(CD_no_circle_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+#
+#add_rostest_gtest(CD_circle_present_test_1 launch/circle_present_1.launch test/CD_circle_present_test.cpp)
+#target_link_libraries(CD_circle_present_test_1 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+#
+#add_rostest_gtest(CD_circle_present_test_2 launch/circle_present_2.launch test/CD_circle_present_test.cpp)
+#target_link_libraries(CD_circle_present_test_2 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(HLCN_wall_proximity_test launch/wall_proximity.launch test/HLCH_wall_proximity_test.cpp)
-target_link_libraries(HLCN_wall_proximity_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(CD_no_circle_test launch/no_circle.launch test/CD_no_circle_test.cpp)
-target_link_libraries(CD_no_circle_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+# System tests
 
-add_rostest_gtest(CD_circle_present_test_1 launch/circle_present_1.launch test/CD_circle_present_test.cpp)
-target_link_libraries(CD_circle_present_test_1 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+add_rostest_gtest(ST_robot_easy_test test/ST_robot_easy.test test/ST_robot_easy_test.cpp)
+target_link_libraries(ST_robot_easy_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
-add_rostest_gtest(CD_circle_present_test_2 launch/circle_present_2.launch test/CD_circle_present_test.cpp)
-target_link_libraries(CD_circle_present_test_2 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+add_rostest_gtest(ST_robot_medium_test test/ST_robot_medium.test test/ST_robot_medium_test.cpp)
+target_link_libraries(ST_robot_medium_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+add_rostest_gtest(ST_robot_hard_test test/ST_robot_hard.test test/ST_robot_hard_test.cpp)
+target_link_libraries(ST_robot_hard_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

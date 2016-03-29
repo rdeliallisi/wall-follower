@@ -31,9 +31,9 @@ To access experimental features:
 
 Setup:
 - Navigate to your catkin workspace
-- `cd src`
-- `git clone https://github.com/JacobsUniversitySELab2016S/se-lab-team-7.git`
-- Navigate back to catkin workspace
+- Run `cd src`
+- Run `git clone https://github.com/JacobsUniversitySELab2016S/se-lab-team-7.git`
+- Navigate back to your catkin workspace (`cd ../`)
 - Run `catkin_make`
 - Run `source devel/setup.bash`
 - Run `roslaunch robot robot.launch world_name:=easy`
