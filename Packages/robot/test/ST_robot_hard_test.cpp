@@ -27,11 +27,11 @@ struct AnyHelper {
 };
 
 TEST(RobotHardSystemTest, RobotSuccess) {
-    ros::Rate r(10.0);
     ros::NodeHandle n;
+    ros::Rate r(10.0);
     AnyHelper h;
     ros::Subscriber test_sub_ = n.subscribe("circle_detect", 100, &AnyHelper::cb, &h);
-    while(ros::ok() && h.circle_x >= -0.1 && h.circle_x <= 0.1) {
+    while(ros::ok()) {
         ros::spinOnce();
         r.sleep();
     }
