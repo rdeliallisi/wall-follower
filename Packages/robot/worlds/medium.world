@@ -1,0 +1,107 @@
+define hokuyo ranger
+(
+	sensor(
+		range [ 0.0 5.0 ]
+		fov 240.0
+		samples 720
+	)
+
+	#generics
+	color "black"
+	size [ 0.050 0.050 0.100 ]
+
+	#ctrl "lasernoise"
+)
+
+
+
+define compbot position 
+(
+	size [ 0.400 0.200 0.100 ]
+	origin [ 0.000 0.000 0.000 0.000 ]
+	
+	drive "diff"
+
+	stack_children 1
+	
+	hokuyo (
+		pose [ 0.150 0.000 0.050 0.000 ]
+	)
+
+	gui_nose 1
+)
+
+
+
+define target model
+(
+	size [ 0.200 0.400 0.300 ]
+	origin [ 0.000 0.000 0.000 0.000 ]
+
+	bitmap "halfdisk.png"
+
+	fiducial_return 1
+	fiducial_key 1
+
+	obstacle_return 1
+	ranger_return 1.000
+
+	color "green"
+
+)
+
+
+
+
+define floorplan model
+(
+	color "gray30"
+
+	# most maps will need a bounding box
+	boundary 1
+
+	gui_nose 0
+	gui_grid 0
+
+	gui_outline 0
+	gripper_return 0
+	fiducial_return 0
+	ranger_return 1.000
+
+)
+
+# set the resolution of the underlying raytrace model in meters
+resolution 0.02
+
+interval_sim 100  # simulation timestep in milliseconds
+
+window
+(
+	size [ 700 500 ]
+
+	rotate [ 0.000 0.000 ]
+	scale 100.000
+)
+
+floorplan
+(
+	name "lab-comp02"
+	bitmap "stage_world_maze02.png"
+	size [ 6.000 4.000 0.300 ]
+	pose [ 0.000 0.000 0.000 0.000 ]
+)
+
+#define the compbot instance
+compbot
+(
+	pose [ -1.800 0.000 0.000 180.000 ]
+	name "compbot"
+	color "blue"	
+)
+
+
+#target
+target
+(
+	pose [ 2.8 0.0 0 0.0 ]
+)
