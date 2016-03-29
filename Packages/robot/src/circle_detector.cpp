@@ -154,4 +154,3 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     pub_msg.ranges = msg->ranges;
     circle_detect_pub_.publish(pub_msg);
 }
-
