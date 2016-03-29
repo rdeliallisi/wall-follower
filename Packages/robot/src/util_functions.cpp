@@ -1,8 +1,8 @@
 /**
- * @file util_function.cpp
+ * @file util_functions.cpp
  * @brief Defines the utility functions for high_level_control
- * 
-* @author Atabak Hafeez [atabakhafeez]
+ *
+ * @author Atabak Hafeez [atabakhafeez]
  * @author Maria Ficiu [MariaFiciu]
  * @author Rubin Deliallisi [rdeliallisi]
  * @author Siddharth Shukla [thunderboltsid]
@@ -21,7 +21,7 @@ double GetMin(std::vector<float>& ranges, int start, int finish) {
 
 
 double Min(double right_min_distance, double left_min_distance,
-                             double center_min_distance) {
+           double center_min_distance) {
     double min;
     if (right_min_distance < center_min_distance) {
         if (right_min_distance < left_min_distance) {

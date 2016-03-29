@@ -13,6 +13,9 @@
 #include <ros/ros.h>
 #include "high_level_control.h"
 
+/**
+ * \cond
+ */
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "HighLevelControl");
@@ -28,3 +31,7 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
+/**
+ * \endcond
+ */
