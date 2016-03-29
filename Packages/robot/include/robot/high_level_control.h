@@ -145,12 +145,6 @@ public:
     void IsCloseToWall(double right_min_distance, double left_min_distance,
                        double center_min_distance);
 
-public:
-    /**
-     * @brief The default constructor for the HighLevelControl class
-     */
-    HighLevelControl();
-
     /**
     * @brief Send the movement command to the robot using ROS nodes and topics
     *
