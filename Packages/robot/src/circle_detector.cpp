@@ -21,28 +21,41 @@
 #include <vector>
 #include "detect_helpers.h"
 
+//Define the constructor for the CircleDetector class
 CircleDetector::CircleDetector() : node_() {
+    //subscribe the node
     laser_sub_ = node_.subscribe("base_scan", 100,
                                  &CircleDetector::LaserCallback, this);
     circle_detect_pub_ = node_.advertise<robot::circle_detect_msg>(
                              "circle_detect", 100);
+    //Method that loads the parameters
     LoadParams();
 }
 
+//Define a method to convert the Cartesian coordinates to screen coordinates
 void CircleDetector::ConvertCartesianToScreen(int &x, int &y, int screen_w, int screen_h) {
+    //convert the data of the x Cartesian coordinate to screen coordinate
     x = static_cast<int>(x + screen_w / 2);
+    //convert the data of the y Cartesian coordinate to screen coordinate
     y = static_cast<int>(-y + screen_h / 2);
 }
 
+//Define a method to convert the data received from the laser to Cartesian coordinates
 void CircleDetector::ConvertLaserScanToCartesian(int &x, int &y, float range, float base_scan_min_angle) {
+    //initialise the scale factor variable
     const int scale_factor = 100;
+    //convert the data of the x coordinate to Cartesian coordinate
     x = (range * sin(base_scan_min_angle)) * scale_factor;
+    //convert the data of the y coordinate to Cartesian coordinate
     y = (range * cos(base_scan_min_angle)) * scale_factor;
 }
 
+//Define a method which loads the parameters
 void CircleDetector::LoadParams() {
+    //Firstly, the loaded variable is assigned to be true
     bool loaded = true;
 
+    // These are loaded from the params in the launch file
     if (!node_.getParam("/blur_kernel_size",
                         blur_params_.kernel_size_)) {
         loaded = false;
@@ -88,6 +101,7 @@ void CircleDetector::LoadParams() {
     }
 }
 
+//Define the LaserCallBack method which turns the maze into an image and then applies Hough Transform
 void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
     size_t data_points = msg->ranges.size();
 
@@ -115,10 +129,10 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
             ConvertCartesianToScreen(x, y, screen_width, screen_height);
 
             if (x >= 0 && y >= 0) {
-                // Swap places to adapt to OpenCV coordinate system
+                //Swap places to adapt to OpenCV coordinate system
                 image.at<uchar>(y, x) = static_cast<uchar>(255);
             } else {
-                // Coordinates are out of bound because of roundoff errors
+                //Coordinates are out of bound because of roundoff errors
                 ROS_INFO("Round off error: Coordinates out of bound");
             }
         }
@@ -135,16 +149,20 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
                      hough_params_.dp_, hough_params_.min_dist_,
                      hough_params_.threshold_1_, hough_params_.threshold_2_,
                      hough_params_.min_radius_, hough_params_.max_radius_);
-
+    // declare the x and y coordinates of the circle
     double circle_x, circle_y;
+    //If the circle is found then the coordinates are converted to screen coordinates
     if (circles.size() == 1) {
         circle_x = (circles[0][0] - screen_width / 2) / 100;
         circle_y = -((circles[0][1] - screen_height / 2) / 100);
-    } else {
+    } 
+    //If the circle is not found, then the x and y coordinates are set to -10 because this 
+    //is a value that will never be achieved
+    else {
         circle_x = -10;
         circle_y = -10;
     }
-
+    //Setting the values that will be published
     robot::circle_detect_msg pub_msg;
     pub_msg.header.stamp = ros::Time::now();
     pub_msg.header.frame_id = "/robot";
