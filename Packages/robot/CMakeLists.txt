@@ -56,3 +56,13 @@ target_link_libraries(ROBOT_util_functions my_library ${catkin_LIBRARIES} ${GTES
 
 add_rostest_gtest(CD_utils_test test/CD_utils_test.test test/CD_utils_test.cpp)
 target_link_libraries(CD_utils_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+# System Tests
+add_rostest_gtest(ST_robot_easy_test test/ST_robot_easy.test test/ST_robot_easy_test.cpp)
+target_link_libraries(ST_robot_easy_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+add_rostest_gtest(ST_robot_medium_test test/ST_robot_medium.test test/ST_robot_medium_test.cpp)
+target_link_libraries(ST_robot_medium_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+add_rostest_gtest(ST_robot_hard_test test/ST_robot_hard.test test/ST_robot_hard_test.cpp)
+target_link_libraries(ST_robot_hard_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
