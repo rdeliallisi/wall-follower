@@ -20,8 +20,9 @@
  	int test_out_y[] = {98, 97, 96};
  	int screen_w = 400;
  	int screen_h = 200;
+ 	CircleDetetor circle_detector;
  	for (int i = 0; i < 3; ++i) {
- 		CircleDetetor::ConvertCartesianToScreenCoordinates(test_inp_x[i], test_inp_y[i], screen_w, screen_h);
+ 		circle_detector.ConvertCartesianToScreenCoordinates(test_inp_x[i], test_inp_y[i], screen_w, screen_h);
  		ASSERT_EQ(test_out_x[i], test_inp_x[i])
  		ASSERT_EQ(test_out_y[i], test_inp_y[i])
  	}
