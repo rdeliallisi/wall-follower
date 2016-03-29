@@ -1,5 +1,5 @@
 /**
- * @file circle_detector.cpp
+ * @file detect_helpers.h
  * @brief Helper file for the circle detector class.
  *
  * @author Atabak Hafeez [atabakhafeez]
@@ -73,3 +73,4 @@ struct HoughParams {
 };
 
 #endif
+
