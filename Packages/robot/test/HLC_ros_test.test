@@ -5,6 +5,6 @@
 
 	<rosparam command="load" file="$(find robot)/config/$(arg HLC_params)" />
 
-	<test test-name="HLC_unit_test" pkg="robot" type="HLC_unit_test"/>
+	<test test-name="HLC_ros_test" pkg="robot" type="HLC_ros_test"/>
 
 </launch>
