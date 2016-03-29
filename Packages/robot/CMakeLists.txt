@@ -33,7 +33,7 @@ catkin_package(
 	CATKIN_DEPENDS message_runtime
 )
 
-#High Level Control Node
+# Nodes
 
 add_executable(HighLevelControl src/high_level_control_node.cpp src/high_level_control.cpp src/util_functions.cpp)
 target_link_libraries(HighLevelControl ${catkin_LIBRARIES})
@@ -43,19 +43,7 @@ add_executable(CircleDetector src/circle_detector.cpp src/circle_detector_node.c
 target_link_libraries ( CircleDetector ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} )
 add_dependencies(CircleDetector robot_generate_messages_cpp)
 
-#Unit Tests
+#Tests
 
-add_rostest_gtest(HLCN_start_position_test launch/start_position.launch test/HLCH_start_position_test.cpp)
-target_link_libraries(HLCN_start_position_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
-
-add_rostest_gtest(HLCN_wall_proximity_test launch/wall_proximity.launch test/HLCH_wall_proximity_test.cpp)
-target_link_libraries(HLCN_wall_proximity_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
-
-add_rostest_gtest(CD_no_circle_test launch/no_circle.launch test/CD_no_circle_test.cpp)
-target_link_libraries(CD_no_circle_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
-
-add_rostest_gtest(CD_circle_present_test_1 launch/circle_present_1.launch test/CD_circle_present_test.cpp)
-target_link_libraries(CD_circle_present_test_1 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
-
-add_rostest_gtest(CD_circle_present_test_2 launch/circle_present_2.launch test/CD_circle_present_test.cpp)
-target_link_libraries(CD_circle_present_test_2 my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+catkin_add_gtest(UtilFunctionsTest test/util_functions_test.cpp src/util_functions.cpp)
+target_link_libraries(UtilFunctionsTest my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})

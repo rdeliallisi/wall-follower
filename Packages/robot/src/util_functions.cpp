@@ -3,6 +3,10 @@
 #include <algorithm>
 
 double GetMin(std::vector<float>& ranges, int start, int finish) {
+    if (ranges.size() <= 0 || start < 0 || finish > ranges.size() ||
+            start > finish) {
+        return 0;
+    }
     std::vector<float>::iterator min = std::min_element(ranges.begin() + start,
                                        ranges.begin() + finish);
     return *min;
@@ -10,7 +14,7 @@ double GetMin(std::vector<float>& ranges, int start, int finish) {
 
 
 double Min(double right_min_distance, double left_min_distance,
-                             double center_min_distance) {
+           double center_min_distance) {
     double min;
     if (right_min_distance < center_min_distance) {
         if (right_min_distance < left_min_distance) {
