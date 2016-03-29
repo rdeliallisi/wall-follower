@@ -22,13 +22,15 @@ TEST(HlcCreate, InitMoveStatus) {
 	ASSERT_FALSE(move_status.is_following_wall_);
 	ASSERT_FALSE(move_status.circle_hit_mode_);
 	ASSERT_FALSE(move_status.hit_goal_);
+	ASSERT_EQ(move_status.last_turn_, 0);
+	ASSERT_EQ(move_status.count_turn_, 0);
 }
 
 TEST(HlcCreate, InitMoveSpecs) {
 	HighLevelControl high_level_control;
 	MoveSpecs move_specs = high_level_control.get_move_specs();
 	ASSERT_DOUBLE_EQ(move_specs.high_security_distance_, 0.28);
-	ASSERT_DOUBLE_EQ(move_specs.low_security_distance_, 0.10);
+	ASSERT_DOUBLE_EQ(move_specs.low_security_distance_, 0.14);
 	ASSERT_DOUBLE_EQ(move_specs.wall_follow_distance_, 0.4);
 	ASSERT_DOUBLE_EQ(move_specs.linear_velocity_, 0.4);
 	ASSERT_DOUBLE_EQ(move_specs.angular_velocity_, 1);

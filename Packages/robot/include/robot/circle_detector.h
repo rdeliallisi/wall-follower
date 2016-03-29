@@ -56,10 +56,20 @@ private:
     */
     ros::Publisher circle_detect_pub_;
 
+
+    /**
+     * @brief Parameters for the Gaussian Blur
+     */
     BlurParams blur_params_;
 
+    /**
+     * @brief Parameters for the Hough Circles
+     */
     HoughParams hough_params_;
 
+    /**
+     * @brief Load the parameters from the rosparam space
+     */
     void LoadParams();
 
 public:
@@ -102,5 +112,3 @@ public:
 };
 
 #endif
-
-

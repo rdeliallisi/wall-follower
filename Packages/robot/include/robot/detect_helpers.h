@@ -16,23 +16,16 @@
  * @brief Defines the BlurParams structure
  * which has two variables
  */
-
 struct BlurParams {
-	
-	/**
-        * @brief The structure has as variables the following:
-        */
 
-       /**
-       * @brief the size of the kernel
-       */
-	
-	int kernel_size_;
-	
 	/**
-       * @brief the amount of blur
-       */
-	
+	 * @brief the size of the kernel
+	 */
+	int kernel_size_;
+
+	/**
+	 * @brief the amount of blur
+	 */
 	int sigma_;
 };
 
@@ -42,35 +35,36 @@ struct BlurParams {
  */
 
 struct HoughParams {
-	
+
 	/**
-        * @brief The structure has as variables the following:
-        * 
-       * @brief dp_ is the inverse ratio of resolution
-       */
-	
+	 * @brief dp_ is the inverse ratio of resolution
+	 */
 	int dp_;
-      	/**
-        * @brief min_dist_ is the minimum distance between detected centers
-       */
+
+	/**
+	* @brief min_dist_ is the minimum distance between detected centers
+	*/
 	int min_dist_;
+
 	/**
-        * @brief threshold_1_ is the upper threshold
-       */
+	 * @brief threshold_1_ is the upper threshold
+	 */
 	int threshold_1_;
+
 	/**
-        * @brief threshold_2_ is the threshold for center detection
-       */
+	 * @brief threshold_2_ is the threshold for center detection
+	 */
 	int threshold_2_;
+
 	/**
-        * @brief min_radius_ is the minimum ratio to be detected
-       */
+	 * @brief min_radius_ is the minimum ratio to be detected
+	 */
 	int min_radius_;
+
 	/**
-        * @brief threshold_1_ is the maximum radius to be detected
-       */
+	 * @brief threshold_1_ is the maximum radius to be detected
+	 */
 	int max_radius_;
 };
 
 #endif
-

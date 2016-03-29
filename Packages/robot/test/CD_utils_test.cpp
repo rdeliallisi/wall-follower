@@ -1,5 +1,5 @@
 /**
- * @file circle_detector.cpp
+ * @file CD_utils_test.cpp
  * @brief This file contains the unit tests for utility methods in CircleDetetor class
  *
  * @author Atabak Hafeez [atabakhafeez]
