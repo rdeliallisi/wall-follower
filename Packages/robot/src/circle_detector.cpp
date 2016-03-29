@@ -36,8 +36,8 @@ void CircleDetector::ConvertCartesianToScreen(int &x, int &y, int screen_w, int 
 
 void CircleDetector::ConvertLaserScanToCartesian(int &x, int &y, float range, float base_scan_min_angle) {
     const int scale_factor = 100;
-    x = (range * sin(base_scan_min_angle)) * scale_factor;
-    y = (range * cos(base_scan_min_angle)) * scale_factor;
+    x = static_cast<int>((range * sin(base_scan_min_angle)) * scale_factor);
+    y = static_cast<int>((range * cos(base_scan_min_angle)) * scale_factor);
 }
 
 void CircleDetector::LoadParams() {

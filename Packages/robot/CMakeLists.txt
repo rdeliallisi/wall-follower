@@ -50,6 +50,9 @@ target_link_libraries(HLC_unit_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRA
 add_rostest_gtest(HLC_ros_test test/HLC_ros_test.test test/HLC_ros_test.cpp)
 target_link_libraries(HLC_ros_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
+catkin_add_gtest(ROBOT_util_functions test/ROBOT_util_functions_test.cpp)
+target_link_libraries(ROBOT_util_functions my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
 add_rostest_gtest(CD_utils_test test/CD_utils_test.test test/CD_utils_test.cpp)
 target_link_libraries(CD_utils_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
