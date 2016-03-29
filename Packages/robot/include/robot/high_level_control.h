@@ -64,14 +64,6 @@ private:
     void LaserCallback(const robot::circle_detect_msg::ConstPtr& msg);
 
     /**
-     * @brief Send the movement command to the robot using ROS nodes and topics
-     * 
-     * @param linear_speed  Linear Speed that the robot should move with
-     * @param angular_speed Angular Speed that the robot should rotate with
-     */
-    void Move(double linear_speed, double angular_speed);
-
-    /**
      * @brief Initialises the movement specifications by getting the parameters 
      * from the config file
      */
@@ -84,8 +76,12 @@ private:
     void InitialiseMoveStatus();
 
 public:
+    /**
+     * @brief The default constructor for the HighLevelControl class
+     */
     HighLevelControl();
 
+    
     /**
      * @brief Moves the robot so that it always follows a wall
      */
@@ -144,13 +140,6 @@ public:
      */
     void IsCloseToWall(double right_min_distance, double left_min_distance,
                        double center_min_distance);
-
-public:
-    /**
-     * @brief The default constructor for the HighLevelControl class
-     */
-    HighLevelControl();
-
     /**
     * @brief Send the movement command to the robot using ROS nodes and topics
     *
