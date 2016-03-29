@@ -13,6 +13,7 @@
 #include <ros/ros.h>
 #include "circle_detector.h"
 
+
 TEST(CircleDetectorUtilities, ConvertCartesianToScreenCoordinates) {
 	int test_inp_x[] = {2, 3, 4};
 	int test_inp_y[] = {2, 3, 4};
@@ -25,6 +26,21 @@ TEST(CircleDetectorUtilities, ConvertCartesianToScreenCoordinates) {
 		circle_detector.ConvertCartesianToScreen(test_inp_x[i], test_inp_y[i], screen_w, screen_h);
 		ASSERT_EQ(test_out_x[i], test_inp_x[i]);
 		ASSERT_EQ(test_out_y[i], test_inp_y[i]);
+	}
+}
+
+TEST(CircleDetectorUtilities, ConvertLaserScanToCartesian) {
+	float test_inp_range[] = {1.5, 2, 0.3}
+	float test_inp_angle[] = {21.3, 42, 69}
+	float test_inp_x[] = {0, 0, 0};
+	float test_inp_y[] = {0, 0, 0};
+	float test_out_x[] = {95.61338942253583, -183.30430958312675, -3.4435444134956166};
+	float test_out_y[] = {-115.57715934878532, -79.99706299767027, 29.801711391668146};
+	CircleDetector circle_detector;
+	for (int i = 0; i < 3; ++i) {
+		circle_detector.ConvertLaserScanToCartesian(test_inp_x[i], test_inp_y[i], test_inp_range[i], test_inp_angle[i])
+		ASSERT_EQ(test_out_x[i], test_inp_x[i])
+		ASSERT_EQ(test_out_y[i], test_inp_y[i])
 	}
 }
 
