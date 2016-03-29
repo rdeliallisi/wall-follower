@@ -1,3 +1,14 @@
+/**
+ * @file HCL_ros_test.cpp
+ * @brief High Level Control movement test
+ *
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
+
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>

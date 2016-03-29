@@ -10,12 +10,14 @@
 	<node name="simulator" pkg="stage_ros" type="stageros" args="$(find robot)/worlds/$(arg world_name).world" />
 
 	<node name="CircleDetector" pkg="robot" type="CircleDetector" clear_params="true">
-		<rosparam command="load" file="$(find robot)/config/$(arg CD_params)" />
 	</node>
 
+	<rosparam command="load" file="$(find robot)/config/$(arg CD_params)" />
+
 	<node name="HighLevelControl" pkg="robot" type="HighLevelControl" clear_params="true">
-		<rosparam command="load" file="$(find robot)/config/$(arg HLC_params)" />
 	</node>
+
+	<rosparam command="load" file="$(find robot)/config/$(arg HLC_params)" />
 	
 	<test test-name="ST_robot_easy_test" pkg="robot" type="ST_robot_easy_test">
 	</test>

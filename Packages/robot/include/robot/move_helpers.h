@@ -87,6 +87,9 @@ struct MoveSpecs {
     Range center_range_;
 };
 
+/**
+ * @brief Defines the movement status of the robot
+ */
 struct MoveStatus {
     /**
      * @brief Can the robot continue walking in a straight line or not

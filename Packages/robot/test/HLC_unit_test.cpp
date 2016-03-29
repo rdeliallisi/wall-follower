@@ -1,3 +1,14 @@
+/**
+ * @file HLC_unit_test.cpp
+ * @brief Unit test for the High Level Control
+ *
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
+
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 #include "high_level_control.h"

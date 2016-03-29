@@ -1,6 +1,6 @@
 /**
- * @file ST_robot_easy_test.cpp
- * @brief System test for successful completion of goal in easy world
+ * @file ST_robot_hard_test.cpp
+ * @brief System test for successful completion of goal in hard world
  *
  * @author Atabak Hafeez [atabakhafeez]
  * @author Maria Ficiu [MariaFiciu]
@@ -27,11 +27,11 @@ struct AnyHelper {
 };
 
 TEST(RobotHardSystemTest, RobotSuccess) {
-    ros::Rate r(10.0);
     ros::NodeHandle n;
+    ros::Rate r(10.0);
     AnyHelper h;
     ros::Subscriber test_sub_ = n.subscribe("circle_detect", 100, &AnyHelper::cb, &h);
-    while(ros::ok() && h.circle_x >= -0.1 && h.circle_x <= 0.1) {
+    while(ros::ok()) {
         ros::spinOnce();
         r.sleep();
     }

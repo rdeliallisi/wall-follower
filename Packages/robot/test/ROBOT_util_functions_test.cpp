@@ -1,3 +1,14 @@
+/**
+ * @file ROBOT_util_function_test.cpp
+ * @brief Unit tests for utility functions for robot
+ *
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
+
 #include <gtest/gtest.h>
 #include "util_functions.h"
 
