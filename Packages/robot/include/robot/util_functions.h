@@ -1,6 +1,6 @@
 /**
  * @file util_functions.h
- * @brief Defines utility functions to be used in the high_level_control class
+ * @brief Declares utility functions to be used in the high_level_control class
  *
  * @author Atabak Hafeez [atabakhafeez]
  * @author Maria Ficiu [MariaFiciu]
