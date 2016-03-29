@@ -96,6 +96,8 @@ void HighLevelControl::InitialiseMoveStatus() {
     move_status_.is_following_wall_ = false;
     move_status_.circle_hit_mode_ = false;
     move_status_.hit_goal_ = false;
+    move_status_.count_turn_ = 0;
+    move_status_.last_turn_ = 0;
 }
 
 void HighLevelControl::LaserCallback(const robot::circle_detect_msg::ConstPtr& msg) {
@@ -269,11 +271,35 @@ void HighLevelControl::WallFollowMove() {
     } else {
         if (move_status_.can_continue_ && move_status_.is_close_to_wall_) {
             Move(move_specs_.linear_velocity_, 0);
+            move_status_.last_turn_ = 0;
+            move_status_.count_turn_ = 0;
         } else if (!move_status_.can_continue_) {
             Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
+            if(move_status_.last_turn_ == 0 || move_status_.last_turn_ == -1) {
+                move_status_.count_turn_++;
+            }
+            move_status_.last_turn_ = 1;
         } else if (!move_status_.is_close_to_wall_) {
             Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
+            if(move_status_.last_turn_ == 0 || move_status_.last_turn_ == 1) {
+                move_status_.count_turn_++;
+            }
+            move_status_.last_turn_ = -1;
         }
+    }
+
+    // In case of a turn loop break out after 10 oposite turns in a row.
+    if(move_status_.count_turn_ > 10) {
+        if(move_specs_.turn_type_ == RIGHT) {
+            // Short right turn
+            Move(0.25, -0.5);
+        } else if(move_specs_.turn_type_ == LEFT) {
+            // Short left turn
+            Move(0.25, 0.5);
+        } else {
+            //Case should not happen
+        }
+        move_status_.count_turn_ = 0;
     }
 }
 

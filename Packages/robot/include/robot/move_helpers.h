@@ -1,7 +1,7 @@
 /**
  * @file move_helpers.h
  * @brief Defines structs for the movement helpers for the high_level_control
- * 
+ *
  * @author Atabak Hafeez [atabakhafeez]
  * @author Maria Ficiu [MariaFiciu]
  * @author Rubin Deliallisi [rdeliallisi]
@@ -114,9 +114,15 @@ struct MoveStatus {
     bool hit_goal_;
 
     /**
-     * @brief Tracks if the robot is stuck or not
+     * @brief What was the robot's last movement. 0 for straight movement,
+     * 1 for obstacle turn, -1 for not close to wall turn
      */
-    bool is_stuck_;
+    int last_turn_;
+
+    /**
+     * @brief How many alternating turns in a row the robot has done
+     */
+    int count_turn_;
 };
 
 #endif
