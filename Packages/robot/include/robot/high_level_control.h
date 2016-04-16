@@ -45,6 +45,11 @@ private:
 	ros::Subscriber laser_sub_;
 
 	/**
+	 * @brief Used to get the position of the circle
+	 */
+	ros::Subscriber circle_sub_;
+
+	/**
 	 * @brief Contains constants that define the robot moving behavior
 	 */
 	MoveSpecs move_specs_;
@@ -60,7 +65,9 @@ private:
 	 *
 	 * @param msg Raw data comming from the laser range finder
 	 */
-	void LaserCallback(const robot::circle_detect_msg::ConstPtr& msg);
+	void LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg);
+
+	void CircleCallback(const robot::circle_detect_msg::ConstPtr& msg);
 
 	/**
 	 * @brief Analyses the ranges given by the laser range finder and updates the

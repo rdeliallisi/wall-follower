@@ -22,7 +22,8 @@ HighLevelControl::HighLevelControl() : node_() {
     InitialiseMoveStatus();
 
     cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel", 100);
-    laser_sub_ = node_.subscribe("circle_detect", 100, &HighLevelControl::LaserCallback, this);
+    laser_sub_ = node_.subscribe("base_scan", 100, &HighLevelControl::LaserCallback, this);
+    circle_sub_ = node_.subscribe("circle_detect", 100, &HighLevelControl::CircleCallback, this);
 }
 
 void HighLevelControl::InitialiseMoveSpecs() {
@@ -100,18 +101,22 @@ void HighLevelControl::InitialiseMoveStatus() {
     move_status_.last_turn_ = 0;
 }
 
-void HighLevelControl::LaserCallback(const robot::circle_detect_msg::ConstPtr& msg) {
+void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
-    // If true stay in the mode else check if we can hit circle
-    move_status_.circle_hit_mode_ = move_status_.circle_hit_mode_ ? true :
-                                    CanHit(msg->circle_x, msg->circle_y,
-                                           ranges);
     if (!move_status_.circle_hit_mode_) {
         Update(ranges);
         WallFollowMove();
     } else {
         HitCircle(ranges);
     }
+}
+
+void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& msg) {
+    std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
+    // If true stay in the mode else check if we can hit circle
+    move_status_.circle_hit_mode_ = move_status_.circle_hit_mode_ ? true :
+                                    CanHit(msg->circle_x, msg->circle_y,
+                                           ranges);
 }
 
 bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<float>& ranges) {
@@ -224,7 +229,7 @@ void HighLevelControl::HitCircle(std::vector<float>& ranges) {
     if (move_status_.hit_goal_) {
         // Move fast towards goal
         float angular_velocity;
-        if(move_specs_.turn_type_ == LEFT) {
+        if (move_specs_.turn_type_ == LEFT) {
             angular_velocity = 0.25;
         } else {
             angular_velocity = -0.25;
@@ -275,13 +280,13 @@ void HighLevelControl::WallFollowMove() {
             move_status_.count_turn_ = 0;
         } else if (!move_status_.can_continue_) {
             Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
-            if(move_status_.last_turn_ == 0 || move_status_.last_turn_ == -1) {
+            if (move_status_.last_turn_ == 0 || move_status_.last_turn_ == -1) {
                 move_status_.count_turn_++;
             }
             move_status_.last_turn_ = 1;
         } else if (!move_status_.is_close_to_wall_) {
             Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
-            if(move_status_.last_turn_ == 0 || move_status_.last_turn_ == 1) {
+            if (move_status_.last_turn_ == 0 || move_status_.last_turn_ == 1) {
                 move_status_.count_turn_++;
             }
             move_status_.last_turn_ = -1;
@@ -289,11 +294,11 @@ void HighLevelControl::WallFollowMove() {
     }
 
     // In case of a turn loop break out after 10 oposite turns in a row.
-    if(move_status_.count_turn_ > 10) {
-        if(move_specs_.turn_type_ == RIGHT) {
+    if (move_status_.count_turn_ > 10) {
+        if (move_specs_.turn_type_ == RIGHT) {
             // Short right turn
             Move(0.25, -0.5);
-        } else if(move_specs_.turn_type_ == LEFT) {
+        } else if (move_specs_.turn_type_ == LEFT) {
             // Short left turn
             Move(0.25, 0.5);
         } else {
