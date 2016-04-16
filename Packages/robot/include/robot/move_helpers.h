@@ -1,15 +1,42 @@
+/**
+ * @file move_helpers.h
+ * @brief Defines structs for the movement helpers for the high_level_control
+ *
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
+
 #ifndef MOVE_HELPERS_H
 #define MOVE_HELPERS_H
 
+/**
+ * @brief Defines the turn type of the robot where LEFT=0, NONE=1, RIGHT=2
+ */
 enum TurnType {
     LEFT, NONE, RIGHT
 };
 
+/**
+ * @brief Defines a range of values in integers
+ */
 struct Range {
+    /**
+     * @brief The lower limit of the range of integers
+     */
     int low_lim_;
+
+    /**
+     * @brief The higher limit of the range of integers
+     */
     int high_lim_;
 };
 
+/**
+ * @brief Defines the movement specifications of the robot
+ */
 struct MoveSpecs {
     /**
      * @brief Minimum proximity distance that the robot can have from the wall it
@@ -60,6 +87,9 @@ struct MoveSpecs {
     Range center_range_;
 };
 
+/**
+ * @brief Defines the movement status of the robot
+ */
 struct MoveStatus {
     /**
      * @brief Can the robot continue walking in a straight line or not
@@ -87,9 +117,15 @@ struct MoveStatus {
     bool hit_goal_;
 
     /**
-     * @brief Tracks if the robot is stuck or not
+     * @brief What was the robot's last movement. 0 for straight movement,
+     * 1 for obstacle turn, -1 for not close to wall turn
      */
-    bool is_stuck_;
+    int last_turn_;
+
+    /**
+     * @brief How many alternating turns in a row the robot has done
+     */
+    int count_turn_;
 };
 
 #endif

@@ -12,29 +12,38 @@ Project Description:
 A robot developed using ROS that can navigate a maze based on the input from a laser range finder.
 
 External Dependencies:
-- ROS
-- OpenCV
-- GoogleTest
+- ROS : v1.11.16 (Jade)
+- OpenCV : v3.1.10
+- GoogleTest : v1.7.0
+- Doxygen : v1.8.11
 
 Development timeline
 - Sprint 1: Completed circle detection (Maria, Atabak), Completed random walk (Rubin),
   Basic wall following - a bit buggy (Rubin), Object detection without OpenCV using analytical methods - Experimental,
   not merged yet (Siddharth)
 
-- Sprint 2: (Pending)
+- Sprint 2: High Level Control (Rubin), Circle Detection (Atabak, Siddharth), HLC & CD Tests (Maria, Rubin, Siddharth), HLC & CD Docs (Maria), System tests (Atabak, Siddharth)
 
 - Sprint 3: (Pending)
 
-To access experimental features:
-- WallFollowMode: Modify `Packages/robot/src/high_level_control_node.cpp:13` to `high_level_control.WallFollowMove();`
-- TotalRandomMove: Modify `Packages/robot/src/high_level_control_node.cpp:13` to `high_level_control.TotalRandomMove();`
-
 Setup:
 - Navigate to your catkin workspace
-- Copy `robot` to your `src`
+- Run `cd src`
+- Run `git clone https://github.com/JacobsUniversitySELab2016S/se-lab-team-7.git`
+- Navigate back to your catkin workspace (`cd ../`)
 - Run `catkin_make`
-- Run `source devel/setup.bash`
-- Run `roscore`
-- Run `roslaunch lab_simulator simulator.launch`
-- Run `rosrun robot HighLevelControlNode && rosrun robot CircleDetector`
+- Run `source devel/setup.bash` or `source devel/setup.zsh` or `source devel/setup.sh` depending on your shell
+- Run `roslaunch robot robot.launch world_name:=easy`
+- Run `roslaunch robot robot.launch world_name:=medium`
+- Run `roslaunch robot robot.launch world_name:=hard`
+
+Tests:
+- Navigate to your catkin workspace
+- Run `catkin_make`
+- Run `source devel/setup.bash` or `source devel/setup.zsh` or `source devel/setup.sh` depending on your shell
+- Run `catkin_make run_tests` to execute test cases including system tests (i.e. individual levels)
+
+Generate Documentation:
+- Navigate to the git project root
+- Run `doxygen Doxyfile` to generate documentation
 */

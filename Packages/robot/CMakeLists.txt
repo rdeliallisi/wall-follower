@@ -43,7 +43,26 @@ add_executable(CircleDetector src/circle_detector.cpp src/circle_detector_node.c
 target_link_libraries ( CircleDetector ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} )
 add_dependencies(CircleDetector robot_generate_messages_cpp)
 
-#Tests
+#Unit tests
 
-catkin_add_gtest(UtilFunctionsTest test/util_functions_test.cpp src/util_functions.cpp)
-target_link_libraries(UtilFunctionsTest my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+add_rostest_gtest(HLC_unit_test test/HLC_unit_test.test test/HLC_unit_test.cpp)
+target_link_libraries(HLC_unit_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+add_rostest_gtest(HLC_ros_test test/HLC_ros_test.test test/HLC_ros_test.cpp)
+target_link_libraries(HLC_ros_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+catkin_add_gtest(ROBOT_util_functions test/ROBOT_util_functions_test.cpp)
+target_link_libraries(ROBOT_util_functions my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+add_rostest_gtest(CD_utils_test test/CD_utils_test.test test/CD_utils_test.cpp)
+target_link_libraries(CD_utils_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+# System Tests
+add_rostest_gtest(ST_robot_easy_test test/ST_robot_easy.test test/ST_robot_easy_test.cpp)
+target_link_libraries(ST_robot_easy_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+add_rostest_gtest(ST_robot_medium_test test/ST_robot_medium.test test/ST_robot_medium_test.cpp)
+target_link_libraries(ST_robot_medium_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+add_rostest_gtest(ST_robot_hard_test test/ST_robot_hard.test test/ST_robot_hard_test.cpp)
+target_link_libraries(ST_robot_hard_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})

@@ -56,10 +56,20 @@ private:
     */
     ros::Publisher circle_detect_pub_;
 
+
+    /**
+     * @brief Parameters for the Gaussian Blur
+     */
     BlurParams blur_params_;
 
+    /**
+     * @brief Parameters for the Hough Circles
+     */
     HoughParams hough_params_;
 
+    /**
+     * @brief Load the parameters from the rosparam space
+     */
     void LoadParams();
 
 public:
@@ -79,24 +89,24 @@ public:
 
 
     /**
-     * @brief [brief description]
-     * @details [long description]
+     * @brief Takes the Cartesian coordinates and converts them to 
+     * screen coordinates
      * 
-     * @param x [description]
-     * @param y [description]
-     * @param screen_w [description]
-     * @param screen_h [description]
+     * @param x is the x Cartesian coordinate of the point
+     * @param y is the y Cartesian coordinate of the point
+     * @param screen_w is the width of the screen
+     * @param screen_h is the height of the screen
      */
     void ConvertCartesianToScreen(int &x, int &y, int screen_w, int screen_h);
 
     /**
-     * @brief [brief description]
-     * @details [long description]
+     * @brief Takes the data received from the laser and converts it
+     * to Cartesian coordinates
      * 
-     * @param x [description]
-     * @param y [description]
-     * @param range [description]
-     * @param base_scan_min_angle [description]
+     * @param x is the x coordinate received from the laser
+     * @param y is the y coordinate received from the laser
+     * @param range is the range of the laser
+     * @param base_scan_min_angle is the least that the laser can look to the left
      */
     void ConvertLaserScanToCartesian(int &x, int &y, float range, float base_scan_min_angle);
 };

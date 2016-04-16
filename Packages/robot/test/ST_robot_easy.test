@@ -19,4 +19,7 @@
 
 	<rosparam command="load" file="$(find robot)/config/$(arg HLC_params)" />
 
+	<test test-name="ST_robot_easy_test" pkg="robot" type="ST_robot_easy_test">
+	</test>
+
 </launch>

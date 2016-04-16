@@ -1,3 +1,14 @@
+/**
+ * @file util_functions.cpp
+ * @brief Defines the utility functions for high_level_control
+ *
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
+
 #include "util_functions.h"
 #include <vector>
 #include <algorithm>
