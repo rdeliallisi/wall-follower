@@ -14,7 +14,7 @@
 #include "robot/circle_detect_msg.h"
 #include "circle_detector.h"
 
-#include "math.h"
+#include <cmath>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -103,6 +103,7 @@ void CircleDetector::LoadParams() {
 
 //Define the LaserCallBack method which turns the maze into an image and then applies Hough Transform
 void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
+    LoadParams();
     size_t data_points = msg->ranges.size();
 
     //create image
@@ -150,13 +151,47 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
                      hough_params_.threshold_1_, hough_params_.threshold_2_,
                      hough_params_.min_radius_, hough_params_.max_radius_);
     // declare the x and y coordinates of the circle
+
     double circle_x, circle_y;
+    for (int i = 0; i < circles.size(); i++) {
+        circle_x = (circles[0][0] - screen_width / 2) / 100;
+        circle_y = -((circles[0][1] - screen_height / 2) / 100);
+
+        // Planar distance to the center of the circle ignoring obstacles
+        double center_distance = sqrt(circle_x * circle_x + circle_y * circle_y);
+        // Angle to the center of the circle relative to normal cartesian system
+        double center_angle = acos(circle_x / center_distance) / M_PI * 180;
+        // Index of the angle in the ranges vector
+        int index = (center_angle + 30) * 3;
+        // Check if we might get an out of bound index after shifting by 20 deg
+        if (index < 60 || index >= 660) {
+            circles.erase(circles.begin() + i);
+            break;
+        }
+        // Distance from LRF in the direction of the circle center
+        double center_lrf = msg->ranges[index];
+        if(center_lrf > center_distance) {
+            circles.erase(circles.begin() + i);
+        }
+    }
+
+     for ( size_t i = 0; i < circles.size(); i++ ) {
+        Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+        int radius = cvRound(circles[i][2]);
+        cv::circle( destination, center, 3, Scalar(255), -1);
+        cv::circle( destination, center, radius, Scalar(255), 1 );
+    }
+
+    namedWindow( "Display window", WINDOW_AUTOSIZE );
+    imshow( "Display window", destination );
+    waitKey(10);
+
     //If the circle is found then the coordinates are converted to screen coordinates
     if (circles.size() == 1) {
         circle_x = (circles[0][0] - screen_width / 2) / 100;
         circle_y = -((circles[0][1] - screen_height / 2) / 100);
-    } 
-    //If the circle is not found, then the x and y coordinates are set to -10 because this 
+    }
+    //If the circle is not found, then the x and y coordinates are set to -10 because this
     //is a value that will never be achieved
     else {
         circle_x = -10;

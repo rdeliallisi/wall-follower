@@ -84,7 +84,7 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
-    move_specs_.turn_type_ = NONE;
+    //move_specs_.turn_type_ = NONE;
 
     if (loaded == false) {
         ros::shutdown();
@@ -99,6 +99,8 @@ void HighLevelControl::InitialiseMoveStatus() {
     move_status_.hit_goal_ = false;
     move_status_.count_turn_ = 0;
     move_status_.last_turn_ = 0;
+    // To be removed
+    move_specs_.turn_type_ = NONE;
 }
 
 void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
@@ -112,6 +114,7 @@ void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg
 }
 
 void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& msg) {
+    InitialiseMoveSpecs();
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
     // If true stay in the mode else check if we can hit circle
     move_status_.circle_hit_mode_ = move_status_.circle_hit_mode_ ? true :
@@ -136,8 +139,6 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
     // Check if we might get an out of bound index after shifting by 20 deg
     if (index < 60 || index >= 660)
         return false;
-    // Distance from LRF in the direction of the circle center
-    double center_lrf = ranges[index];
     if (move_specs_.turn_type_ == RIGHT) {
         // Distance 20 deg left from the center
         wall_20 = ranges[index + 60];
@@ -153,7 +154,7 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
     double threshold = center_distance + 1;
     // If the threshold condition is true, if the circle is to the front of the
     // robot and close enough then we go into circle hit mode
-    if (wall_20 > threshold && center_lrf < center_distance && circle_x > -0.5
+    if (wall_20 > threshold && circle_x > -0.5
             && circle_x < 0.5 && circle_y < 1 && circle_y > 0) {
         return true;
     }
