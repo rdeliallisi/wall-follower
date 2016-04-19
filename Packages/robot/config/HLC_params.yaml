@@ -1,28 +1,21 @@
 # The distance from LRF center to furthest vertice of robot is 0.23 so we
 # make this distance bigger by 0.05 so we also take care of the movement 
 # speed
-high_security_distance : 0.28
+#0.20
+high_security_distance : 0.20
 # This the distance to the opposite side of the wall we are following.
 # We make it smaller so that we can fit into tighter corners
-low_security_distance : 0.14
+#0.14
+low_security_distance : 0.05
 # This distance is 0.4 so that there is 0.12 space for the robot to march
 # forward
-wall_follow_distance : 0.4
+#0.5
+wall_follow_distance : 0.3
 # 0.4 assures that we can take tight turns and also that we never hit the
 # wall given the specified security distance
-linear_velocity : 0.4
+#0.5
+linear_velocity : 1
 # 1 is enough for the turn to have the desired effect without getting into
 #complicated situations
+#1
 angular_velocity : 1
-# The next 2 values specify the range of angles from 0 degree to 75 degree
-# to the right
-right_range_low_lim : 0
-right_range_high_lim : 225
-# The next 2 values specify the range of angles from 0 degree to 75 degree
-# to the left
-left_range_low_lim : 495
-left_range_high_lim : 720
-# The next 2 values specify a 90 degree range of values in front of the robot,
-# from 75 degree to the right to 75 degree to the left
-center_range_low_lim : 225
-center_range_high_lim : 495

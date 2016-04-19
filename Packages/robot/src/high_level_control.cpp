@@ -17,6 +17,8 @@
 #include "high_level_control.h"
 #include "util_functions.h"
 
+float dummy_x, dummy_y;
+
 HighLevelControl::HighLevelControl() : node_() {
     InitialiseMoveSpecs();
     InitialiseMoveStatus();
@@ -54,39 +56,8 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
-    if (!node_.getParam("/right_range_low_lim",
-                        move_specs_.right_range_.low_lim_)) {
-        loaded = false;
-    }
-
-    if (!node_.getParam("/right_range_high_lim",
-                        move_specs_.right_range_.high_lim_)) {
-        loaded = false;
-    }
-
-    if (!node_.getParam("/left_range_low_lim",
-                        move_specs_.left_range_.low_lim_)) {
-        loaded = false;
-    }
-
-    if (!node_.getParam("/left_range_high_lim",
-                        move_specs_.left_range_.high_lim_)) {
-        loaded = false;
-    }
-
-    if (!node_.getParam("/center_range_low_lim",
-                        move_specs_.center_range_.low_lim_)) {
-        loaded = false;
-    }
-
-    if (!node_.getParam("/center_range_high_lim",
-                        move_specs_.center_range_.high_lim_)) {
-        loaded = false;
-    }
-
-    //move_specs_.turn_type_ = NONE;
-
     if (loaded == false) {
+        ROS_INFO("Fuck Params!");
         ros::shutdown();
     }
 }
@@ -99,24 +70,30 @@ void HighLevelControl::InitialiseMoveStatus() {
     move_status_.hit_goal_ = false;
     move_status_.count_turn_ = 0;
     move_status_.last_turn_ = 0;
-    // To be removed
     move_specs_.turn_type_ = NONE;
 }
 
 void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
+    ROS_INFO("%ld", msg->ranges.size());
     if (!move_status_.circle_hit_mode_) {
         Update(ranges);
         WallFollowMove();
     } else {
         HitCircle(ranges);
     }
+
+    ROS_INFO("can_continue:%d, is_following_wall:%d, is_close_to_wall:%d, turn_type:%d\n",
+             move_status_.can_continue_, move_status_.is_following_wall_, move_status_.is_close_to_wall_,
+             move_specs_.turn_type_);
 }
 
 void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& msg) {
     InitialiseMoveSpecs();
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
     // If true stay in the mode else check if we can hit circle
+    dummy_x = msg->circle_x;
+    dummy_y = msg->circle_y;
     move_status_.circle_hit_mode_ = move_status_.circle_hit_mode_ ? true :
                                     CanHit(msg->circle_x, msg->circle_y,
                                            ranges);
@@ -128,6 +105,8 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
         return false;
     }
 
+    int size = ranges.size();
+
     // Distance to the wall 20 deg on the oposite side of the circle
     double wall_20;
     // Planar distance to the center of the circle ignoring obstacles
@@ -135,16 +114,19 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
     // Angle to the center of the circle relative to normal cartesian system
     double center_angle = acos(circle_x / center_distance) / M_PI * 180;
     // Index of the angle in the ranges vector
-    int index = (center_angle + 30) * 3;
+    int index = (int)((center_angle + 30) / 240.0 * size);
     // Check if we might get an out of bound index after shifting by 20 deg
-    if (index < 60 || index >= 660)
+    int deg20 = (int) (20.0/240.0 * size);
+    if (index < deg20 || index >= size - deg20)
         return false;
+    // Distance from LRF in the direction of the circle center
+    double center_lrf = ranges[index];
     if (move_specs_.turn_type_ == RIGHT) {
         // Distance 20 deg left from the center
-        wall_20 = ranges[index + 60];
+        wall_20 = ranges[index + deg20];
     } else if (move_specs_.turn_type_ == LEFT) {
         // Distance 20 deg right from the center
-        wall_20 = ranges[index - 60];
+        wall_20 = ranges[index - deg20];
     } else {
         return false;
     }
@@ -154,7 +136,7 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
     double threshold = center_distance + 1;
     // If the threshold condition is true, if the circle is to the front of the
     // robot and close enough then we go into circle hit mode
-    if (wall_20 > threshold && circle_x > -0.5
+    if (wall_20 > threshold && center_lrf < center_distance && circle_x > -0.5
             && circle_x < 0.5 && circle_y < 1 && circle_y > 0) {
         return true;
     }
@@ -165,14 +147,16 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
 void HighLevelControl::Update(std::vector<float>& ranges) {
     double right_min_distance, left_min_distance, center_min_distance;
 
-    right_min_distance = GetMin(ranges, move_specs_.right_range_.low_lim_,
-                                move_specs_.right_range_.high_lim_);
+    int size = ranges.size();
 
-    left_min_distance = GetMin(ranges, move_specs_.left_range_.low_lim_,
-                               move_specs_.left_range_.high_lim_);
+    // 75 degree range
+    right_min_distance = GetMin(ranges, 0, (int)(75.0 / 240.0 * size));
 
-    center_min_distance = GetMin(ranges, move_specs_.center_range_.low_lim_,
-                                 move_specs_.center_range_.high_lim_);
+    center_min_distance = GetMin(ranges, (int)(76.0 / 240.0 * size), (int)(165.0 / 240.0 * size));
+
+    left_min_distance = GetMin(ranges, (int)(166.0 / 240.0 * size), size);
+
+    ROS_INFO("right:%lf, left:%lf, center:%lf\n", right_min_distance, left_min_distance, center_min_distance);
 
     CanContinue(right_min_distance, left_min_distance, center_min_distance);
 
@@ -215,6 +199,7 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
             min = left_min_distance;
         } else {
             // This case should never happen
+            ROS_INFO("Fuck!");
             ros::shutdown();
         }
 
@@ -227,30 +212,46 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
 }
 
 void HighLevelControl::HitCircle(std::vector<float>& ranges) {
-    if (move_status_.hit_goal_) {
-        // Move fast towards goal
-        float angular_velocity;
-        if (move_specs_.turn_type_ == LEFT) {
-            angular_velocity = 0.25;
+    // if (move_status_.hit_goal_) {
+    //     // Move fast towards goal
+    //     float angular_velocity;
+    //     if (move_specs_.turn_type_ == LEFT) {
+    //         angular_velocity = 0.25;
+    //     } else {
+    //         angular_velocity = -0.25;
+    //     }
+    //     Move(move_specs_.linear_velocity_ * 10, angular_velocity);
+    //     return;
+    // }
+
+    if(move_status_.hit_goal_) {
+        if(dummy_x < -1 || dummy_x <= 0.2 || dummy_x >= -0.2) {
+            Move(move_specs_.linear_velocity_ , 0);
+        } else if(dummy_x > 0.2) {
+            Move(0, move_specs_.angular_velocity_);
+        } else if(dummy_x < -0.2) {
+            Move(0, move_specs_.angular_velocity_);
         } else {
-            angular_velocity = -0.25;
+            Move(move_specs_.linear_velocity_ , 0);
         }
-        Move(move_specs_.linear_velocity_ * 10, angular_velocity);
         return;
     }
+
+    int size = ranges.size();
 
     // 0 deg if right wall and 240 if left wall
     double back_value;
     // 60 deg if right wall and 180 if left wall
     double front_value;
     if (move_specs_.turn_type_ == RIGHT) {
-        back_value = ranges[move_specs_.right_range_.low_lim_];
-        front_value = ranges[90 * 2];
+        back_value = ranges[0];
+        front_value = ranges[(int)(60.0 / 240.0 * size) - 1];
     } else if (move_specs_.turn_type_ == LEFT) {
-        back_value = ranges[move_specs_.left_range_.high_lim_ - 1];
-        front_value = ranges[720 - 90 * 2 - 1];
+        back_value = ranges[size - 1];
+        front_value = ranges[(int)(180.0 / 240.0 * size) - 1];
     } else {
         // Cannot hit circle if not in wall following mode
+        ROS_INFO("This should never happen. The robot fucked up! Thank you C++!\n");
         ros::shutdown();
     }
 
@@ -295,13 +296,13 @@ void HighLevelControl::WallFollowMove() {
     }
 
     // In case of a turn loop break out after 10 oposite turns in a row.
-    if (move_status_.count_turn_ > 10) {
+    if (move_status_.count_turn_ > 5) {
         if (move_specs_.turn_type_ == RIGHT) {
             // Short right turn
-            Move(0.25, -0.5);
+            Move(1, -1);
         } else if (move_specs_.turn_type_ == LEFT) {
             // Short left turn
-            Move(0.25, 0.5);
+            Move(1, 1);
         } else {
             //Case should not happen
         }

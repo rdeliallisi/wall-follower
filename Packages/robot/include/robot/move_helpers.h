@@ -20,21 +20,6 @@ enum TurnType {
 };
 
 /**
- * @brief Defines a range of values in integers
- */
-struct Range {
-    /**
-     * @brief The lower limit of the range of integers
-     */
-    int low_lim_;
-
-    /**
-     * @brief The higher limit of the range of integers
-     */
-    int high_lim_;
-};
-
-/**
  * @brief Defines the movement specifications of the robot
  */
 struct MoveSpecs {
@@ -70,21 +55,6 @@ struct MoveSpecs {
      * from the wall
      */
     TurnType turn_type_;
-
-    /**
-     * @brief Range of LRF values to the right of the robot
-     */
-    Range right_range_;
-
-    /**
-     * @brief Range of LRF values to the left of the robot
-     */
-    Range left_range_;
-
-    /**
-     * @brief Range of 90 degrees in front of the robot
-     */
-    Range center_range_;
 };
 
 /**

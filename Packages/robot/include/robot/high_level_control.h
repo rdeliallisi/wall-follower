@@ -67,6 +67,11 @@ private:
 	 */
 	void LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg);
 
+	/**
+	 * @brief [brief description]
+	 * 
+	 * @param msg [description]
+	 */
 	void CircleCallback(const robot::circle_detect_msg::ConstPtr& msg);
 
 	/**

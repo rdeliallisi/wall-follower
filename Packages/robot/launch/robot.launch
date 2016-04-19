@@ -5,9 +5,11 @@
 
 	<arg name="CD_params" default="CD_params.yaml"/>
 
+	<!--
 	<arg name="world_name" default="easy"/>
 
 	<node name="simulator" pkg="stage_ros" type="stageros" args="$(find robot)/worlds/$(arg world_name).world" />
+	-->
 
 	<node name="CircleDetector" pkg="robot" type="CircleDetector" clear_params="true">
 	</node>

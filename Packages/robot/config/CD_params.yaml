@@ -2,7 +2,7 @@
 # too many false circles 
 blur_kernel_size : 9
 # 2 is the value that gets us the actual circle in most cases
-blur_sigma : 3
+blur_sigma : 2
 # this is the default value that is the most reliable in our case
 hough_dp : 1
 # use a value greater to the width and height of the circle to make sure it
@@ -15,6 +15,8 @@ hough_threshold_1 : 30
 # detection of the actual circle as well
 hough_threshold_2 : 15
 # expected minimum radius of the circle
-hough_min_radius: 15
+#15
+hough_min_radius: 5
 # expected maximum radius of the circle
-hough_max_radius: 30
+#30
+hough_max_radius: 15
