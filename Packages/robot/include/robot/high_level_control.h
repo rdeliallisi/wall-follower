@@ -59,6 +59,8 @@ private:
 	 */
 	MoveStatus move_status_;
 
+	float circle_x_, circle_y_;
+
 	/**
 	 * @brief Gets the data from the laser range finder, examines them and
 	 * updates the relevant class variables
@@ -93,6 +95,8 @@ private:
 	 * initialised
 	 */
 	void InitialiseMoveStatus();
+
+	void InitialiseTopicConnections();
 
 public:
 	/**

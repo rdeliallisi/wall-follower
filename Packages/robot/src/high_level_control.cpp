@@ -17,13 +17,37 @@
 #include "high_level_control.h"
 #include "util_functions.h"
 
-float dummy_x, dummy_y;
-
 HighLevelControl::HighLevelControl() : node_() {
     InitialiseMoveSpecs();
     InitialiseMoveStatus();
+    InitialiseTopicConnections();
+}
 
-    cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel", 100);
+void HighLevelControl::InitialiseTopicConnections() {
+    bool loaded = true;
+    std::string publish_topic, laser_topic, circle_topic;
+
+    if (!node_.getParam("publish_topic",
+                        publish_topic)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("laser_topic",
+                        laser_topic)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("circle_topic",
+                        circle_topic)) {
+        loaded = false;
+    }
+
+    if (loaded == false) {
+        ROS_INFO("Topics failed to load!");
+        ros::shutdown();
+    }
+
+    cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>(publish_topic, 100);
     laser_sub_ = node_.subscribe("base_scan", 100, &HighLevelControl::LaserCallback, this);
     circle_sub_ = node_.subscribe("circle_detect", 100, &HighLevelControl::CircleCallback, this);
 }
@@ -56,8 +80,10 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
+    move_specs_.turn_type_ = NONE;
+
     if (loaded == false) {
-        ROS_INFO("Fuck Params!");
+        ROS_INFO("Params failed to load!");
         ros::shutdown();
     }
 }
@@ -70,12 +96,11 @@ void HighLevelControl::InitialiseMoveStatus() {
     move_status_.hit_goal_ = false;
     move_status_.count_turn_ = 0;
     move_status_.last_turn_ = 0;
-    move_specs_.turn_type_ = NONE;
 }
 
 void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
-    ROS_INFO("%ld", msg->ranges.size());
+
     if (!move_status_.circle_hit_mode_) {
         Update(ranges);
         WallFollowMove();
@@ -83,17 +108,17 @@ void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg
         HitCircle(ranges);
     }
 
+    // Log robot status
     ROS_INFO("can_continue:%d, is_following_wall:%d, is_close_to_wall:%d, turn_type:%d\n",
              move_status_.can_continue_, move_status_.is_following_wall_, move_status_.is_close_to_wall_,
              move_specs_.turn_type_);
 }
 
 void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& msg) {
-    InitialiseMoveSpecs();
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
+    circle_x_ = msg->circle_x;
+    circle_y_ = msg->circle_y;
     // If true stay in the mode else check if we can hit circle
-    dummy_x = msg->circle_x;
-    dummy_y = msg->circle_y;
     move_status_.circle_hit_mode_ = move_status_.circle_hit_mode_ ? true :
                                     CanHit(msg->circle_x, msg->circle_y,
                                            ranges);
@@ -116,7 +141,7 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
     // Index of the angle in the ranges vector
     int index = (int)((center_angle + 30) / 240.0 * size);
     // Check if we might get an out of bound index after shifting by 20 deg
-    int deg20 = (int) (20.0/240.0 * size);
+    int deg20 = (int) (20.0 / 240.0 * size);
     if (index < deg20 || index >= size - deg20)
         return false;
     // Distance from LRF in the direction of the circle center
@@ -199,7 +224,7 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
             min = left_min_distance;
         } else {
             // This case should never happen
-            ROS_INFO("Fuck!");
+            ROS_INFO("IsCloseToWall!");
             ros::shutdown();
         }
 
@@ -224,12 +249,13 @@ void HighLevelControl::HitCircle(std::vector<float>& ranges) {
     //     return;
     // }
 
-    if(move_status_.hit_goal_) {
-        if(dummy_x < -1 || dummy_x <= 0.2 || dummy_x >= -0.2) {
+    if (move_status_.hit_goal_) {
+        ROS_INFO("circle_x:%lf, circle_y:%lf", circle_x_, circle_y_);
+        if (circle_x_ < -9 || (circle_x_ <= 0.025 && circle_x_ >= -0.025)) {
             Move(move_specs_.linear_velocity_ , 0);
-        } else if(dummy_x > 0.2) {
-            Move(0, move_specs_.angular_velocity_);
-        } else if(dummy_x < -0.2) {
+        } else if (circle_x_ > 0.1) {
+            Move(0, -move_specs_.angular_velocity_);
+        } else if (circle_x_ < -0.1) {
             Move(0, move_specs_.angular_velocity_);
         } else {
             Move(move_specs_.linear_velocity_ , 0);
@@ -299,10 +325,10 @@ void HighLevelControl::WallFollowMove() {
     if (move_status_.count_turn_ > 5) {
         if (move_specs_.turn_type_ == RIGHT) {
             // Short right turn
-            Move(1, -1);
+            Move(move_specs_.linear_velocity_, -move_specs_.angular_velocity_);
         } else if (move_specs_.turn_type_ == LEFT) {
             // Short left turn
-            Move(1, 1);
+            Move(move_specs_.linear_velocity_, move_specs_.angular_velocity_);
         } else {
             //Case should not happen
         }

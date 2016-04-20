@@ -19,4 +19,4 @@ hough_threshold_2 : 15
 hough_min_radius: 5
 # expected maximum radius of the circle
 #30
-hough_max_radius: 15
+hough_max_radius: 30

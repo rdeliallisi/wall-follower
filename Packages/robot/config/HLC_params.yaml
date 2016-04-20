@@ -2,20 +2,23 @@
 # make this distance bigger by 0.05 so we also take care of the movement 
 # speed
 #0.20
-high_security_distance : 0.20
+high_security_distance : 0.28
 # This the distance to the opposite side of the wall we are following.
 # We make it smaller so that we can fit into tighter corners
 #0.14
-low_security_distance : 0.05
+low_security_distance : 0.14
 # This distance is 0.4 so that there is 0.12 space for the robot to march
 # forward
-#0.5
-wall_follow_distance : 0.3
+wall_follow_distance : 0.4
 # 0.4 assures that we can take tight turns and also that we never hit the
 # wall given the specified security distance
-#0.5
-linear_velocity : 1
+linear_velocity : 0.5
 # 1 is enough for the turn to have the desired effect without getting into
 #complicated situations
-#1
 angular_velocity : 1
+# Topic to publish messages to robot
+publish_topic: "cmd_vel"
+# Topic to get data from LRF
+laser_topic: "base_scan"
+# Topic to get data from circle detector
+circle_topic: "circle_detect"
