@@ -23,9 +23,7 @@
 
 //Define the constructor for the CircleDetector class
 CircleDetector::CircleDetector() : node_() {
-
     LoadParams();
-
     LoadTopics();
 }
 
@@ -120,6 +118,7 @@ void CircleDetector::LoadParams() {
     }
 
     if (!loaded) {
+        ROS_INFO("Failed to load params!");
         ros::shutdown();
     }
 }
@@ -183,7 +182,25 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
 
     // declare the x and y coordinates of the circle
     double circle_x, circle_y;
+    TransformCircle(circle_x, circle_y, image, circles);
 
+    // for ( size_t i = 0; i < circles.size(); i++ ) {
+    //     Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+    //     int radius = cvRound(circles[i][2]);
+    //     cv::circle( image, center, 3, Scalar(255), -1);
+    //     cv::circle( image, center, radius, Scalar(255), 1 );
+    // }
+
+    // namedWindow( "Display window", WINDOW_AUTOSIZE );
+    // imshow( "Display window", image );
+    // waitKey(10);
+
+    std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
+    PublishCircle(circle_x, circle_y, ranges);
+}
+
+void CircleDetector::TransformCircle(double& circle_x, double& circle_y,
+                                     cv::Mat& image, std::vector<Vec3f>& circles) {
     //If the circle is found then the coordinates are converted to screen coordinates
     if (circles.size() == 1) {
         circle_x = (circles[0][0] - image.rows / 2) / 100;
@@ -195,24 +212,15 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
         circle_x = -10;
         circle_y = -10;
     }
+}
 
-    for ( size_t i = 0; i < circles.size(); i++ ) {
-        Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-        int radius = cvRound(circles[i][2]);
-        cv::circle( image, center, 3, Scalar(255), -1);
-        cv::circle( image, center, radius, Scalar(255), 1 );
-    }
-
-    namedWindow( "Display window", WINDOW_AUTOSIZE );
-    imshow( "Display window", image );
-    waitKey(10);
-
+void CircleDetector::PublishCircle(double circle_x, double circle_y, std::vector<float>& ranges) {
     //Setting the values that will be published
     robot::circle_detect_msg pub_msg;
     pub_msg.header.stamp = ros::Time::now();
     pub_msg.header.frame_id = "/robot";
     pub_msg.circle_x = circle_x;
     pub_msg.circle_y = circle_y;
-    pub_msg.ranges = msg->ranges;
+    pub_msg.ranges = ranges;
     circle_detect_pub_.publish(pub_msg);
 }

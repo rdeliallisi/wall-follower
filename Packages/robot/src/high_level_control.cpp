@@ -253,18 +253,6 @@ void HighLevelControl::HitCircle(std::vector<float>& ranges) {
 
 void HighLevelControl::GoToCircle() {
 
-    // if (move_status_.hit_goal_) {
-    //     // Move fast towards goal
-    //     float angular_velocity;
-    //     if (move_specs_.turn_type_ == LEFT) {
-    //         angular_velocity = 0.25;
-    //     } else {
-    //         angular_velocity = -0.25;
-    //     }
-    //     Move(move_specs_.linear_velocity_ * 10, angular_velocity);
-    //     return;
-    // }
-
     if (circle_x_ < -9 || (circle_x_ <= 0.025 && circle_x_ >= -0.025)) {
         Move(move_specs_.linear_velocity_ , 0);
     } else if (circle_x_ > 0.1) {

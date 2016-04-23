@@ -81,8 +81,13 @@ private:
      */
     cv::Mat CreateImage(const sensor_msgs::LaserScan::ConstPtr& msg);
 
-
     vector<Vec3f> FindCircles(cv::Mat& image);
+
+    void TransformCircle(double& circle_x, double& circle_y,
+                         cv::Mat& image, std::vector<Vec3f>& circles);
+
+    void PublishCircle(double circle_x, double circle_y,
+                       std::vector<float>& ranges);
 
 public:
 
