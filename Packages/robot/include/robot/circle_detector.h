@@ -72,6 +72,8 @@ private:
      */
     void LoadParams();
 
+    void LoadTopics();
+
     /**
      * @brief [brief description]
      *

@@ -23,13 +23,36 @@
 
 //Define the constructor for the CircleDetector class
 CircleDetector::CircleDetector() : node_() {
+
+    LoadParams();
+
+    LoadTopics();
+}
+
+void CircleDetector::LoadTopics() {
+    bool loaded = true;
+    std::string laser_topic, circle_topic;
+
+    if (!node_.getParam("laser_topic",
+                        laser_topic)) {
+        loaded = false;
+    }
+
+    if (!node_.getParam("circle_topic",
+                        circle_topic)) {
+        loaded = false;
+    }
+
+    if (loaded == false) {
+        ROS_INFO("Topics failed to load!");
+        ros::shutdown();
+    }
+
     //subscribe the node
-    laser_sub_ = node_.subscribe("base_scan", 100,
+    laser_sub_ = node_.subscribe(laser_topic, 100,
                                  &CircleDetector::LaserCallback, this);
     circle_detect_pub_ = node_.advertise<robot::circle_detect_msg>(
-                             "circle_detect", 100);
-    //Method that loads the parameters
-    LoadParams();
+                             circle_topic, 100);
 }
 
 //Define a method to convert the Cartesian coordinates to screen coordinates

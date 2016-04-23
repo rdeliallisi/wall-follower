@@ -48,8 +48,8 @@ void HighLevelControl::InitialiseTopicConnections() {
     }
 
     cmd_vel_pub_ = node_.advertise<geometry_msgs::Twist>(publish_topic, 100);
-    laser_sub_ = node_.subscribe("base_scan", 100, &HighLevelControl::LaserCallback, this);
-    circle_sub_ = node_.subscribe("circle_detect", 100, &HighLevelControl::CircleCallback, this);
+    laser_sub_ = node_.subscribe(laser_topic, 100, &HighLevelControl::LaserCallback, this);
+    circle_sub_ = node_.subscribe(circle_topic, 100, &HighLevelControl::CircleCallback, this);
 }
 
 void HighLevelControl::InitialiseMoveSpecs() {
