@@ -229,7 +229,7 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
             min = left_min_distance;
         } else {
             // This case should never happen
-            ROS_INFO("IsCloseToWall!");
+            ROS_INFO("Robot has no turn type after being attached to wall!");
             ros::shutdown();
         }
 
@@ -264,7 +264,7 @@ void HighLevelControl::GoToCircle() {
     //     Move(move_specs_.linear_velocity_ * 10, angular_velocity);
     //     return;
     // }
-    
+
     if (circle_x_ < -9 || (circle_x_ <= 0.025 && circle_x_ >= -0.025)) {
         Move(move_specs_.linear_velocity_ , 0);
     } else if (circle_x_ > 0.1) {
@@ -291,7 +291,7 @@ void HighLevelControl::AlignRobot(std::vector<float>& ranges) {
         front_value = ranges[(int)(180.0 / 240.0 * size) - 1];
     } else {
         // Cannot hit circle if not in wall following mode
-        ROS_INFO("This should never happen. The robot fucked up! Thank you C++!\n");
+        ROS_INFO("The robot has no turn type while trying to align to the wall!\n");
         ros::shutdown();
     }
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+	<arg name="HLC_params" default="HLC_real_params.yaml"/>
+
+	<arg name="CD_params" default="CD_real_params.yaml"/>
+
+	<node name="CircleDetector" pkg="robot" type="CircleDetector" clear_params="true">
+	</node>
+
+	<rosparam command="load" file="$(find robot)/config/$(arg CD_params)" />
+
+	<node name="HighLevelControl" pkg="robot" type="HighLevelControl" clear_params="true">
+	</node>
+
+	<rosparam command="load" file="$(find robot)/config/$(arg HLC_params)" />
+
+</launch>

@@ -15,8 +15,6 @@ hough_threshold_1 : 30
 # detection of the actual circle as well
 hough_threshold_2 : 15
 # expected minimum radius of the circle
-#15
-hough_min_radius: 5
+hough_min_radius: 15
 # expected maximum radius of the circle
-#30
 hough_max_radius: 30
