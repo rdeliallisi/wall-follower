@@ -98,6 +98,12 @@ private:
 
 	void InitialiseTopicConnections();
 
+	void BreakLoop();
+
+	void AlignRobot(std::vector<float>& ranges);
+
+	void GoToCircle();
+
 public:
 	/**
 	 * @brief The default constructor for the HighLevelControl class

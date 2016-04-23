@@ -122,6 +122,9 @@ void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& 
     move_status_.circle_hit_mode_ = move_status_.circle_hit_mode_ ? true :
                                     CanHit(msg->circle_x, msg->circle_y,
                                            ranges);
+
+    // Log circle coordinates
+    ROS_INFO("circle_x:%lf, circle_y:%lf", circle_x_, circle_y_);
 }
 
 bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<float>& ranges) {
@@ -174,11 +177,13 @@ void HighLevelControl::Update(std::vector<float>& ranges) {
 
     int size = ranges.size();
 
-    // 75 degree range
+    // 75 degree range to the right
     right_min_distance = GetMin(ranges, 0, (int)(75.0 / 240.0 * size));
 
+    // 75 degree range in front
     center_min_distance = GetMin(ranges, (int)(76.0 / 240.0 * size), (int)(165.0 / 240.0 * size));
 
+    // 75 degree range to the left
     left_min_distance = GetMin(ranges, (int)(166.0 / 240.0 * size), size);
 
     ROS_INFO("right:%lf, left:%lf, center:%lf\n", right_min_distance, left_min_distance, center_min_distance);
@@ -237,6 +242,17 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
 }
 
 void HighLevelControl::HitCircle(std::vector<float>& ranges) {
+
+    if (move_status_.hit_goal_) {
+        GoToCircle();
+        return;
+    }
+
+    AlignRobot(ranges);
+}
+
+void HighLevelControl::GoToCircle() {
+
     // if (move_status_.hit_goal_) {
     //     // Move fast towards goal
     //     float angular_velocity;
@@ -248,21 +264,19 @@ void HighLevelControl::HitCircle(std::vector<float>& ranges) {
     //     Move(move_specs_.linear_velocity_ * 10, angular_velocity);
     //     return;
     // }
-
-    if (move_status_.hit_goal_) {
-        ROS_INFO("circle_x:%lf, circle_y:%lf", circle_x_, circle_y_);
-        if (circle_x_ < -9 || (circle_x_ <= 0.025 && circle_x_ >= -0.025)) {
-            Move(move_specs_.linear_velocity_ , 0);
-        } else if (circle_x_ > 0.1) {
-            Move(0, -move_specs_.angular_velocity_);
-        } else if (circle_x_ < -0.1) {
-            Move(0, move_specs_.angular_velocity_);
-        } else {
-            Move(move_specs_.linear_velocity_ , 0);
-        }
-        return;
+    
+    if (circle_x_ < -9 || (circle_x_ <= 0.025 && circle_x_ >= -0.025)) {
+        Move(move_specs_.linear_velocity_ , 0);
+    } else if (circle_x_ > 0.1) {
+        Move(0, -move_specs_.angular_velocity_);
+    } else if (circle_x_ < -0.1) {
+        Move(0, move_specs_.angular_velocity_);
+    } else {
+        Move(move_specs_.linear_velocity_ , 0);
     }
+}
 
+void HighLevelControl::AlignRobot(std::vector<float>& ranges) {
     int size = ranges.size();
 
     // 0 deg if right wall and 240 if left wall
@@ -296,6 +310,7 @@ void HighLevelControl::HitCircle(std::vector<float>& ranges) {
 void HighLevelControl::WallFollowMove() {
     if (!move_status_.can_continue_ && !move_status_.is_following_wall_) {
         srand(time(NULL));
+
         // 50% left mode, 50% right mode
         move_specs_.turn_type_ = rand() % 10000 > 5000 ? RIGHT : LEFT;
         move_status_.is_following_wall_ = true;
@@ -304,16 +319,22 @@ void HighLevelControl::WallFollowMove() {
     } else {
         if (move_status_.can_continue_ && move_status_.is_close_to_wall_) {
             Move(move_specs_.linear_velocity_, 0);
+
+            // Update loop breaking status
             move_status_.last_turn_ = 0;
             move_status_.count_turn_ = 0;
         } else if (!move_status_.can_continue_) {
             Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
+
+            // Update loop breaking status
             if (move_status_.last_turn_ == 0 || move_status_.last_turn_ == -1) {
                 move_status_.count_turn_++;
             }
             move_status_.last_turn_ = 1;
         } else if (!move_status_.is_close_to_wall_) {
             Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
+
+            // Update loop breaking status
             if (move_status_.last_turn_ == 0 || move_status_.last_turn_ == 1) {
                 move_status_.count_turn_++;
             }
@@ -321,6 +342,10 @@ void HighLevelControl::WallFollowMove() {
         }
     }
 
+    BreakLoop();
+}
+
+void HighLevelControl::BreakLoop() {
     // In case of a turn loop break out after 10 oposite turns in a row.
     if (move_status_.count_turn_ > 5) {
         if (move_specs_.turn_type_ == RIGHT) {
