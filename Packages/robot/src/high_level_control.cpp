@@ -135,11 +135,11 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
 
     int size = ranges.size();
 
-    // Distance to the wall 20 deg on the oposite side of the circle
+    // Distance to the wall 20 deg on the opposite side of the circle
     double wall_20;
     // Planar distance to the center of the circle ignoring obstacles
     double center_distance = sqrt(circle_x * circle_x + circle_y * circle_y);
-    // Angle to the center of the circle relative to normal cartesian system
+    // Angle to the center of the circle relative to normal Cartesian system
     double center_angle = acos(circle_x / center_distance) / M_PI * 180;
     // Index of the angle in the ranges vector
     int index = (int)((center_angle + 30) / 240.0 * size);
@@ -181,10 +181,10 @@ void HighLevelControl::Update(std::vector<float>& ranges) {
     right_min_distance = GetMin(ranges, 0, (int)(75.0 / 240.0 * size));
 
     // 75 degree range in front
-    center_min_distance = GetMin(ranges, (int)(76.0 / 240.0 * size), (int)(165.0 / 240.0 * size));
+    center_min_distance = GetMin(ranges, (int)(75.0 / 240.0 * size), (int)(165.0 / 240.0 * size));
 
     // 75 degree range to the left
-    left_min_distance = GetMin(ranges, (int)(166.0 / 240.0 * size), size);
+    left_min_distance = GetMin(ranges, (int)(165.0 / 240.0 * size), size);
 
     ROS_INFO("right:%lf, left:%lf, center:%lf\n", right_min_distance, left_min_distance, center_min_distance);
 
@@ -244,14 +244,19 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
 void HighLevelControl::HitCircle(std::vector<float>& ranges) {
 
     if (move_status_.hit_goal_) {
-        GoToCircle();
+        GoToCircle(ranges);
         return;
     }
 
     AlignRobot(ranges);
 }
 
-void HighLevelControl::GoToCircle() {
+void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
+
+    if(ranges[ranges.size() / 2] < 0.05) {
+        ROS_INFO("Goal Reached!");
+        ros::shutdown();
+    }
 
     if (circle_x_ < -9 || (circle_x_ <= 0.025 && circle_x_ >= -0.025)) {
         Move(move_specs_.linear_velocity_ , 0);

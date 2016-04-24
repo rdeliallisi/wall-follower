@@ -63,7 +63,7 @@ void CircleDetector::ConvertCartesianToScreen(int &x, int &y, int screen_w, int 
 
 //Define a method to convert the data received from the laser to Cartesian coordinates
 void CircleDetector::ConvertLaserScanToCartesian(int &x, int &y, float range, float base_scan_min_angle) {
-    //initialise the scale factor variable
+    //initialize the scale factor variable
     const int scale_factor = 100;
     //convert the data of the x coordinate to Cartesian coordinate
     x = static_cast<int>((range * sin(base_scan_min_angle)) * scale_factor);
@@ -148,7 +148,7 @@ cv::Mat CircleDetector::CreateImage(const sensor_msgs::LaserScan::ConstPtr& msg)
                 image.at<uchar>(y, x) = static_cast<uchar>(255);
             } else {
                 //Coordinates are out of bound because of roundoff errors
-                ROS_INFO("Round off error: Coordinates out of bound");
+                ROS_INFO("Round off error: Coordinates out of bounds!");
             }
         }
     }
@@ -183,17 +183,6 @@ void CircleDetector::LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) 
     // declare the x and y coordinates of the circle
     double circle_x, circle_y;
     TransformCircle(circle_x, circle_y, image, circles);
-
-    // for ( size_t i = 0; i < circles.size(); i++ ) {
-    //     Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-    //     int radius = cvRound(circles[i][2]);
-    //     cv::circle( image, center, 3, Scalar(255), -1);
-    //     cv::circle( image, center, radius, Scalar(255), 1 );
-    // }
-
-    // namedWindow( "Display window", WINDOW_AUTOSIZE );
-    // imshow( "Display window", image );
-    // waitKey(10);
 
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
     PublishCircle(circle_x, circle_y, ranges);

@@ -65,7 +65,7 @@ private:
 	 * @brief Gets the data from the laser range finder, examines them and
 	 * updates the relevant class variables
 	 *
-	 * @param msg Raw data comming from the laser range finder
+	 * @param msg Raw data coming from the laser range finder
 	 */
 	void LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg);
 
@@ -85,7 +85,7 @@ private:
 	void Update(std::vector<float>& ranges);
 
 	/**
-	 * @brief Initialises the movement specifications by getting the parameters
+	 * @brief Initializes the movement specifications by getting the parameters
 	 * from the config file
 	 */
 	void InitialiseMoveSpecs();
@@ -102,7 +102,7 @@ private:
 
 	void AlignRobot(std::vector<float>& ranges);
 
-	void GoToCircle();
+	void GoToCircle(std::vector<float>& ranges);
 
 public:
 	/**
