@@ -80,6 +80,16 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
+    if(!node_.getParam("/right_limit",
+        move_specs_.right_limit_)) {
+        loaded = false;
+    }
+
+    if(!node_.getParam("/left_limit",
+        move_specs_.left_limit_)) {
+        loaded = false;
+    }
+
     move_specs_.turn_type_ = NONE;
 
     if (loaded == false) {
@@ -178,13 +188,14 @@ void HighLevelControl::Update(std::vector<float>& ranges) {
     int size = ranges.size();
 
     // 75 degree range to the right
-    right_min_distance = GetMin(ranges, 0, (int)(75.0 / 240.0 * size));
+    right_min_distance = GetMin(ranges, 0, (int)(move_specs_.right_limit_ / 240.0 * size));
 
     // 75 degree range in front
-    center_min_distance = GetMin(ranges, (int)(75.0 / 240.0 * size), (int)(165.0 / 240.0 * size));
+    center_min_distance = GetMin(ranges, (int)(move_specs_.right_limit_ / 240.0 * size),
+     (int)(move_specs_.left_limit_ / 240.0 * size));
 
     // 75 degree range to the left
-    left_min_distance = GetMin(ranges, (int)(165.0 / 240.0 * size), size);
+    left_min_distance = GetMin(ranges, (int)(move_specs_.left_limit_ / 240.0 * size), size);
 
     ROS_INFO("right:%lf, left:%lf, center:%lf\n", right_min_distance, left_min_distance, center_min_distance);
 

@@ -14,6 +14,10 @@ linear_velocity : 0.5
 # 1 is enough for the turn to have the desired effect without getting into
 #complicated situations
 angular_velocity : 1
+#
+right_limit: 75
+#
+left_limit: 165
 # Topic to publish messages to robot
 publish_topic: "cmd_vel"
 # Topic to get data from LRF

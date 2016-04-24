@@ -50,6 +50,10 @@ struct MoveSpecs {
      */
     double angular_velocity_;
 
+    double right_limit_;
+
+    double left_limit_;
+
     /**
      * @brief Specifies the type of turn the robot should make when it is far
      * from the wall
