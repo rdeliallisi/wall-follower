@@ -152,9 +152,9 @@ bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<floa
     // Angle to the center of the circle relative to normal Cartesian system
     double center_angle = acos(circle_x / center_distance) / M_PI * 180;
     // Index of the angle in the ranges vector
-    int index = (int)((center_angle + 30) / 240.0 * size);
+    int index = static_cast<int>((center_angle + 30) / 240.0 * size);
     // Check if we might get an out of bound index after shifting by 20 deg
-    int deg20 = (int) (20.0 / 240.0 * size);
+    int deg20 = static_cast<int>(20.0 / 240.0 * size);
     if (index < deg20 || index >= size - deg20)
         return false;
     // Distance from LRF in the direction of the circle center
@@ -188,14 +188,14 @@ void HighLevelControl::Update(std::vector<float>& ranges) {
     int size = ranges.size();
 
     // 75 degree range to the right
-    right_min_distance = GetMin(ranges, 0, (int)(move_specs_.right_limit_ / 240.0 * size));
+    right_min_distance = GetMin(ranges, 0, static_cast<int>(move_specs_.right_limit_ / 240.0 * size));
 
     // 75 degree range in front
-    center_min_distance = GetMin(ranges, (int)(move_specs_.right_limit_ / 240.0 * size),
-     (int)(move_specs_.left_limit_ / 240.0 * size));
+    center_min_distance = GetMin(ranges, static_cast<int>(move_specs_.right_limit_ / 240.0 * size),
+     static_cast<int>(move_specs_.left_limit_ / 240.0 * size));
 
     // 75 degree range to the left
-    left_min_distance = GetMin(ranges, (int)(move_specs_.left_limit_ / 240.0 * size), size);
+    left_min_distance = GetMin(ranges, static_cast<int>(move_specs_.left_limit_ / 240.0 * size), size);
 
     ROS_INFO("right:%lf, left:%lf, center:%lf\n", right_min_distance, left_min_distance, center_min_distance);
 
@@ -289,10 +289,10 @@ void HighLevelControl::AlignRobot(std::vector<float>& ranges) {
     double front_value;
     if (move_specs_.turn_type_ == RIGHT) {
         back_value = ranges[0];
-        front_value = ranges[(int)(60.0 / 240.0 * size) - 1];
+        front_value = ranges[static_cast<int>(60.0 / 240.0 * size) - 1];
     } else if (move_specs_.turn_type_ == LEFT) {
         back_value = ranges[size - 1];
-        front_value = ranges[(int)(180.0 / 240.0 * size) - 1];
+        front_value = ranges[static_cast<int>(180.0 / 240.0 * size) - 1];
     } else {
         // Cannot hit circle if not in wall following mode
         ROS_INFO("The robot has no turn type while trying to align to the wall!\n");
