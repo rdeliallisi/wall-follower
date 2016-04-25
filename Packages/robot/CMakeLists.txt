@@ -48,6 +48,9 @@ add_dependencies(CircleDetector robot_generate_messages_cpp)
 add_rostest_gtest(HLC_unit_test test/HLC_unit_test.test test/HLC_unit_test.cpp)
 target_link_libraries(HLC_unit_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
+add_rostest_gtest(HLC_unit_test_real test/HLC_unit_test_real.test test/HLC_unit_test_real.cpp)
+target_link_libraries(HLC_unit_test_real my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
 add_rostest_gtest(HLC_ros_test test/HLC_ros_test.test test/HLC_ros_test.cpp)
 target_link_libraries(HLC_ros_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
@@ -56,6 +59,9 @@ target_link_libraries(ROBOT_util_functions my_library ${catkin_LIBRARIES} ${GTES
 
 add_rostest_gtest(CD_utils_test test/CD_utils_test.test test/CD_utils_test.cpp)
 target_link_libraries(CD_utils_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
+add_rostest_gtest(CD_utils_test_real test/CD_utils_test_real.test test/CD_utils_test_real.cpp)
+target_link_libraries(CD_utils_test_real my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
 # System Tests
 add_rostest_gtest(ST_robot_easy_test test/ST_robot_easy.test test/ST_robot_easy_test.cpp)
