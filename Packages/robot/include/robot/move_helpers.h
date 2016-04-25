@@ -90,6 +90,8 @@ struct MoveStatus {
      */
     bool hit_goal_;
 
+    bool is_sim_;
+
     /**
      * @brief What was the robot's last movement. 0 for straight movement,
      * 1 for obstacle turn, -1 for not close to wall turn

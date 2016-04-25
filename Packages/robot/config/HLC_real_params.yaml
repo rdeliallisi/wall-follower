@@ -24,3 +24,5 @@ publish_topic: "cmd_vel"
 laser_topic: "base_scan"
 # Topic to get data from circle detector
 circle_topic: "circle_detect"
+# Variable to detect that we are in simulation to change hit circle mode
+simulation: false
