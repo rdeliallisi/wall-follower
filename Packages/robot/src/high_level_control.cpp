@@ -80,13 +80,13 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
-    if(!node_.getParam("/right_limit",
-        move_specs_.right_limit_)) {
+    if (!node_.getParam("/right_limit",
+                        move_specs_.right_limit_)) {
         loaded = false;
     }
 
-    if(!node_.getParam("/left_limit",
-        move_specs_.left_limit_)) {
+    if (!node_.getParam("/left_limit",
+                        move_specs_.left_limit_)) {
         loaded = false;
     }
 
@@ -192,7 +192,7 @@ void HighLevelControl::Update(std::vector<float>& ranges) {
 
     // 75 degree range in front
     center_min_distance = GetMin(ranges, (int)(move_specs_.right_limit_ / 240.0 * size),
-     (int)(move_specs_.left_limit_ / 240.0 * size));
+                                 (int)(move_specs_.left_limit_ / 240.0 * size));
 
     // 75 degree range to the left
     left_min_distance = GetMin(ranges, (int)(move_specs_.left_limit_ / 240.0 * size), size);
@@ -264,9 +264,18 @@ void HighLevelControl::HitCircle(std::vector<float>& ranges) {
 
 void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
 
-    if(ranges[ranges.size() / 2] < 0.05) {
+    float right_10 = (110.0 / 240.0) * ranges.size();
+    float left_10 = (130.0 / 240.0) * ranges.size();
+    float center_min = GetMin(ranges, right_10, left_10);
+
+    ROS_INFO("center_min:%f", center_min);
+
+    if (center_min < 0.15) {
         ROS_INFO("Goal Reached!");
-        ros::shutdown();
+        // This is the only instance when the robot does not move after
+        // all nodes have been initialized
+        Move(0,0);
+        return;
     }
 
     if (circle_x_ < -9 || (circle_x_ <= 0.025 && circle_x_ >= -0.025)) {
@@ -350,8 +359,10 @@ void HighLevelControl::WallFollowMove() {
 }
 
 void HighLevelControl::BreakLoop() {
-    // In case of a turn loop break out after 10 oposite turns in a row.
+    // In case of a turn loop break out after 5 opposite turns in a row.
     if (move_status_.count_turn_ > 5) {
+        ROS_INFO("Stuck in left-right loop!");
+
         if (move_specs_.turn_type_ == RIGHT) {
             // Short right turn
             Move(move_specs_.linear_velocity_, -move_specs_.angular_velocity_);
