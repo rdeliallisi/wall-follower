@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+	<arg name="HLC_real_params" default="HLC_real_params.yaml"/>
+
+	<rosparam command="load" file="$(find robot)/config/$(arg HLC_real_params)" />
+
+	<test test-name="HLC_unit_test_real" pkg="robot" type="HLC_unit_test_real"/>
+
+</launch>
