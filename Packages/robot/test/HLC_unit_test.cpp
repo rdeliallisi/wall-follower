@@ -34,6 +34,10 @@ TEST(HlcCreate, InitMoveSpecs) {
 	ASSERT_DOUBLE_EQ(move_specs.wall_follow_distance_, 0.4);
 	ASSERT_DOUBLE_EQ(move_specs.linear_velocity_, 0.4);
 	ASSERT_DOUBLE_EQ(move_specs.angular_velocity_, 1);
+	ASSERT_DOUBLE_EQ(move_specs.right_limit_, 75);
+	ASSERT_DOUBLE_EQ(move_specs.left_limit_, 165);
+	ASSERT_TRUE(move_specs.turn_type_ == NONE);
+
 }
 
 TEST(HlcCanCotinue, NoCase) {

@@ -10,7 +10,7 @@ low_security_distance : 0.14
 wall_follow_distance : 0.4
 # 0.4 assures that we can take tight turns and also that we never hit the
 # wall given the specified security distance
-linear_velocity : 0.5
+linear_velocity : 0.4
 # 1 is enough for the turn to have the desired effect without getting into
 #complicated situations
 angular_velocity : 1
@@ -24,3 +24,5 @@ publish_topic: "cmd_vel"
 laser_topic: "base_scan"
 # Topic to get data from circle detector
 circle_topic: "circle_detect"
+# Variable to detect that we are in simulation to change hit circle mode
+simulation: true

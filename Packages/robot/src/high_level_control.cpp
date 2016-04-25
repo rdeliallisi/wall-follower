@@ -80,13 +80,13 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
-    if(!node_.getParam("/right_limit",
-        move_specs_.right_limit_)) {
+    if (!node_.getParam("/right_limit",
+                        move_specs_.right_limit_)) {
         loaded = false;
     }
 
-    if(!node_.getParam("/left_limit",
-        move_specs_.left_limit_)) {
+    if (!node_.getParam("/left_limit",
+                        move_specs_.left_limit_)) {
         loaded = false;
     }
 
@@ -106,6 +106,12 @@ void HighLevelControl::InitialiseMoveStatus() {
     move_status_.hit_goal_ = false;
     move_status_.count_turn_ = 0;
     move_status_.last_turn_ = 0;
+
+    if (!node_.getParam("/simulation",
+                        move_status_.is_sim_)) {
+        ROS_INFO("Params failed to load!");
+        ros::shutdown();
+    }
 }
 
 void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
@@ -264,17 +270,42 @@ void HighLevelControl::HitCircle(std::vector<float>& ranges) {
 
 void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
 
-    if(ranges[ranges.size() / 2] < 0.05) {
+    float right_10 = (110.0 / 240.0) * ranges.size();
+    float left_10 = (130.0 / 240.0) * ranges.size();
+    float center_min = GetMin(ranges, right_10, left_10);
+
+    ROS_INFO("center_min:%f", center_min);
+
+    if (center_min < 0.15) {
         ROS_INFO("Goal Reached!");
-        ros::shutdown();
+        // This is the only instance when the robot does not move after
+        // all nodes have been initialized
+        Move(0, 0);
+        return;
     }
 
-    if (circle_x_ < -9 || (circle_x_ <= 0.025 && circle_x_ >= -0.025)) {
+    float low_lim = -0.05, high_lim = 0.05;
+
+    if (move_status_.is_sim_) {
+        if (move_specs_.turn_type_ == RIGHT) {
+            low_lim = 0.035;
+            high_lim = 0.04;
+        } else if (move_specs_.turn_type_ == LEFT) {
+            low_lim = -0.04;
+            high_lim = -0.035;
+        } else {
+            // This case should never happen
+            ROS_INFO("Robot has no turn type while trying to hit circle!");
+            ros::shutdown();
+        }
+    }
+
+    if (circle_x_ < -9 || (circle_x_ <= high_lim && circle_x_ >= low_lim)) {
         Move(move_specs_.linear_velocity_ , 0);
-    } else if (circle_x_ > 0.1) {
-        Move(0, -move_specs_.angular_velocity_);
-    } else if (circle_x_ < -0.1) {
-        Move(0, move_specs_.angular_velocity_);
+    } else if (circle_x_ > high_lim && circle_y_ < 1 && circle_y_ > 0) {
+        Move(0, -move_specs_.angular_velocity_ / 2);
+    } else if (circle_x_ < low_lim && circle_y_ < 1 && circle_y_ > 0) {
+        Move(0, move_specs_.angular_velocity_ / 2);
     } else {
         Move(move_specs_.linear_velocity_ , 0);
     }
@@ -350,8 +381,10 @@ void HighLevelControl::WallFollowMove() {
 }
 
 void HighLevelControl::BreakLoop() {
-    // In case of a turn loop break out after 10 oposite turns in a row.
+    // In case of a turn loop break out after 5 opposite turns in a row.
     if (move_status_.count_turn_ > 5) {
+        ROS_INFO("Stuck in left-right loop!");
+
         if (move_specs_.turn_type_ == RIGHT) {
             // Short right turn
             Move(move_specs_.linear_velocity_, -move_specs_.angular_velocity_);
@@ -359,7 +392,7 @@ void HighLevelControl::BreakLoop() {
             // Short left turn
             Move(move_specs_.linear_velocity_, move_specs_.angular_velocity_);
         } else {
-            //Case should not happen
+            // Case should not happen
         }
         move_status_.count_turn_ = 0;
     }
