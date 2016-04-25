@@ -34,13 +34,6 @@ TEST(HlcCreate, InitMoveSpecs) {
 	ASSERT_DOUBLE_EQ(move_specs.wall_follow_distance_, 0.4);
 	ASSERT_DOUBLE_EQ(move_specs.linear_velocity_, 0.4);
 	ASSERT_DOUBLE_EQ(move_specs.angular_velocity_, 1);
-	ASSERT_DOUBLE_EQ(move_specs.right_range_.low_lim_, 0);
-	ASSERT_DOUBLE_EQ(move_specs.right_range_.high_lim_, 225);
-	ASSERT_DOUBLE_EQ(move_specs.left_range_.low_lim_, 495);
-	ASSERT_DOUBLE_EQ(move_specs.left_range_.high_lim_, 720);
-	ASSERT_DOUBLE_EQ(move_specs.center_range_.low_lim_, 225);
-	ASSERT_DOUBLE_EQ(move_specs.center_range_.high_lim_, 495);
-	ASSERT_TRUE(move_specs.turn_type_ == NONE);
 }
 
 TEST(HlcCanCotinue, NoCase) {
