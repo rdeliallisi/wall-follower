@@ -1,4 +1,13 @@
-// Implementation of a multithread safe singleton logger class
+/**
+ * @file logger.h
+ * @brief Implementation of a multithread safe singleton logger class
+ *
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
 #include <stdexcept>
 #include "logger.h"
 

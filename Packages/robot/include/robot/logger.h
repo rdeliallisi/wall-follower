@@ -1,3 +1,13 @@
+/**
+ * @file logger.h
+ * @brief Header file for the logger class.
+ *
+ * @author Atabak Hafeez [atabakhafeez]
+ * @author Maria Ficiu [MariaFiciu]
+ * @author Rubin Deliallisi [rdeliallisi]
+ * @author Siddharth Shukla [thunderboltsid]
+ * @bug No known bugs.
+ */
 #include <iostream>
 #include <fstream>
 #include <vector>
