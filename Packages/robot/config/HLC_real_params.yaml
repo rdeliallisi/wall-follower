@@ -1,7 +1,7 @@
 # The distance from LRF center to furthest vertice of robot is 0.23 so we
-# make this distance bigger by 0.05 so we also take care of the movement 
+# make this distance bigger so we also take care of the movement 
 # speed
-high_security_distance : 0.20
+high_security_distance : 0.25
 # This the distance to the opposite side of the wall we are following.
 # We make it smaller so that we can fit into tighter corners
 low_security_distance : 0.10
