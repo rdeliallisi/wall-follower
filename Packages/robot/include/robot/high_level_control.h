@@ -49,6 +49,8 @@ private:
 	 */
 	ros::Subscriber circle_sub_;
 
+	ros::Timer timer_;
+
 	/**
 	 * @brief Contains constants that define the robot moving behavior
 	 */
@@ -76,6 +78,8 @@ private:
 	 */
 	void CircleCallback(const robot::circle_detect_msg::ConstPtr& msg);
 
+	void TimerCallback(const ros::TimerEvent&);
+
 	/**
 	 * @brief Analyses the ranges given by the laser range finder and updates the
 	 * minimum distances on the left, right and center of the robot
@@ -98,9 +102,11 @@ private:
 
 	void InitialiseTopicConnections();
 
+	void InitialiseTimer();
+
 	void BreakLoop();
 
-	void Restart();
+	void BreakRotation();
 
 	void AlignRobot(std::vector<float>& ranges);
 

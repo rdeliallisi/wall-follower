@@ -90,6 +90,8 @@ struct MoveStatus {
      */
     bool hit_goal_;
 
+    bool reached_goal_;
+
     bool is_sim_;
 
     /**

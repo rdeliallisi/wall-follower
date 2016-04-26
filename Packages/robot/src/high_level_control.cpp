@@ -21,6 +21,7 @@ HighLevelControl::HighLevelControl() : node_() {
     InitialiseMoveSpecs();
     InitialiseMoveStatus();
     InitialiseTopicConnections();
+    InitialiseTimer();
 }
 
 void HighLevelControl::InitialiseTopicConnections() {
@@ -104,6 +105,7 @@ void HighLevelControl::InitialiseMoveStatus() {
     move_status_.is_following_wall_ = false;
     move_status_.circle_hit_mode_ = false;
     move_status_.hit_goal_ = false;
+    move_status_.reached_goal_ = false;
     move_status_.count_turn_ = 0;
     move_status_.last_turn_ = 0;
     move_status_.rotate_wall_side_ = 0;
@@ -114,6 +116,18 @@ void HighLevelControl::InitialiseMoveStatus() {
         ROS_INFO("Parameters failed to load!");
         ros::shutdown();
     }
+}
+
+void HighLevelControl::InitialiseTimer() {
+    // If after 2 minutes we have not found the circle, we restart the state of
+    // the robot
+    float duration = 0;
+    if (!node_.getParam("/timer_duration", duration)) {
+        ROS_INFO("Timer could not be initialized");
+        ros::shutdown();
+    }
+
+    timer_ = node_.createTimer(ros::Duration(duration), &HighLevelControl::TimerCallback, this);
 }
 
 void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
@@ -144,6 +158,14 @@ void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& 
     // Log circle coordinates
     ROS_INFO("circle_x:%lf, circle_y:%lf", circle_x_, circle_y_);
 }
+
+void HighLevelControl::TimerCallback(const ros::TimerEvent& event) {
+    if (move_status_.reached_goal_ == false) {
+        ROS_INFO("Timer Fired!");
+        InitialiseMoveStatus();
+    }
+}
+
 
 bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<float>& ranges) {
     // Cannot hit circle if not in wall following mode
@@ -205,7 +227,7 @@ void HighLevelControl::Update(std::vector<float>& ranges) {
     // 75 degree range to the left
     left_min_distance = GetMin(ranges, (int)(move_specs_.left_limit_ / 240.0 * size), size);
 
-    ROS_INFO("right:%lf, left:%lf, center:%lf\n", right_min_distance, left_min_distance, center_min_distance);
+    ROS_INFO("right:%lf, left:%lf, center:%lf", right_min_distance, left_min_distance, center_min_distance);
 
     CanContinue(right_min_distance, left_min_distance, center_min_distance);
 
@@ -282,6 +304,7 @@ void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
         ROS_INFO("Goal Reached!");
         // This is the only instance when the robot does not move after
         // all nodes have been initialized
+        move_status_.reached_goal_ = true;
         Move(0, 0);
         return;
     }
@@ -392,14 +415,14 @@ void HighLevelControl::WallFollowMove() {
     }
 
     BreakLoop();
-    Restart();
+    BreakRotation();
 }
 
-void HighLevelControl::Restart() {
+void HighLevelControl::BreakRotation() {
     // In place breaking condition is relative to the angular velocity with
     // which we are turning
-    if(move_status_.rotate_wall_side_ > 100 * 1.0 / move_specs_.angular_velocity_ ||
-        move_status_.rotate_opposite_side_ > 100 * 1.0 / move_specs_.angular_velocity_) {
+    if (move_status_.rotate_wall_side_ > 100 * 1.0 / move_specs_.angular_velocity_ ||
+            move_status_.rotate_opposite_side_ > 100 * 1.0 / move_specs_.angular_velocity_) {
         InitialiseMoveStatus();
     }
 }
