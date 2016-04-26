@@ -1,5 +1,5 @@
 /**
- * @file HLC_unit_test.cpp
+ * @file HLC_unit_test_real.cpp
  * @brief Unit test for the High Level Control
  *
  * @author Atabak Hafeez [atabakhafeez]
@@ -29,15 +29,11 @@ TEST(HlcCreate, InitMoveStatus) {
 TEST(HlcCreate, InitMoveSpecs) {
 	HighLevelControl high_level_control;
 	MoveSpecs move_specs = high_level_control.get_move_specs();
-	ASSERT_DOUBLE_EQ(move_specs.high_security_distance_, 0.28);
-	ASSERT_DOUBLE_EQ(move_specs.low_security_distance_, 0.14);
+	ASSERT_DOUBLE_EQ(move_specs.high_security_distance_, 0.20);
+	ASSERT_DOUBLE_EQ(move_specs.low_security_distance_, 0.10);
 	ASSERT_DOUBLE_EQ(move_specs.wall_follow_distance_, 0.4);
-	ASSERT_DOUBLE_EQ(move_specs.linear_velocity_, 0.4);
+	ASSERT_DOUBLE_EQ(move_specs.linear_velocity_, 0.5);
 	ASSERT_DOUBLE_EQ(move_specs.angular_velocity_, 1);
-	ASSERT_DOUBLE_EQ(move_specs.right_limit_, 75);
-	ASSERT_DOUBLE_EQ(move_specs.left_limit_, 165);
-	ASSERT_TRUE(move_specs.turn_type_ == NONE);
-
 }
 
 TEST(HlcCanCotinue, NoCase) {
@@ -299,6 +295,6 @@ TEST(HlcCanHit, InsideCase) {
 
 int main(int argc, char** argv) {
 	testing::InitGoogleTest(&argc, argv);
-	ros::init(argc, argv, "HLC_unit_test");
+	ros::init(argc, argv, "HLC_unit_test_real");
 	return RUN_ALL_TESTS();
 }

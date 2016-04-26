@@ -15,6 +15,10 @@ hough_threshold_1 : 30
 # detection of the actual circle as well
 hough_threshold_2 : 15
 # expected minimum radius of the circle
-hough_min_radius: 15
+hough_min_radius: 5
 # expected maximum radius of the circle
 hough_max_radius: 30
+# the topic it publishes to
+circle_topic: "circle_detect"
+# the topic it gets the lrf data from
+laser_topic: "laser_topic"

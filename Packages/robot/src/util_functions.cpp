@@ -14,6 +14,10 @@
 #include <algorithm>
 
 double GetMin(std::vector<float>& ranges, int start, int finish) {
+    if (ranges.size() <= 0 || start < 0 || finish > ranges.size() ||
+            start > finish) {
+        return 0;
+    }
     std::vector<float>::iterator min = std::min_element(ranges.begin() + start,
                                        ranges.begin() + finish);
     return *min;

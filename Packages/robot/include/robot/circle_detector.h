@@ -72,6 +72,23 @@ private:
      */
     void LoadParams();
 
+    void LoadTopics();
+
+    /**
+     * @brief [brief description]
+     *
+     * @return [description]
+     */
+    cv::Mat CreateImage(const sensor_msgs::LaserScan::ConstPtr& msg);
+
+    vector<Vec3f> FindCircles(cv::Mat& image);
+
+    void TransformCircle(double& circle_x, double& circle_y,
+                         cv::Mat& image, std::vector<Vec3f>& circles);
+
+    void PublishCircle(double circle_x, double circle_y,
+                       std::vector<float>& ranges);
+
 public:
 
     /**
@@ -89,9 +106,9 @@ public:
 
 
     /**
-     * @brief Takes the Cartesian coordinates and converts them to 
+     * @brief Takes the Cartesian coordinates and converts them to
      * screen coordinates
-     * 
+     *
      * @param x is the x Cartesian coordinate of the point
      * @param y is the y Cartesian coordinate of the point
      * @param screen_w is the width of the screen
@@ -102,7 +119,7 @@ public:
     /**
      * @brief Takes the data received from the laser and converts it
      * to Cartesian coordinates
-     * 
+     *
      * @param x is the x coordinate received from the laser
      * @param y is the y coordinate received from the laser
      * @param range is the range of the laser

@@ -11,34 +11,35 @@
 
 #include <gtest/gtest.h>
 #include <ros/ros.h>
-#include "robot/circle_detect_msg.h"
+#include <geometry_msgs/Twist.h>
 
 struct AnyHelper {
-    AnyHelper() : circle_x(-10), circle_y(-10) {
+    AnyHelper() : linear_velocity(1), angular_velocity(1) {
     }
 
-    void cb(const robot::circle_detect_msg::ConstPtr& msg) {
-        circle_x = msg->circle_x;
-        circle_y = msg->circle_y;
+    void cb(const geometry_msgs::Twist::ConstPtr& msg) {
+        linear_velocity = msg->linear.x;
+        angular_velocity = msg->angular.z;
     }
 
-    float circle_x;
-    float circle_y;
+    float linear_velocity;
+    float angular_velocity;
 };
 
 TEST(RobotEasySystemTest, RobotSuccess) {
     ros::NodeHandle n;
     ros::Rate r(10.0);
     AnyHelper h;
-    ros::Subscriber test_sub_ = n.subscribe("circle_detect", 100, &AnyHelper::cb, &h);
+    ros::Subscriber test_sub_ = n.subscribe("cmd_vel", 100, &AnyHelper::cb, &h);
     while(ros::ok()) {
+        if(h.linear_velocity < 0.00001  && h.linear_velocity > -0.00001
+            && h.angular_velocity < 0.00001 && h.angular_velocity > -0.00001)
+            break;
         ros::spinOnce();
         r.sleep();
     }
-    ASSERT_LE(h.circle_x, 0.1);
-    ASSERT_GE(h.circle_x, -0.1);
-    ASSERT_LE(h.circle_y, 0.1);
-    ASSERT_GE(h.circle_y, -0.1);
+    ASSERT_FLOAT_EQ(0, h.linear_velocity);
+    ASSERT_FLOAT_EQ(0, h.angular_velocity);
 }
 
 int main(int argc, char** argv) {
