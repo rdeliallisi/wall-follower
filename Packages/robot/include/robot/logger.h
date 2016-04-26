@@ -19,47 +19,71 @@ public:
     static const std::string log_level_debug;
     static const std::string log_level_info;
     static const std::string log_level_error;
-
-    // Returns a reference to the singleton Logger object
+    /**
+     * @brief Returns a reference to the singleton Logger object
+     */
     static Logger& Instance();
-
-    // Logs a single message at the given log level
+     /**
+     * @brief Logs a single message at the given log level
+     */
     void Log(const std::string &in_message,
              const std::string &in_log_level);
-
-    // Logs a vector of messages at the given log level
+     /**
+     * @brief Logs a vector of messages at the given log level
+     */
     void Log(const std::vector <std::string> &in_messages,
              const std::string &in_log_level);
 
 protected:
-    // Static variable for the one-and-only instance
+    /**
+     * @brief Static variable for the one-and-only instance
+     */
     static Logger* p_instance;
-
-    // Constant for the filename
+    /**
+     * @brief Constant for the filename
+     */
     static const char* const log_file_name;
-
-    // Data member for the output stream
+     /**
+     * @brief Data member for the output stream
+     */ 
     std::ofstream output_stream_;
-
-    // Embedded class to make sure the single Logger
-    // instance gets deleted on program shutdown.
+      /**
+     * @brief Embedded class to make sure the single Logger
+     *        instance gets deleted on program shutdown.
+     */ 
     friend class Cleanup;
     class Cleanup
     {
     public:
         ~Cleanup();
     };
-
-    // Logs message. The thread should own a lock on sMutex
-    // before calling this function.
+      /**
+     * @brief Logs message. The thread should own a lock on sMutex
+     *        before calling this function.
+     */ 
     void LogHelper(const std::string &in_message,
                    const std::string &in_log_level);
 
 private:
+     /**
+     * @brief Default constructor
+     */ 
     Logger();
+    /**
+     * @brief Default destructor
+     */ 
     virtual ~Logger();
+    /**
+     * @brief Constructor with arguments
+     */ 
     Logger(const Logger&);
+    /**
+     * @brief Overloading the "=" operator
+     */ 
     Logger& operator=(const Logger&);
+    /**
+     * @brief Mutex for multithreading
+     */ 
     static std::mutex s_mutex;
 };
 

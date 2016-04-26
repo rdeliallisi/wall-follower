@@ -14,14 +14,27 @@
 
 using namespace std;
 
+/**
+* @brief Define the types of loggers
+*/ 
+
 const string Logger::log_level_debug = "DEBUG";
 const string Logger::log_level_info = "INFO";
 const string Logger::log_level_error = "ERROR";
 
+/**
+* @brief Define the name of the log file
+*/ 
 const char* const Logger::log_file_name = "test_log.out";
 
+/**
+* @brief Initialise the logger instance
+*/ 
 Logger* Logger::p_instance = nullptr;
 
+/**
+* @brief Initialise the mutex
+*/ 
 mutex Logger::s_mutex;
 
 Logger& Logger::Instance() {

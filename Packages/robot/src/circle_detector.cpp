@@ -43,6 +43,7 @@ void CircleDetector::LoadTopics() {
 
     if (loaded == false) {
         ROS_INFO("Topics failed to load!");
+        Logger::Instance().Log("Topics failed to load!",Logger::log_level_error);
         ros::shutdown();
     }
 
@@ -119,6 +120,7 @@ void CircleDetector::LoadParams() {
 
     if (!loaded) {
         ROS_INFO("Failed to load params!");
+        Logger::Instance().Log("Failed to load params",Logger::log_level_error);
         ros::shutdown();
     }
 }
