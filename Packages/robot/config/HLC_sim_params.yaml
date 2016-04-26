@@ -14,9 +14,9 @@ linear_velocity : 0.4
 # 1 is enough for the turn to have the desired effect without getting into
 #complicated situations
 angular_velocity : 1
-#
+# Defines the starting angle of the right robot range
 right_limit: 75
-#
+# Defines the starting angle of the left robot range
 left_limit: 165
 # Topic to publish messages to robot
 publish_topic: "cmd_vel"

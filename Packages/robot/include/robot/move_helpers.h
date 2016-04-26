@@ -50,8 +50,14 @@ struct MoveSpecs {
      */
     double angular_velocity_;
 
+    /**
+     * @brief Starting angle of the right robot range
+     */
     double right_limit_;
 
+    /**
+     * @brief Staring angle of the left robot range
+     */
     double left_limit_;
 
     /**
@@ -90,8 +96,15 @@ struct MoveStatus {
      */
     bool hit_goal_;
 
+    /**
+     * @brief Has the robot hit the goal or not
+     */
+
     bool reached_goal_;
 
+    /**
+     * @brief Specifies if we are running on the simulation or on the real robot
+     */
     bool is_sim_;
 
     /**
@@ -105,8 +118,16 @@ struct MoveStatus {
      */
     int count_turn_;
 
+    /**
+     * @brief The number of consecutive turns that the robot takes on the wall
+     * side
+     */
     int rotate_wall_side_;
 
+    /**
+     * @brief The number of consecutive turns that the robot takes on the side
+     * opposite to the wall it is following
+     */
     int rotate_opposite_side_;
 };
 
