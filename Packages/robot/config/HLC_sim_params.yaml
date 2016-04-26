@@ -26,3 +26,5 @@ laser_topic: "base_scan"
 circle_topic: "circle_detect"
 # Variable to detect that we are in simulation to change hit circle mode
 simulation: true
+# Cumulative angle to detect loop
+cumulative_angle: 100
