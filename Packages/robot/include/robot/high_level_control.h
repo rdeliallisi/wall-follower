@@ -50,6 +50,12 @@ private:
 	ros::Subscriber circle_sub_;
 
 	/**
+	 * @brief Timer instance used to reset the robot if it cannot find the
+	 * circle within the specified time limit.
+	 */
+	ros::Timer timer_;
+
+	/**
 	 * @brief Contains constants that define the robot moving behavior
 	 */
 	MoveSpecs move_specs_;
@@ -59,7 +65,15 @@ private:
 	 */
 	MoveStatus move_status_;
 
-	float circle_x_, circle_y_;
+	/**
+	 * @brief x coordinate of the detected circle. -10 if no detection
+	 */
+	float circle_x_;
+
+	/**
+	 * @brief y coordinate of the detected circle. -10 if no detection
+	 */
+	float circle_y_;
 
 	/**
 	 * @brief Gets the data from the laser range finder, examines them and
@@ -76,6 +90,8 @@ private:
 	 */
 	void CircleCallback(const robot::circle_detect_msg::ConstPtr& msg);
 
+	void TimerCallback(const ros::TimerEvent&);
+
 	/**
 	 * @brief Analyses the ranges given by the laser range finder and updates the
 	 * minimum distances on the left, right and center of the robot
@@ -91,17 +107,45 @@ private:
 	void InitialiseMoveSpecs();
 
 	/**
-	 * @brief Initialises the movement status of the robot once the robot is
-	 * initialised
+	 * @brief Initializes the movement status of the robot once the robot is
+	 * initialized
 	 */
 	void InitialiseMoveStatus();
 
+	/**
+	 * @brief Initializes the topics that the node receives and sends info to
+	 */
 	void InitialiseTopicConnections();
 
+	/**
+	 * @brief Initializes the timer
+	 */
+	void InitialiseTimer();
+
+	/**
+	 * @brief If the robot keeps turning left, right continuously then this
+	 * method gets the robot out of this situation
+	 */
 	void BreakLoop();
 
+	/**
+	 * @brief If the robot rotates in place for 2 long, this method resets
+	 * the state of the robot
+	 */
+	void BreakRotation();
+
+	/**
+	 * @brief Aligns the robot to the wall it is following
+	 * 
+	 * @param ranges The values received from the LRF
+	 */
 	void AlignRobot(std::vector<float>& ranges);
 
+	/**
+	 * @brief Adjusts the robot and sends it towards the circle
+	 * 
+	 * @param ranges The values received from the LRF
+	 */
 	void GoToCircle(std::vector<float>& ranges);
 
 public:
@@ -171,7 +215,7 @@ public:
 	void Move(double linear_speed, double angular_speed);
 
 	/**
-	 * @brief Getter for the movement spacifications
+	 * @brief Getter for the movement specifications
 	 *
 	 * @return Returns MoveSpecs
 	 */
