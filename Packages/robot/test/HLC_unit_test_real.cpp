@@ -22,8 +22,11 @@ TEST(HlcCreate, InitMoveStatus) {
 	ASSERT_FALSE(move_status.is_following_wall_);
 	ASSERT_FALSE(move_status.circle_hit_mode_);
 	ASSERT_FALSE(move_status.hit_goal_);
+	ASSERT_FALSE(move_status.reached_goal_);
 	ASSERT_EQ(move_status.last_turn_, 0);
 	ASSERT_EQ(move_status.count_turn_, 0);
+	ASSERT_EQ(move_status.rotate_wall_side_, 0);
+	ASSERT_EQ(move_status.rotate_opposite_side_, 0);
 }
 
 TEST(HlcCreate, InitMoveSpecs) {
@@ -34,6 +37,9 @@ TEST(HlcCreate, InitMoveSpecs) {
 	ASSERT_DOUBLE_EQ(move_specs.wall_follow_distance_, 0.4);
 	ASSERT_DOUBLE_EQ(move_specs.linear_velocity_, 0.5);
 	ASSERT_DOUBLE_EQ(move_specs.angular_velocity_, 1);
+	ASSERT_DOUBLE_EQ(move_specs.right_limit_, 75);
+	ASSERT_DOUBLE_EQ(move_specs.left_limit_, 165);
+	ASSERT_TRUE(move_specs.turn_type_ == NONE);
 }
 
 TEST(HlcCanCotinue, NoCase) {
