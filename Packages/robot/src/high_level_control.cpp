@@ -126,23 +126,6 @@ void HighLevelControl::InitialiseMoveStatus() {
         ros::shutdown();
     }
 }
-
-<<<<<<< HEAD
-void HighLevelControl::InitialiseTimer() {
-    // If after 2 minutes we have not found the circle, we restart the state of
-    // the robot
-    float duration = 0;
-    if (!node_.getParam("/timer_duration", duration)) {
-        ROS_INFO("Timer could not be initialized");
-        Logger::Instance().Log("Timer could not be initialized",Logger::log_level_error);
-        ros::shutdown();
-    }
-
-    timer_ = node_.createTimer(ros::Duration(duration), &HighLevelControl::TimerCallback, this);
-}
-
-=======
->>>>>>> 7aafd3d62a805f8502f5e61879dbb7f992a8ed52
 void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
 
@@ -171,21 +154,9 @@ void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& 
 
     // Log circle coordinates
     ROS_INFO("circle_x:%lf, circle_y:%lf", circle_x_, circle_y_);
-    Logger::Instance().Log("circle_x%lf" + std::to_string(circle_x),Logger::log_level_info);
+    Logger::Instance().Log("circle_x:%lf" + std::to_string(circle_x_),Logger::log_level_info);
 }
 
-<<<<<<< HEAD
-void HighLevelControl::TimerCallback(const ros::TimerEvent& event) {
-    if (move_status_.reached_goal_ == false) {
-        ROS_INFO("Timer Fired!");
-        Logger::Instance().Log("Timer Fired!",Logger::log_level_error);
-        InitialiseMoveStatus();
-    }
-}
-
-
-=======
->>>>>>> 7aafd3d62a805f8502f5e61879dbb7f992a8ed52
 bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<float>& ranges) {
     // Cannot hit circle if not in wall following mode
     if (move_specs_.turn_type_ == NONE) {
