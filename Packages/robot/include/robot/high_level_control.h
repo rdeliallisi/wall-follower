@@ -100,6 +100,8 @@ private:
 
 	void BreakLoop();
 
+	void Restart();
+
 	void AlignRobot(std::vector<float>& ranges);
 
 	void GoToCircle(std::vector<float>& ranges);

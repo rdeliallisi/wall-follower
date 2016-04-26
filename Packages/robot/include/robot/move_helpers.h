@@ -102,6 +102,10 @@ struct MoveStatus {
      * @brief How many alternating turns in a row the robot has done
      */
     int count_turn_;
+
+    int rotate_wall_side_;
+
+    int rotate_opposite_side_;
 };
 
 #endif

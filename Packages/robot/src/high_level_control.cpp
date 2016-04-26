@@ -93,7 +93,7 @@ void HighLevelControl::InitialiseMoveSpecs() {
     move_specs_.turn_type_ = NONE;
 
     if (loaded == false) {
-        ROS_INFO("Params failed to load!");
+        ROS_INFO("Parameters failed to load!");
         ros::shutdown();
     }
 }
@@ -106,10 +106,12 @@ void HighLevelControl::InitialiseMoveStatus() {
     move_status_.hit_goal_ = false;
     move_status_.count_turn_ = 0;
     move_status_.last_turn_ = 0;
+    move_status_.rotate_wall_side_ = 0;
+    move_status_.rotate_opposite_side_ = 0;
 
     if (!node_.getParam("/simulation",
                         move_status_.is_sim_)) {
-        ROS_INFO("Params failed to load!");
+        ROS_INFO("Parameters failed to load!");
         ros::shutdown();
     }
 }
@@ -355,11 +357,19 @@ void HighLevelControl::WallFollowMove() {
         if (move_status_.can_continue_ && move_status_.is_close_to_wall_) {
             Move(move_specs_.linear_velocity_, 0);
 
+            // Not rotating in place since we are moving forward
+            move_status_.rotate_wall_side_ = 0;
+            move_status_.rotate_opposite_side_ = 0;
+
             // Update loop breaking status
             move_status_.last_turn_ = 0;
             move_status_.count_turn_ = 0;
         } else if (!move_status_.can_continue_) {
             Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
+
+            // Rotating on the other side relative to the wall we are following
+            move_status_.rotate_wall_side_ = 0;
+            move_status_.rotate_opposite_side_++;
 
             // Update loop breaking status
             if (move_status_.last_turn_ == 0 || move_status_.last_turn_ == -1) {
@@ -368,6 +378,10 @@ void HighLevelControl::WallFollowMove() {
             move_status_.last_turn_ = 1;
         } else if (!move_status_.is_close_to_wall_) {
             Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
+
+            // Rotating towards the wall we are following
+            move_status_.rotate_opposite_side_ = 0;
+            move_status_.rotate_wall_side_++;
 
             // Update loop breaking status
             if (move_status_.last_turn_ == 0 || move_status_.last_turn_ == 1) {
@@ -378,6 +392,16 @@ void HighLevelControl::WallFollowMove() {
     }
 
     BreakLoop();
+    Restart();
+}
+
+void HighLevelControl::Restart() {
+    // In place breaking condition is relative to the angular velocity with
+    // which we are turning
+    if(move_status_.rotate_wall_side_ > 100 * 1.0 / move_specs_.angular_velocity_ ||
+        move_status_.rotate_opposite_side_ > 100 * 1.0 / move_specs_.angular_velocity_) {
+        InitialiseMoveStatus();
+    }
 }
 
 void HighLevelControl::BreakLoop() {
