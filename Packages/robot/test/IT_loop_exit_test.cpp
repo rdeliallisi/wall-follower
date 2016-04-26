@@ -17,14 +17,14 @@
 
 TEST(RobotHardIntegrationTestLoopExit, RobotLoopExitSuccess) {
     HighLevelControl high_level_control;
-    high_level_control.set_turn_type(RIGHT);
+    high_level_control.set_turn_type(LEFT);
     MoveStatus move_status = high_level_control.get_move_status();
     
     ros::NodeHandle n;
     ros::Rate r(10.0);
 
     int i = 0;
-    while(ros::ok() && i <= 85) {
+    while(ros::ok() && i <= 470) {
         ros::spinOnce();
         i++;
         r.sleep();

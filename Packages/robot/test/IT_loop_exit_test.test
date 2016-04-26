@@ -15,9 +15,9 @@
 	<rosparam command="load" file="$(find robot)/config/$(arg CD_params)" />
 
 	<rosparam command="load" file="$(find robot)/config/$(arg HLC_params)" />
-	<rosparam param="timer_duration">7.0</rosparam>
+	<rosparam param="timer_duration">6.0</rosparam>
 
-	<test test-name="IT_loop_exit_test" pkg="robot" type="IT_loop_exit_test" time-limit="30.0">
+	<test test-name="IT_loop_exit_test" pkg="robot" type="IT_loop_exit_test" time-limit="120.0">
 	</test>
 
 </launch>
