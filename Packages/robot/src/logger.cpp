@@ -1,12 +1,13 @@
 /**
  * @file logger.h
- * @brief Implementation of a multithread safe singleton logger class
+ * @brief Implementation of a multithreaded safe singleton logger class
  *
  * @author Atabak Hafeez [atabakhafeez]
  * @author Maria Ficiu [MariaFiciu]
  * @author Rubin Deliallisi [rdeliallisi]
  * @author Siddharth Shukla [thunderboltsid]
  * @bug No known bugs.
+ * @cite Introduction to Professional C++ ISBN: 978-0-470-93244-5
  */
 #include <stdexcept>
 #include "logger.h"
