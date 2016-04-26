@@ -145,7 +145,7 @@ void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg
     ROS_INFO("can_continue:%d, is_following_wall:%d, is_close_to_wall:%d, turn_type:%d\n",
              move_status_.can_continue_, move_status_.is_following_wall_, move_status_.is_close_to_wall_,
              move_specs_.turn_type_);
-    Logger::instance().log("can_continue:%d" + std::to_string(move_status_.can_continue_), Logger::kLogLevelInfo);
+    Logger::Instance().Log("can_continue:%d" + std::to_string(move_status_.can_continue_), Logger::log_level_info);
 }
 
 void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& msg) {

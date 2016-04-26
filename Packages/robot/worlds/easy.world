@@ -91,7 +91,7 @@ floorplan
 	pose [ 0.000 0.000 0.000 0.000 ]
 )
 
-#define the compbot instance
+#define the compbot Instance
 compbot
 (
 	pose [ -1.800 0.000 0.000 180.000 ]
