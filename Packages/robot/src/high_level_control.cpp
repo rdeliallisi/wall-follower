@@ -92,6 +92,11 @@ void HighLevelControl::InitialiseMoveSpecs() {
         loaded = false;
     }
 
+    if (!node_.getParam("/cumulative_angle",
+                        move_specs_.cumulative_angle_)) {
+        loaded = false;
+    }
+
     move_specs_.turn_type_ = NONE;
 
     if (loaded == false) {
@@ -165,7 +170,7 @@ void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& 
 
     // Log circle coordinates
     ROS_INFO("circle_x:%lf, circle_y:%lf", circle_x_, circle_y_);
-    Logger::Instance().Log("circle_x%lf" + std::to_string(circle_x),Logger::log_level_info);
+    Logger::Instance().Log("circle_x:%lf" + std::to_string(circle_x_),Logger::log_level_info);
 }
 
 
@@ -233,7 +238,7 @@ void HighLevelControl::Update(std::vector<float>& ranges) {
 
     // 75 degree range in front
     center_min_distance = GetMin(ranges, static_cast<int>(move_specs_.right_limit_ / 240.0 * size),
-     static_cast<int>(move_specs_.left_limit_ / 240.0 * size));
+                                 static_cast<int>(move_specs_.left_limit_ / 240.0 * size));
 
     // 75 degree range to the left
     left_min_distance = GetMin(ranges, static_cast<int>(move_specs_.left_limit_ / 240.0 * size), size);
@@ -441,7 +446,7 @@ void HighLevelControl::WallFollowMove() {
     }
 
     ROS_INFO("Angle count: %d", move_status_.angle_count_);
-    if(move_status_.angle_count_ > 100.0 / move_specs_.angular_velocity_){
+    if (move_status_.angle_count_ > move_specs_.cumulative_angle_ / move_specs_.angular_velocity_) {
         InitialiseMoveStatus();
         move_status_.angle_count_ = 0;
     }
