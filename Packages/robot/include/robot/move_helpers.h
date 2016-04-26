@@ -129,6 +129,8 @@ struct MoveStatus {
      * opposite to the wall it is following
      */
     int rotate_opposite_side_;
+
+    int angle_count_;
 };
 
 #endif

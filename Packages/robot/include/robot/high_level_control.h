@@ -50,12 +50,6 @@ private:
 	ros::Subscriber circle_sub_;
 
 	/**
-	 * @brief Timer instance used to reset the robot if it cannot find the
-	 * circle within the specified time limit.
-	 */
-	ros::Timer timer_;
-
-	/**
 	 * @brief Contains constants that define the robot moving behavior
 	 */
 	MoveSpecs move_specs_;
@@ -90,7 +84,6 @@ private:
 	 */
 	void CircleCallback(const robot::circle_detect_msg::ConstPtr& msg);
 
-	void TimerCallback(const ros::TimerEvent&);
 
 	/**
 	 * @brief Analyses the ranges given by the laser range finder and updates the
@@ -117,10 +110,6 @@ private:
 	 */
 	void InitialiseTopicConnections();
 
-	/**
-	 * @brief Initializes the timer
-	 */
-	void InitialiseTimer();
 
 	/**
 	 * @brief If the robot keeps turning left, right continuously then this
