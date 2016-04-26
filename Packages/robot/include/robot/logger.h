@@ -16,30 +16,30 @@
 
 class Logger {
 public:
-    static const std::string kLogLevelDebug;
-    static const std::string kLogLevelInfo;
-    static const std::string kLogLevelError;
+    static const std::string log_level_debug;
+    static const std::string log_level_info;
+    static const std::string log_level_error;
 
     // Returns a reference to the singleton Logger object
-    static Logger& instance();
+    static Logger& Instance();
 
     // Logs a single message at the given log level
-    void log(const std::string& inMessage,
-             const std::string& inLogLevel);
+    void Log(const std::string &in_message,
+             const std::string &in_log_level);
 
     // Logs a vector of messages at the given log level
-    void log(const std::vector<std::string>& inMessages,
-             const std::string& inLogLevel);
+    void Log(const std::vector <std::string> &in_messages,
+             const std::string &in_log_level);
 
 protected:
     // Static variable for the one-and-only instance
-    static Logger* pInstance;
+    static Logger* p_instance;
 
     // Constant for the filename
-    static const char* const kLogFileName;
+    static const char* const log_file_name;
 
     // Data member for the output stream
-    std::ofstream mOutputStream;
+    std::ofstream output_stream_;
 
     // Embedded class to make sure the single Logger
     // instance gets deleted on program shutdown.
@@ -52,14 +52,14 @@ protected:
 
     // Logs message. The thread should own a lock on sMutex
     // before calling this function.
-    void logHelper(const std::string& inMessage,
-                   const std::string& inLogLevel);
+    void LogHelper(const std::string &in_message,
+                   const std::string &in_log_level);
 
 private:
     Logger();
     virtual ~Logger();
     Logger(const Logger&);
     Logger& operator=(const Logger&);
-    static std::mutex sMutex;
+    static std::mutex s_mutex;
 };
 

@@ -35,7 +35,7 @@ define compbot position
 
 define target model
 (
-	size [ 0.25 0.500 0.300 ]
+	size [ 0.150 0.300 0.300 ]
 	origin [ 0.000 0.000 0.000 0.000 ]
 
 	bitmap "halfdisk.png"
@@ -85,16 +85,16 @@ window
 
 floorplan
 (
-	name "lab-comp02"
-	bitmap "stage_world_maze01.png"
+	name "lab-comp03"
+	bitmap "stage_world_maze03.png"
 	size [ 6.000 4.000 0.300 ]
 	pose [ 0.000 0.000 0.000 0.000 ]
 )
 
-#define the compbot Instance
+#define the compbot instance
 compbot
 (
-	pose [ -1.800 0.000 0.000 180.000 ]
+	pose [ 0.047 0.090 0.000 88.326 ]
 	name "compbot"
 	color "blue"	
 )
@@ -103,5 +103,5 @@ compbot
 #target
 target
 (
-	pose [ 2.8 0.0 0 0.0 ]
+	pose [ 2.800 0.000 0.000 0.000 ]
 )

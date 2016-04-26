@@ -14,54 +14,54 @@
 
 using namespace std;
 
-const string Logger::kLogLevelDebug = "DEBUG";
-const string Logger::kLogLevelInfo = "INFO";
-const string Logger::kLogLevelError = "ERROR";
+const string Logger::log_level_debug = "DEBUG";
+const string Logger::log_level_info = "INFO";
+const string Logger::log_level_error = "ERROR";
 
-const char* const Logger::kLogFileName = "test_log.out";
+const char* const Logger::log_file_name = "test_log.out";
 
-Logger* Logger::pInstance = nullptr;
+Logger* Logger::p_instance = nullptr;
 
-mutex Logger::sMutex;
+mutex Logger::s_mutex;
 
-Logger& Logger::instance() {
+Logger& Logger::Instance() {
     static Cleanup cleanup;
 
-    lock_guard<mutex> guard(sMutex);
-    if (pInstance == nullptr)
-        pInstance = new Logger();
-    return *pInstance;
+    lock_guard<mutex> guard(s_mutex);
+    if (p_instance == nullptr)
+        p_instance = new Logger();
+    return *p_instance;
 }
 
 Logger::Cleanup::~Cleanup() {
-    lock_guard<mutex> guard(Logger::sMutex);
-    delete Logger::pInstance;
-    Logger::pInstance = nullptr;
+    lock_guard<mutex> guard(Logger::s_mutex);
+    delete Logger::p_instance;
+    Logger::p_instance = nullptr;
 }
 
 Logger::~Logger() {
-    mOutputStream.close();
+    output_stream_.close();
 }
 
 Logger::Logger() {
-    mOutputStream.open(kLogFileName, ios_base::app);
-    if (!mOutputStream.good()) {
+    output_stream_.open(log_file_name, ios_base::app);
+    if (!output_stream_.good()) {
         throw runtime_error("Unable to initialize the Logger!");
     }
 }
 
-void Logger::log(const string& inMessage, const string& inLogLevel) {
-    lock_guard<mutex> guard(sMutex);
-    logHelper(inMessage, inLogLevel);
+void Logger::Log(const string &in_message, const string &in_log_level) {
+    lock_guard<mutex> guard(s_mutex);
+    logHelper(in_message, in_log_level);
 }
 
-void Logger::log(const vector<string>& inMessages, const string& inLogLevel) {
-    lock_guard<mutex> guard(sMutex);
-    for (size_t i = 0; i < inMessages.size(); i++) {
-        logHelper(inMessages[i], inLogLevel);
+void Logger::Log(const vector <string> &in_messages, const string &in_log_level) {
+    lock_guard<mutex> guard(s_mutex);
+    for (size_t i = 0; i < in_messages.size(); i++) {
+        logHelper(in_messages[i], in_log_level);
     }
 }
 
-void Logger::logHelper(const std::string& inMessage, const std::string& inLogLevel) {
-    mOutputStream << inLogLevel << ": " << inMessage << endl;
+void Logger::logHelper(const std::string& in_message, const std::string& in_log_level) {
+    output_stream_ << in_log_level << ": " << in_message << endl;
 }

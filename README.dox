@@ -48,7 +48,7 @@ Generate Documentation:
 - Run `doxygen Doxyfile` to generate documentation
 
 Logger Usage:
-- `Logger::instance().log("test message", Logger::kLogLevelDebug);`
-- `Logger::instance().log("test message", Logger::kLogLevelInfo);`
-- `Logger::instance().log("test message", Logger::kLogLevelError);`
+- `Logger::Instance().Log("test message", Logger::log_level_debug);`
+- `Logger::Instance().Log("test message", Logger::log_level_info);`
+- `Logger::Instance().Log("test message", Logger::log_level_error);`
 */
