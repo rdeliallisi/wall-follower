@@ -18,7 +18,7 @@ const string Logger::kLogLevelDebug = "DEBUG";
 const string Logger::kLogLevelInfo = "INFO";
 const string Logger::kLogLevelError = "ERROR";
 
-const char* const Logger::kLogFileName = "log.out";
+const char* const Logger::kLogFileName = "test_log.out";
 
 Logger* Logger::pInstance = nullptr;
 
