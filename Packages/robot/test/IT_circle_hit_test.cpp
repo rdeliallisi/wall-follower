@@ -14,6 +14,7 @@
 #include "sensor_msgs/LaserScan.h"
 #include "high_level_control.h"
 #include "move_helpers.h"
+#include "util_functions.h"
 
 
 struct AnyHelper {
@@ -25,7 +26,11 @@ struct AnyHelper {
 
     void cb(const sensor_msgs::LaserScan::ConstPtr &msg) {
         std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
-        if(ranges[ranges.size() / 2] < 0.05) {
+        float right_10 = (110.0 / 240.0) * ranges.size();
+        float left_10 = (130.0 / 240.0) * ranges.size();
+        float center_min = GetMin(ranges, right_10, left_10);
+
+        if (center_min < 0.15) {
             circle_hit_ = true;
         }
     }
