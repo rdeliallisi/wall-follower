@@ -45,6 +45,7 @@ void HighLevelControl::InitialiseTopicConnections() {
 
     if (loaded == false) {
         ROS_INFO("Topics failed to load!");
+        Logger::Instance().Log("Topics failed to load!",Logger::log_level_error);
         ros::shutdown();
     }
 
@@ -100,6 +101,7 @@ void HighLevelControl::InitialiseMoveSpecs() {
 
     if (loaded == false) {
         ROS_INFO("Parameters failed to load!");
+        Logger::Instance().Log("Parameters failed to load!",Logger::log_level_error);
         ros::shutdown();
     }
 }
@@ -120,10 +122,27 @@ void HighLevelControl::InitialiseMoveStatus() {
     if (!node_.getParam("/simulation",
                         move_status_.is_sim_)) {
         ROS_INFO("Parameters failed to load!");
+        Logger::Instance().Log("Parameters failed to load!",Logger::log_level_error);
         ros::shutdown();
     }
 }
 
+<<<<<<< HEAD
+void HighLevelControl::InitialiseTimer() {
+    // If after 2 minutes we have not found the circle, we restart the state of
+    // the robot
+    float duration = 0;
+    if (!node_.getParam("/timer_duration", duration)) {
+        ROS_INFO("Timer could not be initialized");
+        Logger::Instance().Log("Timer could not be initialized",Logger::log_level_error);
+        ros::shutdown();
+    }
+
+    timer_ = node_.createTimer(ros::Duration(duration), &HighLevelControl::TimerCallback, this);
+}
+
+=======
+>>>>>>> 7aafd3d62a805f8502f5e61879dbb7f992a8ed52
 void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
 
@@ -152,8 +171,21 @@ void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& 
 
     // Log circle coordinates
     ROS_INFO("circle_x:%lf, circle_y:%lf", circle_x_, circle_y_);
+    Logger::Instance().Log("circle_x%lf" + std::to_string(circle_x),Logger::log_level_info);
 }
 
+<<<<<<< HEAD
+void HighLevelControl::TimerCallback(const ros::TimerEvent& event) {
+    if (move_status_.reached_goal_ == false) {
+        ROS_INFO("Timer Fired!");
+        Logger::Instance().Log("Timer Fired!",Logger::log_level_error);
+        InitialiseMoveStatus();
+    }
+}
+
+
+=======
+>>>>>>> 7aafd3d62a805f8502f5e61879dbb7f992a8ed52
 bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<float>& ranges) {
     // Cannot hit circle if not in wall following mode
     if (move_specs_.turn_type_ == NONE) {
@@ -216,6 +248,8 @@ void HighLevelControl::Update(std::vector<float>& ranges) {
 
     ROS_INFO("right:%lf, left:%lf, center:%lf", right_min_distance, left_min_distance, center_min_distance);
 
+    Logger::Instance().Log("right%lf" + std::to_string(right_min_distance),Logger::log_level_info);
+
     CanContinue(right_min_distance, left_min_distance, center_min_distance);
 
     IsCloseToWall(right_min_distance, left_min_distance, center_min_distance);
@@ -258,6 +292,7 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
         } else {
             // This case should never happen
             ROS_INFO("Robot has no turn type after being attached to wall!");
+            Logger::Instance().Log("Robot has no turn type after being attached to wall!",Logger::log_level_error);
             ros::shutdown();
         }
 
@@ -286,9 +321,11 @@ void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
     float center_min = GetMin(ranges, right_10, left_10);
 
     ROS_INFO("center_min:%f", center_min);
+    Logger::Instance().Log("center_min" + std::to_string(center_min),Logger::log_level_info);
 
     if (center_min < 0.15) {
         ROS_INFO("Goal Reached!");
+        Logger::Instance().Log("Goal reached!",Logger::log_level_info);
         // This is the only instance when the robot does not move after
         // all nodes have been initialized
         move_status_.reached_goal_ = true;
@@ -308,6 +345,7 @@ void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
         } else {
             // This case should never happen
             ROS_INFO("Robot has no turn type while trying to hit circle!");
+            Logger::Instance().Log("Robot has no turn type while trying to hit circle!",Logger::log_level_error);
             ros::shutdown();
         }
     }
@@ -343,6 +381,7 @@ void HighLevelControl::AlignRobot(std::vector<float>& ranges) {
     } else {
         // Cannot hit circle if not in wall following mode
         ROS_INFO("The robot has no turn type while trying to align to the wall!\n");
+        Logger::Instance().Log("The robot has no turn type while trying to align to the wall!",Logger::log_level_error);
         ros::shutdown();
     }
 
@@ -432,6 +471,7 @@ void HighLevelControl::BreakLoop() {
     // In case of a turn loop break out after 5 opposite turns in a row.
     if (move_status_.count_turn_ > 5) {
         ROS_INFO("Stuck in left-right loop!");
+        Logger::Instance().Log("Stuck in left-right loop!",Logger::log_level_debug);
 
         if (move_specs_.turn_type_ == RIGHT) {
             // Short right turn

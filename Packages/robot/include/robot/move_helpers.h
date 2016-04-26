@@ -132,6 +132,10 @@ struct MoveStatus {
      */
     int rotate_opposite_side_;
 
+    /**
+     * @brief Compute the angle the robot has done
+     */
+
     int angle_count_;
 };
 
