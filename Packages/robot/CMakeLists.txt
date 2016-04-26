@@ -40,7 +40,7 @@ add_executable(HighLevelControl src/high_level_control_node.cpp src/high_level_c
 target_link_libraries(HighLevelControl ${catkin_LIBRARIES})
 add_dependencies(HighLevelControl robot_generate_messages_cpp)
 
-add_executable(CircleDetector src/circle_detector.cpp src/circle_detector_node.cpp)
+add_executable(CircleDetector src/circle_detector.cpp src/circle_detector_node.cpp src/logger.cpp)
 target_link_libraries ( CircleDetector ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} )
 add_dependencies(CircleDetector robot_generate_messages_cpp)
 

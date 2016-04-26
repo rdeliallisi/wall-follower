@@ -13,13 +13,14 @@
 #include "sensor_msgs/LaserScan.h"
 #include "robot/circle_detect_msg.h"
 #include "circle_detector.h"
+#include "detect_helpers.h"
+#include "logger.h"
 
 #include <cmath>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <vector>
-#include "detect_helpers.h"
 
 //Define the constructor for the CircleDetector class
 CircleDetector::CircleDetector() : node_() {
