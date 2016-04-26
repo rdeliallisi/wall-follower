@@ -52,16 +52,16 @@ Logger::Logger() {
 
 void Logger::Log(const string &in_message, const string &in_log_level) {
     lock_guard<mutex> guard(s_mutex);
-    logHelper(in_message, in_log_level);
+    LogHelper(in_message, in_log_level);
 }
 
 void Logger::Log(const vector <string> &in_messages, const string &in_log_level) {
     lock_guard<mutex> guard(s_mutex);
     for (size_t i = 0; i < in_messages.size(); i++) {
-        logHelper(in_messages[i], in_log_level);
+        LogHelper(in_messages[i], in_log_level);
     }
 }
 
-void Logger::logHelper(const std::string& in_message, const std::string& in_log_level) {
+void Logger::LogHelper(const std::string& in_message, const std::string& in_log_level) {
     output_stream_ << in_log_level << ": " << in_message << endl;
 }
