@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+	<arg name="HLC_params" default="HLC_sim_params.yaml"/>
+
+	<arg name="CD_params" default="CD_sim_params.yaml"/>
+
+	<arg name="world_name" default="IT_loop_exit_hard"/>
+
+	<node name="simulator" pkg="stage_ros" type="stageros" args="$(find robot)/worlds/$(arg world_name).world" />
+
+	<node name="CircleDetector" pkg="robot" type="CircleDetector" clear_params="true">
+	</node>
+
+	<rosparam command="load" file="$(find robot)/config/$(arg CD_params)" />
+
+	<rosparam command="load" file="$(find robot)/config/$(arg HLC_params)" />
+	<rosparam param="timer_duration">7.0</rosparam>
+
+	<test test-name="IT_loop_exit_test" pkg="robot" type="IT_loop_exit_test" time-limit="30.0">
+	</test>
+
+</launch>

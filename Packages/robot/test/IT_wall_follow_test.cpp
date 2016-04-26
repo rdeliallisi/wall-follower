@@ -1,6 +1,6 @@
 /**
  * @file IT_wall_follow_test.cpp
- * @brief Integration test for successful detection of circle in easy world
+ * @brief Integration test for successful wall following in easy world
  *
  * @author Atabak Hafeez [atabakhafeez]
  * @author Maria Ficiu [MariaFiciu]

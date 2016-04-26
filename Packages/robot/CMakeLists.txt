@@ -72,6 +72,9 @@ target_link_libraries(IT_circle_hit_test my_library ${catkin_LIBRARIES} ${GTEST_
 add_rostest_gtest(IT_wall_follow_test test/IT_wall_follow_test.test test/IT_wall_follow_test.cpp)
 target_link_libraries(IT_wall_follow_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
 
+add_rostest_gtest(IT_loop_exit_test test/IT_loop_exit_test.test test/IT_loop_exit_test.cpp)
+target_link_libraries(IT_loop_exit_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+
 # System Tests
 add_rostest_gtest(ST_robot_easy_test test/ST_robot_easy.test test/ST_robot_easy_test.cpp)
 target_link_libraries(ST_robot_easy_test my_library ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
