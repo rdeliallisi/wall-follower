@@ -26,5 +26,3 @@ laser_topic: "base_scan"
 circle_topic: "circle_detect"
 # Variable to detect that we are in simulation to change hit circle mode
 simulation: true
-# Duration of the timer
-timer_duration: 120

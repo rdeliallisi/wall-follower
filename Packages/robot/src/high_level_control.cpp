@@ -22,7 +22,6 @@ HighLevelControl::HighLevelControl() : node_() {
     InitialiseMoveSpecs();
     InitialiseMoveStatus();
     InitialiseTopicConnections();
-    InitialiseTimer();
 }
 
 void HighLevelControl::InitialiseTopicConnections() {
@@ -113,6 +112,7 @@ void HighLevelControl::InitialiseMoveStatus() {
     move_status_.last_turn_ = 0;
     move_status_.rotate_wall_side_ = 0;
     move_status_.rotate_opposite_side_ = 0;
+    move_status_.angle_count_ = 0;
 
     if (!node_.getParam("/simulation",
                         move_status_.is_sim_)) {
@@ -122,6 +122,7 @@ void HighLevelControl::InitialiseMoveStatus() {
     }
 }
 
+<<<<<<< HEAD
 void HighLevelControl::InitialiseTimer() {
     // If after 2 minutes we have not found the circle, we restart the state of
     // the robot
@@ -135,6 +136,8 @@ void HighLevelControl::InitialiseTimer() {
     timer_ = node_.createTimer(ros::Duration(duration), &HighLevelControl::TimerCallback, this);
 }
 
+=======
+>>>>>>> 7aafd3d62a805f8502f5e61879dbb7f992a8ed52
 void HighLevelControl::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
     std::vector<float> ranges(msg->ranges.begin(), msg->ranges.end());
 
@@ -166,6 +169,7 @@ void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& 
     Logger::Instance().Log("circle_x%lf" + std::to_string(circle_x),Logger::log_level_info);
 }
 
+<<<<<<< HEAD
 void HighLevelControl::TimerCallback(const ros::TimerEvent& event) {
     if (move_status_.reached_goal_ == false) {
         ROS_INFO("Timer Fired!");
@@ -175,6 +179,8 @@ void HighLevelControl::TimerCallback(const ros::TimerEvent& event) {
 }
 
 
+=======
+>>>>>>> 7aafd3d62a805f8502f5e61879dbb7f992a8ed52
 bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<float>& ranges) {
     // Cannot hit circle if not in wall following mode
     if (move_specs_.turn_type_ == NONE) {
@@ -340,12 +346,16 @@ void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
     }
 
     if (circle_x_ < -9 || (circle_x_ <= high_lim && circle_x_ >= low_lim)) {
+        ROS_INFO("Circle 0!");
         Move(move_specs_.linear_velocity_ , 0);
     } else if (circle_x_ > high_lim && circle_y_ < 1 && circle_y_ > 0) {
-        Move(0, -move_specs_.angular_velocity_ / 2);
+        ROS_INFO("Circle 1!");
+        Move(0, -move_specs_.angular_velocity_);
     } else if (circle_x_ < low_lim && circle_y_ < 1 && circle_y_ > 0) {
-        Move(0, move_specs_.angular_velocity_ / 2);
+        ROS_INFO("Circle 2!");
+        Move(0, move_specs_.angular_velocity_);
     } else {
+        ROS_INFO("Circle 3!");
         Move(move_specs_.linear_velocity_ , 0);
     }
 }
@@ -414,6 +424,8 @@ void HighLevelControl::WallFollowMove() {
                 move_status_.count_turn_++;
             }
             move_status_.last_turn_ = 1;
+
+            move_status_.angle_count_--;
         } else if (!move_status_.is_close_to_wall_) {
             Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
 
@@ -426,7 +438,15 @@ void HighLevelControl::WallFollowMove() {
                 move_status_.count_turn_++;
             }
             move_status_.last_turn_ = -1;
+
+            move_status_.angle_count_++;
         }
+    }
+
+    ROS_INFO("Angle count: %d", move_status_.angle_count_);
+    if(move_status_.angle_count_ > 100.0 / move_specs_.angular_velocity_){
+        InitialiseMoveStatus();
+        move_status_.angle_count_ = 0;
     }
 
     BreakLoop();
