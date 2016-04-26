@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(robot)
+set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
 find_package(catkin REQUIRED COMPONENTS
   	roscpp
@@ -15,7 +16,7 @@ find_package(rostest REQUIRED)
 
 include_directories(include/${PROJECT_NAME} ${catkin_INCLUDE_DIRS} ${GTest_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 
-add_library(my_library src/high_level_control.cpp src/circle_detector.cpp src/util_functions.cpp)
+add_library(my_library src/high_level_control.cpp src/circle_detector.cpp src/util_functions.cpp src/logger.cpp)
 target_link_libraries(my_library ${OpenCV_LIBRARIES})
 
 add_message_files(
@@ -35,7 +36,7 @@ catkin_package(
 
 # Nodes
 
-add_executable(HighLevelControl src/high_level_control_node.cpp src/high_level_control.cpp src/util_functions.cpp)
+add_executable(HighLevelControl src/high_level_control_node.cpp src/high_level_control.cpp src/util_functions.cpp src/logger.cpp)
 target_link_libraries(HighLevelControl ${catkin_LIBRARIES})
 add_dependencies(HighLevelControl robot_generate_messages_cpp)
 
