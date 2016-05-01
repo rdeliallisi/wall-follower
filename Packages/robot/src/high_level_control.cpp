@@ -45,7 +45,7 @@ void HighLevelControl::InitialiseTopicConnections() {
 
     if (loaded == false) {
         ROS_INFO("Topics failed to load!");
-        Logger::Instance().Log("Topics failed to load!",Logger::log_level_error);
+        Logger::Instance().Log("Topics failed to load!", Logger::log_level_error);
         ros::shutdown();
     }
 
@@ -101,7 +101,7 @@ void HighLevelControl::InitialiseMoveSpecs() {
 
     if (loaded == false) {
         ROS_INFO("Parameters failed to load!");
-        Logger::Instance().Log("Parameters failed to load!",Logger::log_level_error);
+        Logger::Instance().Log("Parameters failed to load!", Logger::log_level_error);
         ros::shutdown();
     }
 }
@@ -122,7 +122,7 @@ void HighLevelControl::InitialiseMoveStatus() {
     if (!node_.getParam("/simulation",
                         move_status_.is_sim_)) {
         ROS_INFO("Parameters failed to load!");
-        Logger::Instance().Log("Parameters failed to load!",Logger::log_level_error);
+        Logger::Instance().Log("Parameters failed to load!", Logger::log_level_error);
         ros::shutdown();
     }
 }
@@ -155,7 +155,7 @@ void HighLevelControl::CircleCallback(const robot::circle_detect_msg::ConstPtr& 
 
     // Log circle coordinates
     ROS_INFO("circle_x:%lf, circle_y:%lf", circle_x_, circle_y_);
-    Logger::Instance().Log("circle_x:%lf" + std::to_string(circle_x_),Logger::log_level_info);
+    Logger::Instance().Log("circle_x:%lf" + std::to_string(circle_x_), Logger::log_level_info);
 }
 
 bool HighLevelControl::CanHit(double circle_x, double circle_y, std::vector<float>& ranges) {
@@ -220,7 +220,7 @@ void HighLevelControl::Update(std::vector<float>& ranges) {
 
     ROS_INFO("right:%lf, left:%lf, center:%lf", right_min_distance, left_min_distance, center_min_distance);
 
-    Logger::Instance().Log("right%lf" + std::to_string(right_min_distance),Logger::log_level_info);
+    Logger::Instance().Log("right%lf" + std::to_string(right_min_distance), Logger::log_level_info);
 
     CanContinue(right_min_distance, left_min_distance, center_min_distance);
 
@@ -264,7 +264,7 @@ void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_
         } else {
             // This case should never happen
             ROS_INFO("Robot has no turn type after being attached to wall!");
-            Logger::Instance().Log("Robot has no turn type after being attached to wall!",Logger::log_level_error);
+            Logger::Instance().Log("Robot has no turn type after being attached to wall!", Logger::log_level_error);
             ros::shutdown();
         }
 
@@ -288,16 +288,17 @@ void HighLevelControl::HitCircle(std::vector<float>& ranges) {
 
 void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
 
+    // 30 degree in front of the robot to detect if the circle has been hit
     float right_10 = (110.0 / 240.0) * ranges.size();
     float left_10 = (130.0 / 240.0) * ranges.size();
     float center_min = GetMin(ranges, right_10, left_10);
 
     ROS_INFO("center_min:%f", center_min);
-    Logger::Instance().Log("center_min" + std::to_string(center_min),Logger::log_level_info);
+    Logger::Instance().Log("center_min" + std::to_string(center_min), Logger::log_level_info);
 
     if (center_min < 0.15) {
         ROS_INFO("Goal Reached!");
-        Logger::Instance().Log("Goal reached!",Logger::log_level_info);
+        Logger::Instance().Log("Goal reached!", Logger::log_level_info);
         // This is the only instance when the robot does not move after
         // all nodes have been initialized
         move_status_.reached_goal_ = true;
@@ -317,22 +318,22 @@ void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
         } else {
             // This case should never happen
             ROS_INFO("Robot has no turn type while trying to hit circle!");
-            Logger::Instance().Log("Robot has no turn type while trying to hit circle!",Logger::log_level_error);
+            Logger::Instance().Log("Robot has no turn type while trying to hit circle!", Logger::log_level_error);
             ros::shutdown();
         }
     }
 
     if (circle_x_ < -9 || (circle_x_ <= high_lim && circle_x_ >= low_lim)) {
-        ROS_INFO("Circle 0!");
+        ROS_INFO("Circle Case: 0!");
         Move(move_specs_.linear_velocity_ , 0);
     } else if (circle_x_ > high_lim && circle_y_ < 1 && circle_y_ > 0) {
-        ROS_INFO("Circle 1!");
+        ROS_INFO("Circle Case: 1!");
         Move(0, -move_specs_.angular_velocity_);
     } else if (circle_x_ < low_lim && circle_y_ < 1 && circle_y_ > 0) {
-        ROS_INFO("Circle 2!");
+        ROS_INFO("Circle Case: 2!");
         Move(0, move_specs_.angular_velocity_);
     } else {
-        ROS_INFO("Circle 3!");
+        ROS_INFO("Circle Case: 3!");
         Move(move_specs_.linear_velocity_ , 0);
     }
 }
@@ -353,7 +354,7 @@ void HighLevelControl::AlignRobot(std::vector<float>& ranges) {
     } else {
         // Cannot hit circle if not in wall following mode
         ROS_INFO("The robot has no turn type while trying to align to the wall!\n");
-        Logger::Instance().Log("The robot has no turn type while trying to align to the wall!",Logger::log_level_error);
+        Logger::Instance().Log("The robot has no turn type while trying to align to the wall!", Logger::log_level_error);
         ros::shutdown();
     }
 
@@ -420,12 +421,6 @@ void HighLevelControl::WallFollowMove() {
         }
     }
 
-    ROS_INFO("Angle count: %d", move_status_.angle_count_);
-    if (move_status_.angle_count_ > move_specs_.cumulative_angle_ / move_specs_.angular_velocity_) {
-        InitialiseMoveStatus();
-        move_status_.angle_count_ = 0;
-    }
-
     BreakLoop();
     BreakRotation();
 }
@@ -443,7 +438,7 @@ void HighLevelControl::BreakLoop() {
     // In case of a turn loop break out after 5 opposite turns in a row.
     if (move_status_.count_turn_ > 5) {
         ROS_INFO("Stuck in left-right loop!");
-        Logger::Instance().Log("Stuck in left-right loop!",Logger::log_level_debug);
+        Logger::Instance().Log("Stuck in left-right loop!", Logger::log_level_debug);
 
         if (move_specs_.turn_type_ == RIGHT) {
             // Short right turn
@@ -455,6 +450,12 @@ void HighLevelControl::BreakLoop() {
             // Case should not happen
         }
         move_status_.count_turn_ = 0;
+    }
+
+    // In case we are in a loop circuit
+    if (move_status_.angle_count_ > move_specs_.cumulative_angle_ / move_specs_.angular_velocity_) {
+        InitialiseMoveStatus();
+        move_status_.angle_count_ = 0;
     }
 }
 

@@ -35,7 +35,7 @@ TEST(HlcCreate, InitMoveSpecs) {
 	ASSERT_DOUBLE_EQ(move_specs.high_security_distance_, 0.25);
 	ASSERT_DOUBLE_EQ(move_specs.low_security_distance_, 0.10);
 	ASSERT_DOUBLE_EQ(move_specs.wall_follow_distance_, 0.35);
-	ASSERT_DOUBLE_EQ(move_specs.linear_velocity_, 0.5);
+	ASSERT_DOUBLE_EQ(move_specs.linear_velocity_, 0.75);
 	ASSERT_DOUBLE_EQ(move_specs.angular_velocity_, 1);
 	ASSERT_DOUBLE_EQ(move_specs.right_limit_, 75);
 	ASSERT_DOUBLE_EQ(move_specs.left_limit_, 165);
