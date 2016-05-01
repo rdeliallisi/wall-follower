@@ -306,22 +306,19 @@ void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
         return;
     }
 
-    float low_lim = -0.05, high_lim = 0.05;
-
     if (move_status_.is_sim_) {
-        if (move_specs_.turn_type_ == RIGHT) {
-            low_lim = 0.035;
-            high_lim = 0.04;
-        } else if (move_specs_.turn_type_ == LEFT) {
-            low_lim = -0.04;
-            high_lim = -0.035;
+        // Move fast towards goal
+        float angular_velocity;
+        if (move_specs_.turn_type_ == LEFT) {
+            angular_velocity = 0.25;
         } else {
-            // This case should never happen
-            ROS_INFO("Robot has no turn type while trying to hit circle!");
-            Logger::Instance().Log("Robot has no turn type while trying to hit circle!", Logger::log_level_error);
-            ros::shutdown();
+            angular_velocity = -0.25;
         }
+        Move(move_specs_.linear_velocity_ * 10, angular_velocity);
+        return;
     }
+
+    float low_lim = -0.05, high_lim = 0.05;
 
     if (circle_x_ < -9 || (circle_x_ <= high_lim && circle_x_ >= low_lim)) {
         ROS_INFO("Circle Case: 0!");
@@ -442,10 +439,10 @@ void HighLevelControl::BreakLoop() {
 
         if (move_specs_.turn_type_ == RIGHT) {
             // Short right turn
-            Move(move_specs_.linear_velocity_, -move_specs_.angular_velocity_);
+            Move(move_specs_.linear_velocity_ * 5, -move_specs_.angular_velocity_);
         } else if (move_specs_.turn_type_ == LEFT) {
             // Short left turn
-            Move(move_specs_.linear_velocity_, move_specs_.angular_velocity_);
+            Move(move_specs_.linear_velocity_ * 5, move_specs_.angular_velocity_);
         } else {
             // Case should not happen
         }
