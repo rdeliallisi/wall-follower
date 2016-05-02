@@ -369,8 +369,8 @@ void HighLevelControl::AlignRobot(std::vector<float>& ranges) {
     // is aligned to the wall it is following. If not turn appropriately.
     double diff = front_value - back_value;
     if (diff <= 0.025 && diff >= -0.025) {
-    	ROS_INFO("Goal Reached!");
-        Logger::Instance().Log("Goal reached!", Logger::log_level_info);
+    	ROS_INFO("Aligned to wall!");
+        Logger::Instance().Log("Aligned to wall!", Logger::log_level_info);
         move_status_.hit_goal_ = true;
     } else if (diff > 0.025) {
     	ROS_INFO("The robot should turn because the difference is not small enough!\n");

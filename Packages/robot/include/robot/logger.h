@@ -53,7 +53,7 @@ public:
              const std::string &in_log_level);
      /**
      * @brief Logs a vector of messages at the given log level
-     * @param in_message is the vector with the received messages
+     * @param in_messages is the vector with the received messages
      * @param in_log_level is the level of the log
      */
     void Log(const std::vector <std::string> &in_messages,
@@ -77,6 +77,13 @@ protected:
      *        instance gets deleted on program shutdown.
      */ 
     friend class Cleanup;
+
+    /**
+     * @brief Defines the Cleanup class that is responsible for removing
+     * unnecessary data after the logger is of no use anymore
+     * @details Deletes the files and all the material created by the
+     * logger
+     */
     class Cleanup
     {
     public:
@@ -88,8 +95,8 @@ protected:
       /**
      * @brief Logs message. The thread should own a lock on sMutex
      *        before calling this function.
-     * @param in_message is the received message
-     * @param in_log_level is the level of the log
+     * @param in_message Is the received message
+     * @param in_log_level Is the level of the log
      */ 
     void LogHelper(const std::string &in_message,
                    const std::string &in_log_level);

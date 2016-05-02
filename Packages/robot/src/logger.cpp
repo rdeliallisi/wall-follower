@@ -7,7 +7,6 @@
  * @author Rubin Deliallisi [rdeliallisi]
  * @author Siddharth Shukla [thunderboltsid]
  * @bug No known bugs.
- * @cite Introduction to Professional C++ ISBN: 978-0-470-93244-5
  */
 #include <stdexcept>
 #include "logger.h"
@@ -63,12 +62,12 @@ Logger::Logger() {
     }
 }
 
-void Logger::Log(const string &in_message, const string &in_log_level) {
+void Logger::Log(const std::string &in_message, const std::string &in_log_level) {
     lock_guard<mutex> guard(s_mutex);
     LogHelper(in_message, in_log_level);
 }
 
-void Logger::Log(const vector <string> &in_messages, const string &in_log_level) {
+void Logger::Log(const std::vector <std::string> &in_messages, const std::string &in_log_level) {
     lock_guard<mutex> guard(s_mutex);
     for (size_t i = 0; i < in_messages.size(); i++) {
         LogHelper(in_messages[i], in_log_level);

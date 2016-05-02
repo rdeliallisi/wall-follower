@@ -24,7 +24,7 @@ Development timeline
 
 - Sprint 2: High Level Control (Rubin), Circle Detection (Atabak, Siddharth), HLC & CD Tests (Maria, Rubin, Siddharth), HLC & CD Docs (Maria), System tests (Atabak, Siddharth)
 
-- Sprint 3: (Pending)
+- Sprint 3: Code Modularization,Optimization and Cleanup(Rubin), Logger Class(Siddharth), Integration and Unit Tests(Atabak, Maria), High Level Control adjustments for real robot(Rubin), Code Documentation(Maria, Siddharth)
 
 Setup:
 - Navigate to your catkin workspace

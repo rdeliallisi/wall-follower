@@ -60,6 +60,10 @@ struct MoveSpecs {
      */
     double left_limit_;
 
+    /**
+     * @brief Estimate of the cumulative angle that the robot has turned since
+     * starting
+     */
     int cumulative_angle_;
 
     /**

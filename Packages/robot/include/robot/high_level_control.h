@@ -199,7 +199,7 @@ public:
 	 * @brief Send the movement command to the robot using ROS nodes and topics
 	 *
 	 * @param linear_speed  Linear Speed that the robot should move with
-	 * @param angular_speed Angular Speed that the robot should rotate with
+	 * @param angular_speed Angular Speed that the robot should rotate with 
 	 */
 	void Move(double linear_speed, double angular_speed);
 
