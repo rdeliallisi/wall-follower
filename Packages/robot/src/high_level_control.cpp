@@ -251,6 +251,10 @@ void HighLevelControl::CanContinue(double right_min_distance, double left_min_di
     } else {
         move_status_.can_continue_ = false;
     }
+
+    ROS_INFO("priority_min:%lf, secondary_min:%lf", priority_min, secondary_min);
+
+    Logger::Instance().Log("priority_min%lf" + std::to_string(priority_min), Logger::log_level_info);
 }
 
 void HighLevelControl::IsCloseToWall(double right_min_distance, double left_min_distance,
@@ -314,6 +318,8 @@ void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
         } else {
             angular_velocity = -0.25;
         }
+        ROS_INFO("Moving towards the goal!");
+        Logger::Instance().Log("Moving towards the goal!", Logger::log_level_info);
         Move(move_specs_.linear_velocity_ * 10, angular_velocity);
         return;
     }
@@ -322,15 +328,19 @@ void HighLevelControl::GoToCircle(std::vector<float>& ranges) {
 
     if (circle_x_ < -9 || (circle_x_ <= high_lim && circle_x_ >= low_lim)) {
         ROS_INFO("Circle Case: 0!");
+        Logger::Instance().Log("Circle Case: 0!", Logger::log_level_info);
         Move(move_specs_.linear_velocity_ , 0);
     } else if (circle_x_ > high_lim && circle_y_ < 1 && circle_y_ > 0) {
         ROS_INFO("Circle Case: 1!");
+        Logger::Instance().Log("Circle Case: 1!", Logger::log_level_info);
         Move(0, -move_specs_.angular_velocity_);
     } else if (circle_x_ < low_lim && circle_y_ < 1 && circle_y_ > 0) {
         ROS_INFO("Circle Case: 2!");
+        Logger::Instance().Log("Circle Case: 2!", Logger::log_level_info);
         Move(0, move_specs_.angular_velocity_);
     } else {
         ROS_INFO("Circle Case: 3!");
+        Logger::Instance().Log("Circle Case: 3!", Logger::log_level_info);
         Move(move_specs_.linear_velocity_ , 0);
     }
 }
@@ -359,10 +369,16 @@ void HighLevelControl::AlignRobot(std::vector<float>& ranges) {
     // is aligned to the wall it is following. If not turn appropriately.
     double diff = front_value - back_value;
     if (diff <= 0.025 && diff >= -0.025) {
+    	ROS_INFO("Goal Reached!");
+        Logger::Instance().Log("Goal reached!", Logger::log_level_info);
         move_status_.hit_goal_ = true;
     } else if (diff > 0.025) {
+    	ROS_INFO("The robot should turn because the difference is not small enough!\n");
+        Logger::Instance().Log("The robot should turn because the difference is not small enough!", Logger::log_level_info);
         Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
     } else {
+    	ROS_INFO("The robot should turn because the difference is not small enough!\n");
+        Logger::Instance().Log("The robot should turn because the difference is not small enough!", Logger::log_level_info);
         Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_ / 4);
     }
 }
@@ -375,9 +391,13 @@ void HighLevelControl::WallFollowMove() {
         move_specs_.turn_type_ = rand() % 10000 > 5000 ? RIGHT : LEFT;
         move_status_.is_following_wall_ = true;
     } else if (move_status_.can_continue_ && !move_status_.is_following_wall_) {
+    	ROS_INFO("The robot can continue walking!\n");
+        Logger::Instance().Log("The robot can continue walking!", Logger::log_level_info);
         Move(move_specs_.linear_velocity_, 0);
     } else {
         if (move_status_.can_continue_ && move_status_.is_close_to_wall_) {
+        	ROS_INFO("The robot can continue walking!\n");
+            Logger::Instance().Log("The robot can continue walking!", Logger::log_level_info);
             Move(move_specs_.linear_velocity_, 0);
 
             // Not rotating in place since we are moving forward
@@ -388,6 +408,8 @@ void HighLevelControl::WallFollowMove() {
             move_status_.last_turn_ = 0;
             move_status_.count_turn_ = 0;
         } else if (!move_status_.can_continue_) {
+        	ROS_INFO("The robot can't continue walking!\n");
+            Logger::Instance().Log("The robot can't continue walking!", Logger::log_level_info);
             Move(0, (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
 
             // Rotating on the other side relative to the wall we are following
@@ -402,6 +424,8 @@ void HighLevelControl::WallFollowMove() {
 
             move_status_.angle_count_--;
         } else if (!move_status_.is_close_to_wall_) {
+        	ROS_INFO("The robot isn't close to wall!\n");
+            Logger::Instance().Log("The robot isn't close to wall!", Logger::log_level_info);
             Move(0, -1 * (move_specs_.turn_type_ - 1) * move_specs_.angular_velocity_);
 
             // Rotating towards the wall we are following
@@ -439,12 +463,19 @@ void HighLevelControl::BreakLoop() {
 
         if (move_specs_.turn_type_ == RIGHT) {
             // Short right turn
+            ROS_INFO("The robot is turning right!\n");
+            Logger::Instance().Log("The robot is turning right!", Logger::log_level_info);
             Move(move_specs_.linear_velocity_ * 5, -move_specs_.angular_velocity_);
         } else if (move_specs_.turn_type_ == LEFT) {
             // Short left turn
+            ROS_INFO("The robot is turning left!\n");
+            Logger::Instance().Log("The robot is turning left!", Logger::log_level_info);
             Move(move_specs_.linear_velocity_ * 5, move_specs_.angular_velocity_);
         } else {
             // Case should not happen
+             ROS_INFO("The turn type is neither right nor left! \n");
+             Logger::Instance().Log("The turn type is neither right nor left!", Logger::log_level_error);
+             ros::shutdown();
         }
         move_status_.count_turn_ = 0;
     }
