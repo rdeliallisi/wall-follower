@@ -33,9 +33,10 @@ Setup:
 - Navigate back to your catkin workspace (`cd ../`)
 - Run `catkin_make`
 - Run `source devel/setup.bash` or `source devel/setup.zsh` or `source devel/setup.sh` depending on your shell
-- Run `roslaunch robot robot.launch world_name:=easy`
-- Run `roslaunch robot robot.launch world_name:=medium`
-- Run `roslaunch robot robot.launch world_name:=hard`
+- Run `roslaunch robot simulator.launch world_name:=easy [--screen]`
+- Run `roslaunch robot simulator.launch world_name:=medium [--screen]`
+- Run `roslaunch robot simulator.launch world_name:=hard [--screen]`
+- The --screen option serves to view the logging output on the screen
 
 Tests:
 - Navigate to your catkin workspace
@@ -48,7 +49,7 @@ Generate Documentation:
 - Run `doxygen Doxyfile` to generate documentation
 
 Logger Usage:
-- `Logger::Instance().Log("test message", Logger::log_level_debug);`
-- `Logger::Instance().Log("test message", Logger::log_level_info);`
-- `Logger::Instance().Log("test message", Logger::log_level_error);`
+- `Logger::Instance().Log("message", Logger::log_level_debug);`
+- `Logger::Instance().Log("message", Logger::log_level_info);`
+- `Logger::Instance().Log("message", Logger::log_level_error);`
 */
