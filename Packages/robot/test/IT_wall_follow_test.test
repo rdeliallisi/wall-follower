@@ -9,11 +9,6 @@
 
 	<node name="simulator" pkg="stage_ros" type="stageros" args="$(find robot)/worlds/$(arg world_name).world" />
 
-	<node name="CircleDetector" pkg="robot" type="CircleDetector" clear_params="true">
-	</node>
-
-	<rosparam command="load" file="$(find robot)/config/$(arg CD_params)" />
-
 	<rosparam command="load" file="$(find robot)/config/$(arg HLC_params)" />
 
 	<test test-name="IT_wall_follow_test" pkg="robot" type="IT_wall_follow_test" time-limit="30.0">

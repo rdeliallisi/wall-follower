@@ -24,8 +24,6 @@ TEST(RobotEasyIntegrationTestWallFollow, RobotWallFollowAndTurn) {
     ASSERT_TRUE(move_status.is_following_wall_);
     ASSERT_FALSE(move_status.circle_hit_mode_);
     ASSERT_FALSE(move_status.hit_goal_);    
-    ASSERT_EQ(move_status.count_turn_, 0);
-    ASSERT_EQ(move_status.last_turn_, 0);
 
     ros::NodeHandle n;
     ros::Rate r(10.0);
@@ -42,9 +40,7 @@ TEST(RobotEasyIntegrationTestWallFollow, RobotWallFollowAndTurn) {
     ASSERT_TRUE(move_status.is_close_to_wall_);
     ASSERT_TRUE(move_status.is_following_wall_);
     ASSERT_FALSE(move_status.circle_hit_mode_);
-    ASSERT_FALSE(move_status.hit_goal_);    
-    ASSERT_EQ(move_status.count_turn_, 1);
-    ASSERT_EQ(move_status.last_turn_, 1);
+    ASSERT_FALSE(move_status.hit_goal_);
 }
 
 int main(int argc, char** argv) {
