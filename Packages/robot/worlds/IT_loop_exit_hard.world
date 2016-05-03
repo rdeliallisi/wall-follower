@@ -86,7 +86,7 @@ window
 floorplan
 (
 	name "lab-comp03"
-	bitmap "stage_world_maze03.png"
+	bitmap "stage_world_maze_custom.png"
 	size [ 6.000 4.000 0.300 ]
 	pose [ 0.000 0.000 0.000 0.000 ]
 )
@@ -94,7 +94,7 @@ floorplan
 #define the compbot instance
 compbot
 (
-	pose [ 0.860 0.407 0.000 88.326 ]
+	pose [ -0.875 1.221 0.000 179.999 ]
 	name "compbot"
 	color "blue"	
 )

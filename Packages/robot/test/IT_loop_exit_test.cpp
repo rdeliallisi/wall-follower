@@ -24,7 +24,7 @@ TEST(RobotHardIntegrationTestLoopExit, RobotLoopExitSuccess) {
     ros::Rate r(10.0);
 
     int i = 0;
-    while(ros::ok() && i <= 450) {
+    while(ros::ok() && i <= 400) {
         ros::spinOnce();
         i++;
         r.sleep();
