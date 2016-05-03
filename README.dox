@@ -49,6 +49,8 @@ Generate Documentation:
 - Run `doxygen Doxyfile` to generate documentation
 
 Logger Usage:
+- The Logger might be used in case logging levels are needed. Right now ROS_INFO is enough for our
+  purposes.
 - `Logger::Instance().Log("message", Logger::log_level_debug);`
 - `Logger::Instance().Log("message", Logger::log_level_info);`
 - `Logger::Instance().Log("message", Logger::log_level_error);`
