@@ -44,7 +44,6 @@ void CircleDetector::LoadTopics() {
 
     if (loaded == false) {
         ROS_INFO("Topics failed to load!");
-        Logger::Instance().Log("Topics failed to load!",Logger::log_level_error);
         ros::shutdown();
     }
 
